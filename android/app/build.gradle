@@ -75,6 +75,15 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.activ_esaip_audya"
+packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+    
+    defaultConfig {
+        // ... le reste du code
+    }
     defaultConfig {
         applicationId "com.activ_esaip_audya"
         minSdkVersion rootProject.ext.minSdkVersion
