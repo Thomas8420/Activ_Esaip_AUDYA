@@ -1,0 +1,202 @@
+import React, { useState } from 'react';
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Svg, { Path } from 'react-native-svg';
+import ChatIcon from '../../../assets/images/chat.svg';
+import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
+import { Screen, useNavigation } from '../../../context/NavigationContext';
+import { MENU_ITEMS } from '../../../constants';
+
+/** Icône maison (Material Design) en SVG inline */
+const HomeIcon = ({ color }: { color: string }) => (
+  <Svg width={28} height={28} viewBox="0 0 24 24">
+    <Path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20Z" fill={color} />
+  </Svg>
+);
+
+/** Icône hamburger (≡) */
+const MenuIcon = ({ color }: { color: string }) => (
+  <Svg width={18} height={18} viewBox="0 0 24 24">
+    <Path
+      d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z"
+      fill={color}
+    />
+  </Svg>
+);
+
+/** Correspondance écran → libellé affiché dans le bouton central */
+const SCREEN_LABELS: Partial<Record<Screen, string>> = {
+  home: 'Accueil',
+  professionals: 'Mes professionnels',
+  'professional-profile': 'Mes professionnels',
+  'add-professional': 'Mes professionnels',
+  'invite-professional': 'Mes professionnels',
+};
+
+/**
+ * Barre de navigation inférieure.
+ * - Gauche : icône maison → retour à l'accueil
+ * - Centre : bouton pill blanc → nom de la section active / ouvre le menu
+ * - Droite : bouton chat (Fab intégré)
+ */
+const BottomNav = () => {
+  const { currentScreen, goHome, navigateTo } = useNavigation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
+
+  const handleMenuItemPress = (itemId: string) => {
+    setMenuOpen(false);
+    if (itemId === 'professionals') {
+      navigateTo('professionals');
+    } else if (itemId === 'home') {
+      goHome();
+    }
+    // TODO: implémenter la navigation pour les autres onglets
+  };
+
+  return (
+    <>
+      {/* ── Popup menu ── */}
+      <Modal
+        visible={menuOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuOpen(false)}
+      >
+        <Pressable style={styles.menuOverlay} onPress={() => setMenuOpen(false)}>
+          <View style={styles.menuPopup}>
+            {MENU_ITEMS.map((item, index) => (
+              <React.Fragment key={item.id}>
+                {index > 0 && <View style={styles.menuSeparator} />}
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleMenuItemPress(item.id)}
+                  activeOpacity={0.7}
+                >
+                  <item.icon width={22} height={22} fill={COLORS.orange} />
+                  <Text style={styles.menuItemLabel}>{item.label}</Text>
+                </TouchableOpacity>
+              </React.Fragment>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* ── Barre ── */}
+      <View style={styles.container}>
+        {/* Bouton Accueil */}
+        <TouchableOpacity
+          style={styles.sideButton}
+          onPress={goHome}
+          activeOpacity={0.7}
+          accessibilityLabel="Accueil"
+        >
+          <HomeIcon color={COLORS.white} />
+        </TouchableOpacity>
+
+        {/* Bouton central : section active + ouvre le menu */}
+        <TouchableOpacity
+          style={styles.centerButton}
+          onPress={() => setMenuOpen(true)}
+          activeOpacity={0.85}
+          accessibilityLabel="Ouvrir le menu"
+        >
+          <MenuIcon color={COLORS.orange} />
+          <Text style={styles.centerLabel} numberOfLines={1}>
+            {sectionLabel}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Bouton Chat (Fab intégré) */}
+        <TouchableOpacity
+          style={styles.fabButton}
+          activeOpacity={0.7}
+          accessibilityLabel="Messagerie"
+        >
+          <ChatIcon width={26} height={26} fill={COLORS.white} />
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.orange,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 12,
+  },
+  sideButton: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centerButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    borderRadius: 30,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 10,
+  },
+  centerLabel: {
+    flex: 1,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.orange,
+  },
+  fabButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.teal,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // ── Menu popup ──
+  menuOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  menuPopup: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 8,
+    paddingBottom: 24,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    gap: 16,
+  },
+  menuItemLabel: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 15,
+    color: COLORS.text,
+  },
+  menuSeparator: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginHorizontal: 24,
+  },
+});
+
+export default BottomNav;
