@@ -10,38 +10,28 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Home/HomeScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
-import Fab from '../common/Button/Fab';
-
-// --- Imports des icônes SVG pour la grille ---
-import HealthIcon from '../../assets/images/patient.svg';
-import HearingIcon from '../../assets/images/son-doreille.svg';
-import NotebookIcon from '../../assets/images/dossier-patient.svg';
-import ProfessionalsIcon from '../../assets/images/medecin-de-lutilisateur.svg';
-import AgendaIcon from '../../assets/images/calendrier.svg';
-import MessageIcon from '../../assets/images/discussion-sur-les-bulles.svg';
-import QuestionnaireIcon from '../../assets/images/barre-de-satisfaction.svg';
-import NewsIcon from '../../assets/images/journal.svg';
-
-/**
- * Données statiques pour les éléments de la grille de menu.
- * Chaque objet contient un identifiant, un libellé et le composant icône à afficher.
- */
-const MENU_ITEMS = [
-  { id: 'health', label: 'Ma santé', icon: HealthIcon },
-  { id: 'hearing', label: 'Mon appareillage', icon: HearingIcon },
-  { id: 'notebook', label: 'Mon carnet audition', icon: NotebookIcon },
-  { id: 'professionals', label: 'Mes professionnels', icon: ProfessionalsIcon },
-  { id: 'agenda', label: 'Mon agenda', icon: AgendaIcon },
-  { id: 'message', label: 'Ma messagerie', icon: MessageIcon },
-  { id: 'questionnaire', label: 'Mes questionnaires', icon: QuestionnaireIcon },
-  { id: 'news', label: 'Mes actualités', icon: NewsIcon },
-];
+import BottomNav from '../common/BottomNav/BottomNav';
+import { useNavigation } from '../../context/NavigationContext';
+import { MENU_ITEMS } from '../../constants';
 
 /**
  * Composant principal qui assemble les différentes parties de l'écran d'accueil.
  * Il intègre la barre de navigation, le corps de la page (scrollable) et le bouton d'action flottant.
  */
 const MainPage = () => {
+  const { navigateTo } = useNavigation();
+
+  /**
+   * Gère le clic sur un élément du menu
+   * Navigate vers la page correspondante si c'est "professionals"
+   */
+  const handleMenuItemPress = (itemId: string) => {
+    if (itemId === 'professionals') {
+      navigateTo('professionals');
+    }
+    // TODO: Implémenter la navigation pour les autres éléments du menu
+  };
+
   return (
     // SafeAreaView assure que le contenu ne chevauche pas les encoches du téléphone.
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -55,7 +45,12 @@ const MainPage = () => {
         {/* Grille de tuiles cliquables */}
         <View style={styles.grid}>
           {MENU_ITEMS.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.tile} activeOpacity={0.7}>
+            <TouchableOpacity
+              key={item.id}
+              style={styles.tile}
+              activeOpacity={0.7}
+              onPress={() => handleMenuItemPress(item.id)}
+            >
               <item.icon width={48} height={48} />
               <Text style={styles.tileLabel}>{item.label}</Text>
             </TouchableOpacity>
@@ -76,8 +71,8 @@ const MainPage = () => {
         </View>
       </ScrollView>
 
-      {/* Affiche le bouton d'action flottant */}
-      <Fab />
+      {/* Barre de navigation inférieure (inclut le bouton chat) */}
+      <BottomNav />
     </SafeAreaView>
   );
 };

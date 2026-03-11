@@ -1,0 +1,723 @@
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+export const COLORS = {
+  orange: '#E8622A',
+  orangeLight: '#F0936B',
+  teal: '#3ABFBF',
+  white: '#FFFFFF',
+  offWhite: '#F8F9FA',
+  tile: '#FFFFFF',
+  text: '#2D2D2D',
+  textLight: '#6B6B6B',
+  textLighter: '#999999',
+  border: '#E0E0E0',
+  background: '#f5f3ef',
+  overlay: 'rgba(0, 0, 0, 0.4)',
+  avatarBg: '#3ABFBF',
+};
+
+export const FONT_REGULAR = 'Montserrat-Regular';
+export const FONT_SEMIBOLD = 'Montserrat-SemiBold';
+export const FONT_BOLD = 'Montserrat-Bold';
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: COLORS.offWhite,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 100,
+    backgroundColor: COLORS.background,
+  },
+
+  // ── Title Section ──
+  titleSection: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: FONT_BOLD,
+    color: COLORS.orange,
+    textAlign: 'center',
+  },
+
+  // ── Filters Section ──
+  filtersContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  filtersHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  filtersTitle: {
+    fontSize: 16,
+    fontFamily: FONT_SEMIBOLD,
+    color: COLORS.text,
+  },
+  filtersModeSelector: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  modeIcon: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  modeIconActive: {
+    backgroundColor: COLORS.orange,
+    borderColor: COLORS.orange,
+  },
+  modeMenuButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modeIconText: {
+    fontSize: 13,
+    color: COLORS.textLighter,
+  },
+  modeIconTextActive: {
+    color: COLORS.white,
+  },
+
+  // ── Search & Filters Controls ──
+  searchInput: {
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    marginBottom: 12,
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.text,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  filterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+  },
+  filterButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  filterButtonText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  addProfessionalButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  addProfessionalButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.white,
+    textAlign: 'center',
+  },
+
+  // ── Professional Cards ──
+  professionalCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  cardAvatarSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.avatarBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  avatarText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 12,
+    color: COLORS.white,
+  },
+  avatarInfo: {
+    flex: 1,
+  },
+  avatarProfession: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.teal,
+  },
+  avatarCompany: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginTop: 2,
+  },
+  favoriteButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  favoriteText: {
+    fontSize: 18,
+  },
+
+  // ── Card Name Section ──
+  cardName: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
+    color: COLORS.text,
+    marginBottom: 12,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginBottom: 12,
+  },
+
+  // ── Contact Info ──
+  contactInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  contactIcon: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  contactText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.textLight,
+  },
+
+  // ── Card Actions ──
+  cardActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.offWhite,
+  },
+  actionButtonPrimary: {
+    backgroundColor: COLORS.orange,
+    borderColor: COLORS.orange,
+  },
+  actionButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  actionButtonTextPrimary: {
+    color: COLORS.white,
+  },
+
+  // ── Filter Dropdowns ──
+  filterDropdownWrapper: {
+    flex: 1,
+  },
+  filterDropdownMenuOverlay: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    backgroundColor: COLORS.white,
+    borderRadius: 8,
+    elevation: 5,
+    zIndex: 100,
+  },
+  filterDropdownItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  filterDropdownChevron: {
+    fontSize: 14,
+    color: COLORS.textLighter,
+  },
+
+  // ── List/Table View ──
+  listContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    marginBottom: 16,
+  },
+  listHeader: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.orange,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  listHeaderCellSpecialty: {
+    flex: 2,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 11,
+    color: COLORS.white,
+    textTransform: 'uppercase',
+  },
+  listHeaderCellName: {
+    flex: 1.5,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 11,
+    color: COLORS.white,
+    textTransform: 'uppercase',
+  },
+  listHeaderCellActions: {
+    flex: 1,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 11,
+    color: COLORS.white,
+    textTransform: 'uppercase',
+    textAlign: 'right',
+  },
+  listRow: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  listRowAlternate: {
+    backgroundColor: COLORS.offWhite,
+  },
+  listCellSpecialty: {
+    flex: 2,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 13,
+    color: COLORS.teal,
+  },
+  listCellName: {
+    flex: 1.5,
+    fontFamily: FONT_REGULAR,
+    fontSize: 13,
+    color: COLORS.text,
+  },
+  listCellActions: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 6,
+    justifyContent: 'flex-end',
+  },
+  listActionButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.offWhite,
+  },
+  listActionButtonPrimary: {
+    backgroundColor: COLORS.orange,
+    borderColor: COLORS.orange,
+  },
+  listActionIcon: {
+    fontSize: 14,
+  },
+  listActionIconPrimary: {
+    fontSize: 12,
+    color: COLORS.white,
+    fontFamily: FONT_SEMIBOLD,
+  },
+
+  // ── Invitation Warning ──
+  invitationWarning: {
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.orange,
+  },
+  invitationWarningText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: COLORS.text,
+    lineHeight: 18,
+  },
+  invitationWarningTextBold: {
+    fontFamily: FONT_SEMIBOLD,
+  },
+  resendInvitationButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  resendInvitationButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.white,
+  },
+
+  // ── Professional Profile ──
+  profileScrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 40,
+    backgroundColor: COLORS.background,
+  },
+  profileCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  profileCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  profileCardTitle: {
+    fontFamily: FONT_BOLD,
+    fontSize: 16,
+    color: COLORS.orange,
+  },
+  profileBackButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  profileBackButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.white,
+  },
+  profileAvatar: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: COLORS.avatarBg,
+    marginBottom: 28,
+  },
+  profileField: {
+    marginBottom: 16,
+  },
+  profileFieldLabel: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.text,
+    marginBottom: 6,
+  },
+  profileFieldValue: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.textLight,
+  },
+  profileFieldSeparator: {
+    height: 1,
+    backgroundColor: COLORS.border,
+  },
+  profileFieldSeparatorFirst: {
+    height: 2,
+    backgroundColor: '#4A90D9',
+  },
+
+  // ── Add / Invite Professional Forms ──
+  formScrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 40,
+    backgroundColor: COLORS.background,
+  },
+  formCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  formCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  formCardTitle: {
+    fontFamily: FONT_BOLD,
+    fontSize: 15,
+    color: COLORS.orange,
+    flex: 1,
+    marginRight: 12,
+  },
+  formBackButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  formBackButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 13,
+    color: COLORS.white,
+  },
+  formSectionTitle: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.text,
+    marginBottom: 16,
+  },
+  formInput: {
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 12,
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.text,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  formDropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  formDropdownText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.textLighter,
+    flex: 1,
+  },
+  formDropdownTextSelected: {
+    color: COLORS.text,
+  },
+  formDropdownMenu: {
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginTop: -8,
+    marginBottom: 12,
+    elevation: 5,
+    zIndex: 100,
+  },
+  formDropdownItem: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  formDropdownItemText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  formSearchButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 20,
+  },
+  formSearchButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.white,
+  },
+  formInviteButton: {
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  formInviteButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.orange,
+  },
+  formNoteInput: {
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 12,
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.text,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  formCheckboxRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    gap: 10,
+  },
+  formCheckbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 1,
+  },
+  formCheckboxChecked: {
+    backgroundColor: COLORS.orange,
+    borderColor: COLORS.orange,
+  },
+  formCheckboxTick: {
+    color: COLORS.white,
+    fontSize: 13,
+    fontFamily: FONT_BOLD,
+  },
+  formCheckboxLabel: {
+    flex: 1,
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: COLORS.textLight,
+    lineHeight: 18,
+  },
+  formSubmitButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  formSubmitButtonDisabled: {
+    backgroundColor: COLORS.textLighter,
+  },
+  formSubmitButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.white,
+  },
+  formSearchResults: {
+    marginTop: 16,
+  },
+  formSearchResultTitle: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.text,
+    marginBottom: 12,
+  },
+  formSearchResultItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  formSearchResultInfo: {
+    flex: 1,
+  },
+  formSearchResultName: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  formSearchResultSpecialty: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: COLORS.teal,
+    marginTop: 2,
+  },
+  formSearchResultAddButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 14,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  formSearchResultAddButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 12,
+    color: COLORS.white,
+  },
+});
