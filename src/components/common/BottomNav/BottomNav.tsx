@@ -39,6 +39,8 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'invite-professional': 'Mes professionnels',
   settings: 'Mes paramètres',
   'my-profile': 'Mon profil',
+  'messaging': 'Ma messagerie',
+  'messaging-chat': 'Ma messagerie',
 };
 
 /**
@@ -48,7 +50,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
  * - Droite : bouton chat (Fab intégré)
  */
 const BottomNav = () => {
-  const { currentScreen, goHome, navigateTo } = useNavigation();
+  const { currentScreen, goHome, navigateTo, navigateToMessaging } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
@@ -59,6 +61,8 @@ const BottomNav = () => {
       navigateTo('professionals');
     } else if (itemId === 'home') {
       goHome();
+    } else if (itemId === 'message') {
+      navigateToMessaging();
     }
     // TODO: implémenter la navigation pour les autres onglets
   };
@@ -119,6 +123,7 @@ const BottomNav = () => {
         {/* Bouton Chat (Fab intégré) */}
         <TouchableOpacity
           style={styles.fabButton}
+          onPress={navigateToMessaging}
           activeOpacity={0.7}
           accessibilityLabel="Messagerie"
         >

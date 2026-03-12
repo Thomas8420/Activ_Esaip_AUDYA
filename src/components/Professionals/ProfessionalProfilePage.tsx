@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
-import { SelectedProfessional } from '../../context/NavigationContext';
+import { SelectedConversation, SelectedProfessional, useNavigation } from '../../context/NavigationContext';
 
 interface ProfileField {
   label: string;
@@ -25,7 +25,23 @@ const ProfessionalProfilePage: React.FC<ProfessionalProfilePageProps> = ({
   professional,
   onBack,
 }) => {
+  const { navigateToMessagingChat } = useNavigation();
   const address = [professional.zipCode, professional.city].filter(Boolean).join(' ');
+
+  const handleSendMessage = () => {
+    const conversation: SelectedConversation = {
+      id: null,
+      subject: `Message à ${professional.firstName} ${professional.lastName}`,
+      correspondentId: professional.id,
+      correspondentName: `${professional.firstName} ${professional.lastName}`,
+      correspondentPhone: professional.phone,
+      correspondentEmail: professional.email,
+      correspondentCity: professional.city,
+      correspondentZip: professional.zipCode,
+      status: 'pending',
+    };
+    navigateToMessagingChat(conversation);
+  };
 
   const fields: ProfileField[] = [
     {
@@ -75,6 +91,16 @@ const ProfessionalProfilePage: React.FC<ProfessionalProfilePageProps> = ({
               />
             </View>
           ))}
+
+          {/* Bouton messagerie */}
+          <TouchableOpacity
+            style={styles.profileMessageButton}
+            onPress={handleSendMessage}
+            activeOpacity={0.8}
+            accessibilityLabel="Envoyer un message"
+          >
+            <Text style={styles.profileMessageButtonText}>Envoyer un message</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       <BottomNav />

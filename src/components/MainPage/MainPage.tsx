@@ -19,15 +19,16 @@ import { MENU_ITEMS } from '../../constants';
  * Il intègre la barre de navigation, le corps de la page (scrollable) et le bouton d'action flottant.
  */
 const MainPage = () => {
-  const { navigateTo } = useNavigation();
+  const { navigateTo, navigateToMessaging } = useNavigation();
 
   /**
    * Gère le clic sur un élément du menu
-   * Navigate vers la page correspondante si c'est "professionals"
    */
   const handleMenuItemPress = (itemId: string) => {
     if (itemId === 'professionals') {
       navigateTo('professionals');
+    } else if (itemId === 'message') {
+      navigateToMessaging();
     }
     // TODO: Implémenter la navigation pour les autres éléments du menu
   };

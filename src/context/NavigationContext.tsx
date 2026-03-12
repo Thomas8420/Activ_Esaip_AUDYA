@@ -3,7 +3,24 @@ import React, { createContext, useState, ReactNode } from 'react';
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile';
+export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat';
+
+/**
+ * Données transmises à l'écran de conversation
+ */
+export interface SelectedConversation {
+  /** ID de la conversation — null si nouvelle conversation (depuis fiche pro) */
+  id: number | null;
+  subject: string;
+  correspondentId: string;
+  correspondentName: string;
+  correspondentPhone: string;
+  correspondentEmail: string;
+  correspondentCity: string;
+  correspondentZip: string;
+  status: 'pending' | 'blocked' | 'finished';
+  isOnline?: boolean;
+}
 
 /**
  * Données minimales du professionnel transmises à l'écran de fiche
@@ -35,6 +52,9 @@ interface NavigationContextType {
   navigateToInvite: () => void;
   navigateToSettings: () => void;
   navigateToMyProfile: () => void;
+  selectedConversation: SelectedConversation | null;
+  navigateToMessaging: () => void;
+  navigateToMessagingChat: (conversation: SelectedConversation) => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -50,6 +70,7 @@ export const NavigationContext = createContext<NavigationContextType | undefined
 export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [history, setHistory] = useState<Screen[]>(['home']);
   const [selectedProfessional, setSelectedProfessional] = useState<SelectedProfessional | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<SelectedConversation | null>(null);
 
   const currentScreen = history[history.length - 1];
   const previousScreen = history.length > 1 ? history[history.length - 2] : 'home';
@@ -88,6 +109,15 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children
     setHistory(prev => [...prev, 'my-profile']);
   };
 
+  const navigateToMessaging = () => {
+    setHistory(prev => [...prev, 'messaging']);
+  };
+
+  const navigateToMessagingChat = (conversation: SelectedConversation) => {
+    setSelectedConversation(conversation);
+    setHistory(prev => [...prev, 'messaging-chat']);
+  };
+
   return (
     <NavigationContext.Provider value={{
       currentScreen,
@@ -101,6 +131,9 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children
       navigateToInvite,
       navigateToSettings,
       navigateToMyProfile,
+      selectedConversation,
+      navigateToMessaging,
+      navigateToMessagingChat,
     }}>
       {children}
     </NavigationContext.Provider>

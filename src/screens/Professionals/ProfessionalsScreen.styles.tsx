@@ -488,6 +488,19 @@ export const styles = StyleSheet.create({
     height: 2,
     backgroundColor: '#4A90D9',
   },
+  profileMessageButton: {
+    backgroundColor: COLORS.teal,
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  profileMessageButtonText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.white,
+  },
 
   // ── Add / Invite Professional Forms ──
   formScrollContent: {

@@ -7,6 +7,8 @@ import AddProfessionalScreen from './src/screens/Professionals/AddProfessionalSc
 import InviteProfessionalScreen from './src/screens/Professionals/InviteProfessionalScreen';
 import SettingsScreen from './src/screens/Settings/SettingsScreen';
 import ProfileScreen from './src/screens/Profile/ProfileScreen';
+import MessagingScreen from './src/screens/Messaging/MessagingScreen';
+import MessagingChatScreen from './src/screens/Messaging/MessagingChatScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 
 /**
@@ -27,6 +29,8 @@ function AppContent() {
       {currentScreen === 'invite-professional' && <InviteProfessionalScreen />}
       {currentScreen === 'settings' && <SettingsScreen />}
       {currentScreen === 'my-profile' && <ProfileScreen />}
+      {currentScreen === 'messaging' && <MessagingScreen />}
+      {currentScreen === 'messaging-chat' && <MessagingChatScreen />}
     </>
   );
 }
