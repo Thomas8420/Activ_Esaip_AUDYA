@@ -6,6 +6,7 @@ import ProfessionalProfileScreen from './src/screens/Professionals/ProfessionalP
 import AddProfessionalScreen from './src/screens/Professionals/AddProfessionalScreen';
 import InviteProfessionalScreen from './src/screens/Professionals/InviteProfessionalScreen';
 import SettingsScreen from './src/screens/Settings/SettingsScreen';
+import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 
 /**
@@ -25,6 +26,7 @@ function AppContent() {
       {currentScreen === 'add-professional' && <AddProfessionalScreen />}
       {currentScreen === 'invite-professional' && <InviteProfessionalScreen />}
       {currentScreen === 'settings' && <SettingsScreen />}
+      {currentScreen === 'my-profile' && <ProfileScreen />}
     </>
   );
 }

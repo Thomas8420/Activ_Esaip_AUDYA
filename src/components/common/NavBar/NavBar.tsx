@@ -23,7 +23,7 @@ import LogoutIcon from '../../../assets/images/on-off.svg';
  * et le menu déroulant du profil utilisateur.
  */
 const NavBar = () => {
-  const { navigateToSettings } = useNavigation();
+  const { navigateToSettings, navigateToMyProfile } = useNavigation();
   // État local pour gérer la visibilité du menu déroulant.
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -70,7 +70,10 @@ const NavBar = () => {
 
           {/* Contenu du menu déroulant */}
           <View style={styles.dropdown}>
-            <TouchableOpacity style={styles.dropdownItem}>
+            <TouchableOpacity
+              style={styles.dropdownItem}
+              onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}
+            >
                 <ProfileIcon width={18} height={18} fill={COLORS.white} />
                 <Text style={styles.dropdownLabel}>Profil</Text>
             </TouchableOpacity>
