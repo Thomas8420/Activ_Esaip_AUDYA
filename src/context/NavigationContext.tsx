@@ -3,7 +3,7 @@ import React, { createContext, useState, ReactNode } from 'react';
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional';
+export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings';
 
 /**
  * Données minimales du professionnel transmises à l'écran de fiche
@@ -33,6 +33,7 @@ interface NavigationContextType {
   navigateToProfile: (professional: SelectedProfessional) => void;
   navigateToAdd: () => void;
   navigateToInvite: () => void;
+  navigateToSettings: () => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -78,6 +79,10 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children
     setHistory(prev => [...prev, 'invite-professional']);
   };
 
+  const navigateToSettings = () => {
+    setHistory(prev => [...prev, 'settings']);
+  };
+
   return (
     <NavigationContext.Provider value={{
       currentScreen,
@@ -89,6 +94,7 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children
       navigateToProfile,
       navigateToAdd,
       navigateToInvite,
+      navigateToSettings,
     }}>
       {children}
     </NavigationContext.Provider>

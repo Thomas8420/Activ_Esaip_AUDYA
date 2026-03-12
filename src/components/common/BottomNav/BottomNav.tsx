@@ -37,6 +37,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'professional-profile': 'Mes professionnels',
   'add-professional': 'Mes professionnels',
   'invite-professional': 'Mes professionnels',
+  settings: 'Mes paramètres',
 };
 
 /**

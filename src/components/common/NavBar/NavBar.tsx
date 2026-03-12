@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 import { styles, COLORS } from '../../../screens/Home/HomeScreen.styles';
+import { useNavigation } from '../../../context/NavigationContext';
 
 // --- Imports des icônes SVG ---
 // Chaque icône est un composant React à part entière.
@@ -22,6 +23,7 @@ import LogoutIcon from '../../../assets/images/on-off.svg';
  * et le menu déroulant du profil utilisateur.
  */
 const NavBar = () => {
+  const { navigateToSettings } = useNavigation();
   // État local pour gérer la visibilité du menu déroulant.
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -40,7 +42,11 @@ const NavBar = () => {
             <BellIcon width={30} height={30} fill={COLORS.white} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.headerIconBtn} accessibilityLabel="Paramètres">
+          <TouchableOpacity
+            style={styles.headerIconBtn}
+            accessibilityLabel="Paramètres"
+            onPress={navigateToSettings}
+          >
             <SettingsIcon width={30} height={30} fill={COLORS.white} />
           </TouchableOpacity>
 
@@ -69,7 +75,10 @@ const NavBar = () => {
                 <Text style={styles.dropdownLabel}>Profil</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
-            <TouchableOpacity style={styles.dropdownItem}>
+            <TouchableOpacity
+              style={styles.dropdownItem}
+              onPress={() => { setProfileOpen(false); navigateToSettings(); }}
+            >
                 <SettingsIcon width={18} height={18} fill={COLORS.white} />
                 <Text style={styles.dropdownLabel}>Préférences</Text>
             </TouchableOpacity>
