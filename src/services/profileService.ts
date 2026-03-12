@@ -71,6 +71,31 @@ export async function fetchPatientProfile(): Promise<PatientProfile> {
 }
 
 /**
+ * POST /api/patient/profile/photo
+ * Upload une nouvelle photo de profil (multipart/form-data).
+ * Retourne l'URL publique de la photo enregistrée.
+ * TODO: endpoint non encore disponible côté backend
+ */
+export async function uploadProfilePhoto(
+  uri: string,
+  type: string,
+  name: string,
+): Promise<string> {
+  const formData = new FormData();
+  // React Native accepte un objet { uri, type, name } dans FormData
+  formData.append('photo', { uri, type, name } as unknown as Blob);
+  const response = await apiFetch<{ profile_picture_url: string }>(
+    '/api/patient/profile/photo',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'multipart/form-data' },
+      body: formData as unknown as BodyInit_,
+    },
+  );
+  return response.profile_picture_url;
+}
+
+/**
  * PATCH /api/patient/profile
  * TODO: endpoint non encore disponible côté backend
  */

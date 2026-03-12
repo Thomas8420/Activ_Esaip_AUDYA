@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   ActivityIndicator,
+  Alert,
+  Image,
   ScrollView,
   StatusBar,
   Text,
@@ -10,6 +12,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path, Rect } from 'react-native-svg';
+import {
+  launchCamera,
+  launchImageLibrary,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
 import { styles, COLORS } from '../../screens/Profile/ProfileScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
@@ -17,6 +24,7 @@ import {
   PatientProfile,
   fetchPatientProfile,
   updatePatientProfile,
+  uploadProfilePhoto,
 } from '../../services/profileService';
 
 // ─── Mock Data (remove once API is ready) ────────────────────────────────────
@@ -39,6 +47,9 @@ const MOCK_PROFILE: PatientProfile = {
 
 /** Passer à true dès que GET/PATCH /api/patient/profile est disponible */
 const USE_API = false;
+
+/** Taille max autorisée pour la photo (3 Mo) */
+const MAX_PHOTO_SIZE_MB = 3;
 
 // ─── QR Code placeholder ─────────────────────────────────────────────────────
 /**
@@ -76,7 +87,7 @@ const QRCodePlaceholder = () => (
   </Svg>
 );
 
-/** Icône silhouette utilisateur pour la photo de profil */
+/** Icône silhouette utilisateur pour la photo de profil (placeholder) */
 const PersonIcon = () => (
   <Svg width={44} height={44} viewBox="0 0 24 24">
     <Path
@@ -86,11 +97,21 @@ const PersonIcon = () => (
   </Svg>
 );
 
+/** Icône crayon pour le badge "modifier" */
+const EditIcon = () => (
+  <Svg width={14} height={14} viewBox="0 0 24 24">
+    <Path
+      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+      fill={COLORS.white}
+    />
+  </Svg>
+);
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
  * Page Mon Profil : informations personnelles du patient.
- * Affiche le QR code de partage, la photo de profil et les champs éditables.
+ * Affiche le QR code de partage, la photo de profil (modifiable) et les champs éditables.
  *
  * Suit le pattern USE_API défini dans CLAUDE.md.
  */
@@ -99,6 +120,10 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  // ── Photo state ──────────────────────────────────────────────────────────────
+  /** URI locale de la photo sélectionnée (non encore uploadée) */
+  const [localPhotoUri, setLocalPhotoUri] = useState<string | null>(null);
 
   // ── Load on mount ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -120,6 +145,53 @@ const ProfilePage = () => {
     load();
   }, []);
 
+  // ── Photo handler ────────────────────────────────────────────────────────────
+
+  const handleImagePickerResponse = (response: ImagePickerResponse) => {
+    if (response.didCancel || response.errorCode) {
+      return;
+    }
+    const asset = response.assets?.[0];
+    if (!asset?.uri) {
+      return;
+    }
+    const sizeMB = (asset.fileSize ?? 0) / (1024 * 1024);
+    if (sizeMB > MAX_PHOTO_SIZE_MB) {
+      Alert.alert(
+        'Fichier trop lourd',
+        `La photo ne doit pas dépasser ${MAX_PHOTO_SIZE_MB} Mo.`,
+      );
+      return;
+    }
+    setLocalPhotoUri(asset.uri);
+  };
+
+  const handlePickPhoto = () => {
+    Alert.alert(
+      'Photo de profil',
+      'Choisir une source',
+      [
+        {
+          text: 'Prendre une photo',
+          onPress: () =>
+            launchCamera(
+              { mediaType: 'photo', quality: 0.8, saveToPhotos: false },
+              handleImagePickerResponse,
+            ),
+        },
+        {
+          text: 'Choisir dans la galerie',
+          onPress: () =>
+            launchImageLibrary(
+              { mediaType: 'photo', quality: 0.8, selectionLimit: 1 },
+              handleImagePickerResponse,
+            ),
+        },
+        { text: 'Annuler', style: 'cancel' },
+      ],
+    );
+  };
+
   // ── Field updater ────────────────────────────────────────────────────────────
   const updateField = <K extends keyof PatientProfile>(
     key: K,
@@ -139,6 +211,15 @@ const ProfilePage = () => {
     setIsSaving(true);
     try {
       if (USE_API) {
+        // Upload la nouvelle photo si elle a été modifiée
+        if (localPhotoUri) {
+          const filename = localPhotoUri.split('/').pop() ?? 'photo.jpg';
+          const ext = filename.split('.').pop()?.toLowerCase() ?? 'jpg';
+          const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg';
+          const newUrl = await uploadProfilePhoto(localPhotoUri, mimeType, filename);
+          setProfile(prev => prev ? { ...prev, profilePictureUrl: newUrl } : prev);
+          setLocalPhotoUri(null);
+        }
         await updatePatientProfile(profile);
       }
       // TODO: afficher un toast de confirmation
@@ -148,6 +229,9 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
+
+  // Détermine l'URI de l'image à afficher : locale > serveur > null
+  const displayPhotoUri = localPhotoUri ?? profile?.profilePictureUrl ?? null;
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -185,14 +269,26 @@ const ProfilePage = () => {
 
             {/* ── Photo de profil ── */}
             <View style={styles.photoSection}>
-              {/* TODO: intégrer ImagePicker pour modifier la photo */}
               <TouchableOpacity
                 style={styles.photoButton}
+                onPress={handlePickPhoto}
                 activeOpacity={0.8}
                 accessibilityLabel="Modifier la photo de profil"
                 testID="photoButton"
               >
-                <PersonIcon />
+                {displayPhotoUri ? (
+                  <Image
+                    source={{ uri: displayPhotoUri }}
+                    style={styles.photoImage}
+                    testID="profileImage"
+                  />
+                ) : (
+                  <PersonIcon />
+                )}
+                {/* Badge crayon */}
+                <View style={styles.photoEditBadge}>
+                  <EditIcon />
+                </View>
               </TouchableOpacity>
               <Text style={styles.photoLabel}>Photo de votre profil</Text>
               <Text style={styles.photoHint}>(3 Mo max)</Text>
