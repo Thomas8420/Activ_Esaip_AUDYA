@@ -50,14 +50,14 @@ function formatDayHeader(dateISO: string): string {
 
 function addDays(dateISO: string, delta: number): string {
   const { year, month, day } = parseDateParts(dateISO);
-  const d = new Date(year, month, day + delta);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const date = new Date(year, month, day + delta);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 function timeToMinutes(timeStr: string): number {
-  const h = parseInt(timeStr.slice(0, 2));
-  const m = parseInt(timeStr.slice(3, 5));
-  return h * 60 + m;
+  const hours = parseInt(timeStr.slice(0, 2));
+  const minutes = parseInt(timeStr.slice(3, 5));
+  return hours * 60 + minutes;
 }
 
 /** Calcule la position et la hauteur d'un bloc event dans la timeline */
@@ -128,14 +128,14 @@ const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate
   const dayEvents = events.filter(e => e.start.startsWith(currentDate));
 
   // ── Navigation jour précédent / suivant ────────────────────────────────
-  const goPrevDay = () => setCurrentDate(d => addDays(d, -1));
-  const goNextDay = () => setCurrentDate(d => addDays(d, 1));
+  const goPrevDay = () => setCurrentDate(prev => addDays(prev, -1));
+  const goNextDay = () => setCurrentDate(prev => addDays(prev, 1));
 
   // ── Ouvrir le formulaire (création) ─────────────────────────────────────
   const handleAddEvent = (hour?: number) => {
-    const h = hour ?? 9;
-    const startStr = `${currentDate} ${String(h).padStart(2, '0')}:00`;
-    const endStr   = `${currentDate} ${String(h + 1).padStart(2, '0')}:00`;
+    const defaultHour = hour ?? 9;
+    const startStr = `${currentDate} ${String(defaultHour).padStart(2, '0')}:00`;
+    const endStr   = `${currentDate} ${String(defaultHour + 1).padStart(2, '0')}:00`;
     const event: SelectedAgendaEvent = {
       id: null,
       title: '',

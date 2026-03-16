@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -16,6 +16,7 @@ import ProfessionalListRow from './ProfessionalListRow';
 import {
   Professional,
   fetchMyProfessionals,
+  USE_PROFESSIONALS_API,
 } from '../../services/professionalsService';
 import { useNavigation } from '../../context/NavigationContext';
 import { SPECIALTIES } from '../../constants';
@@ -69,8 +70,6 @@ const MOCK_PROFESSIONALS: Professional[] = [
   },
 ];
 
-/** Passer à true dès que GET /api/patient/professionals est disponible */
-const USE_API = false;
 
 /**
  * Composant principal qui assemble les différentes parties de l'écran des professionnels.
@@ -91,7 +90,7 @@ const ProfessionalsPage = () => {
 
   useEffect(() => {
     const load = async () => {
-      if (USE_API) {
+      if (USE_PROFESSIONALS_API) {
         try {
           const data = await fetchMyProfessionals();
           setProfessionals(data);
@@ -106,44 +105,30 @@ const ProfessionalsPage = () => {
     load();
   }, []);
 
-  const handleToggleFavorite = (id: string) => {
-    setProfessionals(
-      professionals.map(p =>
-        p.id === id ? { ...p, isFavorite: !p.isFavorite } : p,
-      ),
+  const handleToggleFavorite = useCallback((id: string) => {
+    setProfessionals(prev =>
+      prev.map(p => p.id === id ? { ...p, isFavorite: !p.isFavorite } : p),
     );
-  };
+  }, []);
 
-  const handleResendInvitation = (_id: string) => {
+  const handleResendInvitation = useCallback((_id: string) => {
     // TODO: Implémenter l'appel API de renvoi d'invitation
-  };
+  }, []);
 
-  /**
-   * Filtre les professionnels selon tous les critères
-   */
-  const filteredProfessionals = professionals
-    .filter(p => {
-      // Filtre par recherche (nom, prénom ou rôle)
-      const fullName = `${p.firstName} ${p.lastName}`.toLowerCase();
-      const matchesSearch =
-        fullName.includes(filters.searchQuery.toLowerCase()) ||
-        p.role.toLowerCase().includes(filters.searchQuery.toLowerCase());
-
-      // Filtre par spécialité
-      const matchesSpecialty =
-        !filters.specialty || p.specialty === filters.specialty;
-
-      // Filtre par code postal
-      const matchesZipCode =
-        !filters.zipCode || p.zipCode.includes(filters.zipCode);
-
-      // Filtre par ville
-      const matchesCity =
-        !filters.city || p.city.toLowerCase().includes(filters.city.toLowerCase());
-
-      return matchesSearch && matchesSpecialty && matchesZipCode && matchesCity;
-    })
-    .slice(0, filters.itemsPerPage); // Limite au nombre d'items sélectionné
+  const filteredProfessionals = useMemo(() =>
+    professionals
+      .filter(p => {
+        const fullName = `${p.firstName} ${p.lastName}`.toLowerCase();
+        const matchesSearch =
+          fullName.includes(filters.searchQuery.toLowerCase()) ||
+          p.role.toLowerCase().includes(filters.searchQuery.toLowerCase());
+        const matchesSpecialty = !filters.specialty || p.specialty === filters.specialty;
+        const matchesZipCode = !filters.zipCode || p.zipCode.includes(filters.zipCode);
+        const matchesCity = !filters.city || p.city.toLowerCase().includes(filters.city.toLowerCase());
+        return matchesSearch && matchesSpecialty && matchesZipCode && matchesCity;
+      })
+      .slice(0, filters.itemsPerPage),
+  [professionals, filters]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>

@@ -1,5 +1,8 @@
 import { apiFetch } from './api';
 
+/** Passer à true dès que GET/PATCH /api/patient/profile est disponible */
+export const USE_PROFILE_API = false;
+
 // ─── API response types (snake_case — format backend) ─────────────────────────
 
 export interface PatientProfileApiResponse {

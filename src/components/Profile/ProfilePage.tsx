@@ -25,6 +25,7 @@ import {
   fetchPatientProfile,
   updatePatientProfile,
   uploadProfilePhoto,
+  USE_PROFILE_API,
 } from '../../services/profileService';
 
 // ─── Mock Data (remove once API is ready) ────────────────────────────────────
@@ -45,8 +46,6 @@ const MOCK_PROFILE: PatientProfile = {
   profilePictureUrl: null,
 };
 
-/** Passer à true dès que GET/PATCH /api/patient/profile est disponible */
-const USE_API = false;
 
 /** Taille max autorisée pour la photo (3 Mo) */
 const MAX_PHOTO_SIZE_MB = 3;
@@ -130,7 +129,7 @@ const ProfilePage = () => {
     const load = async () => {
       setIsLoading(true);
       try {
-        if (USE_API) {
+        if (USE_PROFILE_API) {
           const data = await fetchPatientProfile();
           setProfile(data);
         } else {
@@ -210,7 +209,7 @@ const ProfilePage = () => {
     }
     setIsSaving(true);
     try {
-      if (USE_API) {
+      if (USE_PROFILE_API) {
         // Upload la nouvelle photo si elle a été modifiée
         if (localPhotoUri) {
           const filename = localPhotoUri.split('/').pop() ?? 'photo.jpg';

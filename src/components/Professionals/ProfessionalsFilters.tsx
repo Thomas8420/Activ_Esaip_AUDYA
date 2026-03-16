@@ -78,6 +78,9 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
           <TouchableOpacity
             style={[styles.modeIcon, viewMode === 'card' && styles.modeIconActive]}
             onPress={() => onViewModeChange('card')}
+            accessibilityLabel="Vue grille"
+            accessibilityRole="button"
+            accessibilityState={{ selected: viewMode === 'card' }}
           >
             <Icon
               name="grid-outline"
@@ -88,6 +91,9 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
           <TouchableOpacity
             style={[styles.modeIcon, viewMode === 'list' && styles.modeIconActive]}
             onPress={() => onViewModeChange('list')}
+            accessibilityLabel="Vue liste"
+            accessibilityRole="button"
+            accessibilityState={{ selected: viewMode === 'list' }}
           >
             <Icon
               name="list-outline"

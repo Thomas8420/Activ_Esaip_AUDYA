@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -29,8 +29,8 @@ const MONTHS_FR = [
 const DAYS_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
 function getTodayISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 }
 
 function formatDateISO(year: number, month: number, day: number): string {
@@ -49,8 +49,8 @@ function buildCalendarGrid(year: number, month: number): { day: number; otherMon
   for (let i = offset - 1; i >= 0; i--) {
     grid.push({ day: prevMonthDays - i, otherMonth: true });
   }
-  for (let d = 1; d <= daysInMonth; d++) {
-    grid.push({ day: d, otherMonth: false });
+  for (let day = 1; day <= daysInMonth; day++) {
+    grid.push({ day, otherMonth: false });
   }
   while (grid.length % 7 !== 0) {
     grid.push({ day: grid.length - (offset + daysInMonth) + 1, otherMonth: true });
@@ -108,15 +108,18 @@ const AgendaPage = () => {
   // ── Calendrier ───────────────────────────────────────────────────────────
   const grid = buildCalendarGrid(currentYear, currentMonth);
 
-  const eventDateSet = new Set(events.map(e => e.start.slice(0, 10)));
-  const eventsByDate: Record<string, AgendaEvent[]> = {};
-  for (const e of events) {
-    const d = e.start.slice(0, 10);
-    if (!eventsByDate[d]) {
-      eventsByDate[d] = [];
+  const { eventDateSet, eventsByDate } = useMemo(() => {
+    const dateSet = new Set(events.map(event => event.start.slice(0, 10)));
+    const byDate: Record<string, AgendaEvent[]> = {};
+    for (const event of events) {
+      const dateKey = event.start.slice(0, 10);
+      if (!byDate[dateKey]) {
+        byDate[dateKey] = [];
+      }
+      byDate[dateKey].push(event);
     }
-    eventsByDate[d].push(e);
-  }
+    return { eventDateSet: dateSet, eventsByDate: byDate };
+  }, [events]);
 
   const prevMonth = () => {
     if (currentMonth === 0) {

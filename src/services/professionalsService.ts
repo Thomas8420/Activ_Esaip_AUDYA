@@ -1,5 +1,8 @@
 import { apiFetch } from './api';
 
+/** Passer à true dès que GET /api/patient/professionals est disponible */
+export const USE_PROFESSIONALS_API = false;
+
 /**
  * Structure d'un professionnel telle que retournée par l'API.
  * Champs en snake_case conformément à la convention du backend Laravel.

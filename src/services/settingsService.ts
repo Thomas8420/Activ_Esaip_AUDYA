@@ -1,5 +1,8 @@
 import { apiFetch } from './api';
 
+/** Passer à true dès que GET/PATCH /api/patient/settings est disponible */
+export const USE_SETTINGS_API = false;
+
 // ─── API response types (snake_case — format backend) ─────────────────────────
 
 export interface SettingsApiResponse {

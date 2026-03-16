@@ -23,6 +23,7 @@ import {
   saveSettings,
   changePassword,
   deleteAccount,
+  USE_SETTINGS_API,
 } from '../../services/settingsService';
 import { useNavigation } from '../../context/NavigationContext';
 
@@ -39,9 +40,6 @@ const MOCK_SETTINGS: UserSettings = {
   notificationsAlerts: true,
   notificationsTasks: false,
 };
-
-/** Passer à true dès que GET/PATCH /api/patient/settings est disponible */
-const USE_API = false;
 
 // ─── Preference options ────────────────────────────────────────────────────────
 const LANGUAGE_OPTIONS = ['FR', 'EN'];
@@ -64,8 +62,8 @@ const EyeIcon = ({ visible }: { visible: boolean }) => (
  * changement de mot de passe et suppression de compte.
  *
  * Suit le pattern USE_API défini dans CLAUDE.md :
- * - USE_API = false → données mock
- * - USE_API = true  → appels API via settingsService
+ * - USE_SETTINGS_API = false → données mock
+ * - USE_SETTINGS_API = true  → appels API via settingsService
  */
 const SettingsPage = () => {
   const { goHome } = useNavigation();
@@ -95,7 +93,7 @@ const SettingsPage = () => {
     const load = async () => {
       setIsLoading(true);
       try {
-        if (USE_API) {
+        if (USE_SETTINGS_API) {
           const data = await fetchSettings();
           setSettings(data);
         } else {
@@ -134,7 +132,7 @@ const SettingsPage = () => {
     }
     setIsSaving(true);
     try {
-      if (USE_API) {
+      if (USE_SETTINGS_API) {
         await saveSettings(settings);
       }
       // TODO: afficher un toast de confirmation
@@ -151,7 +149,7 @@ const SettingsPage = () => {
     }
     setIsChangingPassword(true);
     try {
-      if (USE_API) {
+      if (USE_SETTINGS_API) {
         await changePassword(newPassword);
       }
       setNewPassword('');
@@ -167,7 +165,7 @@ const SettingsPage = () => {
   const handleDeleteAccount = async () => {
     setShowDeleteModal(false);
     try {
-      if (USE_API) {
+      if (USE_SETTINGS_API) {
         await deleteAccount();
       }
       goHome();
@@ -372,6 +370,8 @@ const SettingsPage = () => {
                   trackColor={{ false: COLORS.border, true: COLORS.teal }}
                   thumbColor={COLORS.white}
                   testID="switchMessages"
+                  accessibilityLabel="Notifications de messages"
+                  accessibilityRole="switch"
                 />
               </View>
 
@@ -383,6 +383,8 @@ const SettingsPage = () => {
                   trackColor={{ false: COLORS.border, true: COLORS.teal }}
                   thumbColor={COLORS.white}
                   testID="switchAlerts"
+                  accessibilityLabel="Notifications d'alertes"
+                  accessibilityRole="switch"
                 />
               </View>
 
@@ -394,6 +396,8 @@ const SettingsPage = () => {
                   trackColor={{ false: COLORS.border, true: COLORS.teal }}
                   thumbColor={COLORS.white}
                   testID="switchTasks"
+                  accessibilityLabel="Notifications de tâches"
+                  accessibilityRole="switch"
                 />
               </View>
             </View>

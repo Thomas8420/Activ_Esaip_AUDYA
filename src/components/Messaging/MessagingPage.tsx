@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  StyleSheet,
   StatusBar,
   Text,
   TouchableOpacity,
@@ -75,15 +76,16 @@ const MessagingPage = () => {
   }, []);
 
   // ── Filtre EN LIGNE ──────────────────────────────────────────────────────────
-  const onlineContactIds = new Set(
-    contacts.filter(c => c.status === 'online').map(c => c.id),
-  );
-  const displayed = onlineOnly
-    ? conversations.filter(c => onlineContactIds.has(c.correspondentId))
-    : conversations;
+  const { onlineContactIds, displayed } = useMemo(() => {
+    const ids = new Set(contacts.filter(c => c.status === 'online').map(c => c.id));
+    const list = onlineOnly
+      ? conversations.filter(c => ids.has(c.correspondentId))
+      : conversations;
+    return { onlineContactIds: ids, displayed: list };
+  }, [contacts, conversations, onlineOnly]);
 
   // ── Navigation vers le chat ──────────────────────────────────────────────────
-  const openConversation = (conv: Conversation) => {
+  const openConversation = useCallback((conv: Conversation) => {
     const contact = contacts.find(c => c.id === conv.correspondentId);
     const selected: SelectedConversation = {
       id: conv.id,
@@ -98,10 +100,10 @@ const MessagingPage = () => {
       isOnline: contact?.status === 'online',
     };
     navigateToMessagingChat(selected);
-  };
+  }, [contacts, navigateToMessagingChat]);
 
   // ── Render row ───────────────────────────────────────────────────────────────
-  const renderItem = ({ item }: { item: Conversation }) => {
+  const renderItem = useCallback(({ item }: { item: Conversation }) => {
     const contact = contacts.find(c => c.id === item.correspondentId);
     const isOnline = contact?.status === 'online';
     return (
@@ -113,19 +115,7 @@ const MessagingPage = () => {
       >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{initials(item.correspondentName)}</Text>
-          {isOnline && (
-            <View style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              width: 12,
-              height: 12,
-              borderRadius: 6,
-              backgroundColor: '#4CAF50',
-              borderWidth: 2,
-              borderColor: COLORS.white,
-            }} />
-          )}
+          {isOnline && <View style={localStyles.onlineIndicator} />}
         </View>
         <View style={styles.convContent}>
           <Text style={styles.convName}>{item.correspondentName}</Text>
@@ -139,7 +129,7 @@ const MessagingPage = () => {
         )}
       </TouchableOpacity>
     );
-  };
+  }, [contacts, openConversation, onlineContactIds]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -191,5 +181,19 @@ const MessagingPage = () => {
     </SafeAreaView>
   );
 };
+
+const localStyles = StyleSheet.create({
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#4CAF50',
+    borderWidth: 2,
+    borderColor: COLORS.white,
+  },
+});
 
 export default MessagingPage;

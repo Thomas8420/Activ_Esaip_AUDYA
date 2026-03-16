@@ -41,7 +41,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         </View>
 
         {/* Bouton Favoris */}
-        <TouchableOpacity style={styles.favoriteButton} onPress={onToggleFavorite}>
+        <TouchableOpacity
+          style={styles.favoriteButton}
+          onPress={onToggleFavorite}
+          accessibilityLabel={professional.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          accessibilityRole="button"
+        >
           <Text style={styles.favoriteText}>
             {professional.isFavorite ? '⭐' : '☆'}
           </Text>
@@ -71,12 +76,18 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
 
       {/* Actions */}
       <View style={styles.cardActions}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          accessibilityLabel={`Envoyer un message à ${professional.firstName} ${professional.lastName}`}
+          accessibilityRole="button"
+        >
           <Text style={styles.actionButtonText}>Message</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.actionButton, styles.actionButtonPrimary]}
           onPress={onViewProfile}
+          accessibilityLabel={`Voir la fiche de ${professional.firstName} ${professional.lastName}`}
+          accessibilityRole="button"
         >
           <Text style={[styles.actionButtonText, styles.actionButtonTextPrimary]}>
             Voir la fiche
