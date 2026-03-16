@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { styles, COLORS } from '../../../screens/Home/HomeScreen.styles';
 import { useNavigation } from '../../../context/NavigationContext';
+import { useAuth } from '../../../context/AuthContext';
 
 // --- Imports des icônes SVG ---
 // Chaque icône est un composant React à part entière.
@@ -24,7 +25,7 @@ import LogoutIcon from '../../../assets/images/on-off.svg';
  */
 const NavBar = () => {
   const { navigateToSettings, navigateToMyProfile } = useNavigation();
-  // État local pour gérer la visibilité du menu déroulant.
+  const { logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
 
   return (
@@ -86,7 +87,10 @@ const NavBar = () => {
                 <Text style={styles.dropdownLabel}>Préférences</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
-            <TouchableOpacity style={styles.dropdownItem}>
+            <TouchableOpacity
+              style={styles.dropdownItem}
+              onPress={() => { setProfileOpen(false); logout(); }}
+            >
                 <LogoutIcon width={18} height={18} fill={COLORS.white} />
                 <Text style={styles.dropdownLabel}>Déconnexion</Text>
             </TouchableOpacity>

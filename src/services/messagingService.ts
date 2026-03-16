@@ -282,11 +282,13 @@ export async function uploadAttachment(
   name: string,
 ): Promise<number> {
   const formData = new FormData();
-  formData.append('file', { uri, type, name } as unknown as Blob);
+  // React Native's fetch accepts { uri, type, name } as a file object in FormData
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (formData as any).append('file', { uri, type, name });
   const raw = await apiFetch<{ file_id: number }>('/upload/document', {
     method: 'POST',
-    headers: { 'Content-Type': 'multipart/form-data' },
-    body: formData as unknown as BodyInit_,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: formData as any,
   });
   return raw.file_id;
 }

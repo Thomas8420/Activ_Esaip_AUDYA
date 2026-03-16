@@ -95,8 +95,8 @@ const ProfessionalsPage = () => {
         try {
           const data = await fetchMyProfessionals();
           setProfessionals(data);
-        } catch (error) {
-          console.error('Erreur chargement professionnels:', error);
+        } catch {
+          // Erreur silencieuse en production — l'UI reste sur les données précédentes
         }
       } else {
         setProfessionals(MOCK_PROFESSIONALS);
@@ -114,9 +114,8 @@ const ProfessionalsPage = () => {
     );
   };
 
-  const handleResendInvitation = (id: string) => {
-    // TODO: Implémenter la logique d'envoi d'invitation
-    console.log('Resend invitation for:', id);
+  const handleResendInvitation = (_id: string) => {
+    // TODO: Implémenter l'appel API de renvoi d'invitation
   };
 
   /**

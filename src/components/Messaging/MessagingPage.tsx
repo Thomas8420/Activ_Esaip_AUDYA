@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StatusBar,
   Text,
@@ -8,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Messaging/MessagingScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
@@ -24,12 +25,7 @@ import { useNavigation, SelectedConversation } from '../../context/NavigationCon
 
 /** Icône silhouette personne (état vide) */
 const PersonIcon = () => (
-  <Svg width={40} height={40} viewBox="0 0 24 24">
-    <Path
-      d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"
-      fill={COLORS.textLighter}
-    />
-  </Svg>
+  <Icon name="person-circle-outline" size={40} color={COLORS.textLighter} />
 );
 
 /** Calcule les initiales d'un nom complet (ex: "Arnaud DEVEZE" → "AD") */
@@ -69,8 +65,8 @@ const MessagingPage = () => {
           setConversations(MOCK_CONVERSATIONS);
           setContacts(MOCK_CONTACTS);
         }
-      } catch (err) {
-        console.error('Erreur chargement conversations:', err);
+      } catch {
+        Alert.alert('Erreur', 'Impossible de charger les conversations.');
       } finally {
         setIsLoading(false);
       }

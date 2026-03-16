@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import DocumentPicker, { types as DocumentTypes } from 'react-native-document-picker';
 import { styles, COLORS } from '../../screens/Messaging/MessagingChatScreen.styles';
@@ -29,34 +29,22 @@ import {
   USE_MESSAGING_API,
 } from '../../services/messagingService';
 import { useNavigation, SelectedConversation } from '../../context/NavigationContext';
+import { BASE_URL } from '../../services/api';
 
 const POLL_INTERVAL_MS = 10_000;
-const BASE_URL = __DEV__ ? 'http://localhost:8000' : 'https://api.audya.com';
 
-// ─── Icônes inline ────────────────────────────────────────────────────────────
+// ─── Icônes ───────────────────────────────────────────────────────────────────
 
 const ClipIcon = () => (
-  <Svg width={20} height={20} viewBox="0 0 24 24">
-    <Path
-      d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V6H9v9.5a3.5 3.5 0 0 0 7 0V5c0-2.76-2.24-5-5-5S6 2.24 6 5v12.5c0 3.87 3.13 7 7 7s7-3.13 7-7V6h-1.5z"
-      fill={COLORS.textLight}
-    />
-  </Svg>
+  <Icon name="attach" size={22} color={COLORS.textLight} />
 );
 
 const SendIcon = () => (
-  <Svg width={20} height={20} viewBox="0 0 24 24">
-    <Path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill={COLORS.white} />
-  </Svg>
+  <Icon name="send" size={20} color={COLORS.white} />
 );
 
 const DocIcon = () => (
-  <Svg width={16} height={16} viewBox="0 0 24 24">
-    <Path
-      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"
-      fill={COLORS.white}
-    />
-  </Svg>
+  <Icon name="document-outline" size={16} color={COLORS.white} />
 );
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -134,8 +122,8 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
             lastMessageIdRef.current = MOCK_MESSAGES[MOCK_MESSAGES.length - 1].id;
           }
         }
-      } catch (err) {
-        console.error('Erreur chargement messages:', err);
+      } catch {
+        Alert.alert('Erreur', 'Impossible de charger les messages.');
       } finally {
         setIsLoading(false);
       }
@@ -160,8 +148,8 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
           lastMessageIdRef.current = newMsgs[newMsgs.length - 1].id;
           setMessages(prev => [...prev, ...newMsgs]);
         }
-      } catch (err) {
-        console.error('Erreur polling messages:', err);
+      } catch {
+        // Polling failure is silent — will retry on next interval
       }
     }, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
@@ -206,7 +194,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
       setPendingAttachments(prev => [...prev, ...newAttachments]);
     } catch (err) {
       if (!DocumentPicker.isCancel(err)) {
-        console.error('Erreur sélection document:', err);
+        Alert.alert('Erreur', 'Impossible de sélectionner le document.');
       }
     }
   };
@@ -279,8 +267,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
       }
       setInputText('');
       setPendingAttachments([]);
-    } catch (err) {
-      console.error('Erreur envoi message:', err);
+    } catch {
       Alert.alert('Erreur', "L'envoi du message a échoué.");
     } finally {
       setIsSending(false);
@@ -288,7 +275,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
   };
 
   // ── Render d'un message ──────────────────────────────────────────────────────
-  const renderMessage = ({ item }: { item: Message }) => {
+  const renderMessage = useCallback(({ item }: { item: Message }) => {
     const isMe = item.isMe;
     return (
       <View
@@ -331,7 +318,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
         </View>
       </View>
     );
-  };
+  }, []);
 
   // ── Localisation ─────────────────────────────────────────────────────────────
   const hasLocation = conversation.correspondentZip || conversation.correspondentCity;

@@ -7,27 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import Icon from 'react-native-vector-icons/Ionicons';
 import ChatIcon from '../../../assets/images/chat.svg';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 import { Screen, useNavigation } from '../../../context/NavigationContext';
 import { MENU_ITEMS } from '../../../constants';
 
-/** Icône maison (Material Design) en SVG inline */
+/** Icône maison */
 const HomeIcon = ({ color }: { color: string }) => (
-  <Svg width={28} height={28} viewBox="0 0 24 24">
-    <Path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20Z" fill={color} />
-  </Svg>
+  <Icon name="home" size={28} color={color} />
 );
 
-/** Icône hamburger (≡) */
+/** Icône hamburger */
 const MenuIcon = ({ color }: { color: string }) => (
-  <Svg width={18} height={18} viewBox="0 0 24 24">
-    <Path
-      d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z"
-      fill={color}
-    />
-  </Svg>
+  <Icon name="menu" size={24} color={color} />
 );
 
 /** Correspondance écran → libellé affiché dans le bouton central */
@@ -41,6 +34,9 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'my-profile': 'Mon profil',
   'messaging': 'Ma messagerie',
   'messaging-chat': 'Ma messagerie',
+  'agenda': 'Mon agenda',
+  'agenda-day': 'Mon agenda',
+  'agenda-form': 'Mon agenda',
 };
 
 /**
@@ -50,7 +46,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
  * - Droite : bouton chat (Fab intégré)
  */
 const BottomNav = () => {
-  const { currentScreen, goHome, navigateTo, navigateToMessaging } = useNavigation();
+  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
@@ -63,6 +59,8 @@ const BottomNav = () => {
       goHome();
     } else if (itemId === 'message') {
       navigateToMessaging();
+    } else if (itemId === 'agenda') {
+      navigateToAgenda();
     }
     // TODO: implémenter la navigation pour les autres onglets
   };

@@ -6,6 +6,7 @@ import {
   Text,
   ScrollView,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import { useNavigation } from '../../context/NavigationContext';
 
@@ -78,13 +79,21 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             style={[styles.modeIcon, viewMode === 'card' && styles.modeIconActive]}
             onPress={() => onViewModeChange('card')}
           >
-            <Text style={[styles.modeIconText, viewMode === 'card' && styles.modeIconTextActive]}>⊞⊞</Text>
+            <Icon
+              name="grid-outline"
+              size={20}
+              color={viewMode === 'card' ? '#E8622A' : '#999999'}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modeIcon, viewMode === 'list' && styles.modeIconActive]}
             onPress={() => onViewModeChange('list')}
           >
-            <Text style={[styles.modeIconText, viewMode === 'list' && styles.modeIconTextActive]}>≡</Text>
+            <Icon
+              name="list-outline"
+              size={20}
+              color={viewMode === 'list' ? '#E8622A' : '#999999'}
+            />
           </TouchableOpacity>
         </View>
       </View>

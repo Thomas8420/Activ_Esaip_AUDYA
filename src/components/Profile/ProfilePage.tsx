@@ -136,8 +136,8 @@ const ProfilePage = () => {
         } else {
           setProfile({ ...MOCK_PROFILE });
         }
-      } catch (err) {
-        console.error('Erreur chargement profil:', err);
+      } catch {
+        Alert.alert('Erreur', 'Impossible de charger le profil.');
       } finally {
         setIsLoading(false);
       }
@@ -223,8 +223,8 @@ const ProfilePage = () => {
         await updatePatientProfile(profile);
       }
       // TODO: afficher un toast de confirmation
-    } catch (err) {
-      console.error('Erreur sauvegarde profil:', err);
+    } catch {
+      Alert.alert('Erreur', 'Impossible de sauvegarder le profil.');
     } finally {
       setIsSaving(false);
     }

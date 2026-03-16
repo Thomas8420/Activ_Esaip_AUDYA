@@ -51,4 +51,4 @@ const ProfessionalListRow: React.FC<ProfessionalListRowProps> = ({
   );
 };
 
-export default ProfessionalListRow;
+export default React.memo(ProfessionalListRow);

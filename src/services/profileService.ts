@@ -83,13 +83,15 @@ export async function uploadProfilePhoto(
 ): Promise<string> {
   const formData = new FormData();
   // React Native accepte un objet { uri, type, name } dans FormData
-  formData.append('photo', { uri, type, name } as unknown as Blob);
+  // React Native's fetch accepts { uri, type, name } as a file object in FormData
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (formData as any).append('photo', { uri, type, name });
   const response = await apiFetch<{ profile_picture_url: string }>(
     '/api/patient/profile/photo',
     {
       method: 'POST',
-      headers: { 'Content-Type': 'multipart/form-data' },
-      body: formData as unknown as BodyInit_,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      body: formData as any,
     },
   );
   return response.profile_picture_url;

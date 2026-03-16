@@ -105,4 +105,4 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   );
 };
 
-export default ProfessionalCard;
+export default React.memo(ProfessionalCard);

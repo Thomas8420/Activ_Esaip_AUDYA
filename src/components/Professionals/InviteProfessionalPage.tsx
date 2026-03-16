@@ -54,10 +54,6 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
     if (!isFormValid) { return; }
     // TODO: Appel API pour inviter le professionnel
     // POST /api/patient/invite-professional ou équivalent
-    console.log('Invite professional:', {
-      specialty, lastName, firstName, address, addressComplement,
-      zipCode, city, country, email, proPhone, mobilePhone, note,
-    });
   };
 
   return (

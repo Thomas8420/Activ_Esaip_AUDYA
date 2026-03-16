@@ -1,9 +1,9 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, useMemo, ReactNode } from 'react';
 
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat';
+export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form';
 
 /**
  * Données transmises à l'écran de conversation
@@ -20,6 +20,23 @@ export interface SelectedConversation {
   correspondentZip: string;
   status: 'pending' | 'blocked' | 'finished';
   isOnline?: boolean;
+}
+
+/**
+ * Event agenda transmis au formulaire (id=null → création, id≠null → édition)
+ */
+export interface SelectedAgendaEvent {
+  id: number | null;
+  title: string;
+  type: string;
+  /** "YYYY-MM-DD HH:mm" */
+  start: string;
+  /** "YYYY-MM-DD HH:mm" */
+  end: string;
+  location: string;
+  notes: string;
+  professionalName: string;
+  backgroundColor: string;
 }
 
 /**
@@ -55,6 +72,11 @@ interface NavigationContextType {
   selectedConversation: SelectedConversation | null;
   navigateToMessaging: () => void;
   navigateToMessagingChat: (conversation: SelectedConversation) => void;
+  selectedAgendaEvent: SelectedAgendaEvent | null;
+  selectedAgendaDate: string | null;
+  navigateToAgenda: () => void;
+  navigateToAgendaDay: (date: string) => void;
+  navigateToAgendaForm: (event?: SelectedAgendaEvent | null) => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -71,6 +93,8 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children
   const [history, setHistory] = useState<Screen[]>(['home']);
   const [selectedProfessional, setSelectedProfessional] = useState<SelectedProfessional | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<SelectedConversation | null>(null);
+  const [selectedAgendaEvent, setSelectedAgendaEvent] = useState<SelectedAgendaEvent | null>(null);
+  const [selectedAgendaDate, setSelectedAgendaDate] = useState<string | null>(null);
 
   const currentScreen = history[history.length - 1];
   const previousScreen = history.length > 1 ? history[history.length - 2] : 'home';
@@ -118,23 +142,45 @@ export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children
     setHistory(prev => [...prev, 'messaging-chat']);
   };
 
+  const navigateToAgenda = () => {
+    setHistory(prev => [...prev, 'agenda']);
+  };
+
+  const navigateToAgendaDay = (date: string) => {
+    setSelectedAgendaDate(date);
+    setHistory(prev => [...prev, 'agenda-day']);
+  };
+
+  const navigateToAgendaForm = (event?: SelectedAgendaEvent | null) => {
+    setSelectedAgendaEvent(event ?? null);
+    setHistory(prev => [...prev, 'agenda-form']);
+  };
+
+  const value = useMemo(() => ({
+    currentScreen,
+    previousScreen,
+    navigateTo,
+    goHome,
+    goBack,
+    selectedProfessional,
+    navigateToProfile,
+    navigateToAdd,
+    navigateToInvite,
+    navigateToSettings,
+    navigateToMyProfile,
+    selectedConversation,
+    navigateToMessaging,
+    navigateToMessagingChat,
+    selectedAgendaEvent,
+    selectedAgendaDate,
+    navigateToAgenda,
+    navigateToAgendaDay,
+    navigateToAgendaForm,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [currentScreen, previousScreen, selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate]);
+
   return (
-    <NavigationContext.Provider value={{
-      currentScreen,
-      previousScreen,
-      navigateTo,
-      goHome,
-      goBack,
-      selectedProfessional,
-      navigateToProfile,
-      navigateToAdd,
-      navigateToInvite,
-      navigateToSettings,
-      navigateToMyProfile,
-      selectedConversation,
-      navigateToMessaging,
-      navigateToMessagingChat,
-    }}>
+    <NavigationContext.Provider value={value}>
       {children}
     </NavigationContext.Provider>
   );

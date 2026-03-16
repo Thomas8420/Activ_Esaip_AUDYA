@@ -1,3 +1,4 @@
+
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import HomeScreen from './src/screens/Home/HomeScreen';
@@ -9,11 +10,15 @@ import SettingsScreen from './src/screens/Settings/SettingsScreen';
 import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import MessagingScreen from './src/screens/Messaging/MessagingScreen';
 import MessagingChatScreen from './src/screens/Messaging/MessagingChatScreen';
+import AgendaScreen from './src/screens/Agenda/AgendaScreen';
+import AgendaDayViewScreen from './src/screens/Agenda/AgendaDayViewScreen';
+import AgendaFormScreen from './src/screens/Agenda/AgendaFormScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
+import AuthFlow from './src/components/auth/AuthFlow';
 
 /**
- * Composant interne qui gère l'affichage de l'écran actuel
- * Utilise le contexte de navigation pour déterminer quel écran afficher
+ * Contenu principal de l'app (affiché uniquement si authentifié).
  */
 function AppContent() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -31,20 +36,39 @@ function AppContent() {
       {currentScreen === 'my-profile' && <ProfileScreen />}
       {currentScreen === 'messaging' && <MessagingScreen />}
       {currentScreen === 'messaging-chat' && <MessagingChatScreen />}
+      {currentScreen === 'agenda' && <AgendaScreen />}
+      {currentScreen === 'agenda-day' && <AgendaDayViewScreen />}
+      {currentScreen === 'agenda-form' && <AgendaFormScreen />}
     </>
   );
 }
 
 /**
- * Composant principal de l'application
- * Enveloppe l'app avec le NavigationProvider pour permettre la navigation
+ * Routeur principal : affiche le flux d'auth ou l'app selon l'état de connexion.
+ */
+function AppRouter() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <AuthFlow />;
+  }
+
+  return (
+    <NavigationProvider>
+      <AppContent />
+    </NavigationProvider>
+  );
+}
+
+/**
+ * Composant racine — enveloppe l'app avec SafeAreaProvider et AuthProvider.
  */
 function App() {
   return (
     <SafeAreaProvider>
-      <NavigationProvider>
-        <AppContent />
-      </NavigationProvider>
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
