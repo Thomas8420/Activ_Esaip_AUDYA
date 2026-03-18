@@ -31,6 +31,8 @@ const MainPage = () => {
       navigateToMessaging();
     } else if (itemId === 'agenda') {
       navigateToAgenda();
+    } else if (itemId === 'notebook') {
+            navigateTo('CarnetAudition');
     }
     // TODO: Implémenter la navigation pour les autres éléments du menu
   };

@@ -13,6 +13,7 @@ import MessagingChatScreen from './src/screens/Messaging/MessagingChatScreen';
 import AgendaScreen from './src/screens/Agenda/AgendaScreen';
 import AgendaDayViewScreen from './src/screens/Agenda/AgendaDayViewScreen';
 import AgendaFormScreen from './src/screens/Agenda/AgendaFormScreen';
+import CarnetAuditionScreen from './src/screens/Carnet_Audition/CarnetAuditionScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import AuthFlow from './src/components/auth/AuthFlow';
@@ -39,6 +40,7 @@ function AppContent() {
       {currentScreen === 'agenda' && <AgendaScreen />}
       {currentScreen === 'agenda-day' && <AgendaDayViewScreen />}
       {currentScreen === 'agenda-form' && <AgendaFormScreen />}
+      {currentScreen === 'CarnetAudition' && <CarnetAuditionScreen />}
     </>
   );
 }
