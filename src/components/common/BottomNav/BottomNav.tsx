@@ -12,6 +12,7 @@ import ChatIcon from '../../../assets/images/chat.svg';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 import { Screen, useNavigation } from '../../../context/NavigationContext';
 import { MENU_ITEMS } from '../../../constants';
+import ChatbotModal from '../../Chatbot/ChatbotModal';
 
 /** Icône maison */
 const HomeIcon = ({ color }: { color: string }) => (
@@ -48,6 +49,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
 const BottomNav = () => {
   const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
 
@@ -67,6 +69,9 @@ const BottomNav = () => {
 
   return (
     <>
+      {/* ── Chatbot ── */}
+      <ChatbotModal visible={chatbotOpen} onClose={() => setChatbotOpen(false)} />
+
       {/* ── Popup menu ── */}
       <Modal
         visible={menuOpen}
@@ -118,12 +123,12 @@ const BottomNav = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Bouton Chat (Fab intégré) */}
+        {/* Bouton Chat (Fab intégré) — ouvre le chatbot AUDYA */}
         <TouchableOpacity
           style={styles.fabButton}
-          onPress={navigateToMessaging}
+          onPress={() => setChatbotOpen(true)}
           activeOpacity={0.7}
-          accessibilityLabel="Messagerie"
+          accessibilityLabel="Assistant AUDYA"
         >
           <ChatIcon width={26} height={26} fill={COLORS.white} />
         </TouchableOpacity>
