@@ -132,6 +132,83 @@ export const styles = StyleSheet.create({
   docDesc: { fontSize: 11, color: '#444', marginTop: 3 },
   actionIcons: { flexDirection: 'row', gap: 15, marginTop: 15, alignItems: 'center' },
 
+// --- Styles pour la Modale d'Ajout ---
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end'
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    padding: 20,
+    minHeight: 400
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#F15A24',
+    marginBottom: 20,
+    textAlign: 'center'
+  },
+  inputLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 5,
+    fontWeight: 'bold'
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 15,
+    backgroundColor: '#F9F9F9'
+  },
+  uploadButtonModal: {
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#CCC',
+    borderStyle: 'dashed',
+    borderRadius: 8,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 25
+  },
+  uploadButtonTextModal: {
+    color: '#666',
+    fontWeight: '500'
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  cancelButton: {
+    flex: 1,
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#EEE',
+    marginRight: 10
+  },
+  cancelButtonText: {
+    color: '#333',
+    fontWeight: 'bold'
+  },
+  saveButton: {
+    flex: 1,
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#F15A24',
+    marginLeft: 10
+  },
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold'
+  },
+
 // Styles pour la Liste
   tableContainer: { marginTop: 10, borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: '#EEE' },
   tableHeader: { flexDirection: 'row', backgroundColor: '#F0F0F0', paddingVertical: 12, paddingHorizontal: 5 },

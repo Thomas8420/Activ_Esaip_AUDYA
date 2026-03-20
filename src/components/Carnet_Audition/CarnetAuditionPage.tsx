@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  StatusBar
+  StatusBar,
+  Modal
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -42,7 +43,7 @@ const CarnetAuditionPage = () => {
   const [viewMode, setViewMode] = useState<'timeline' | 'grid' | 'list'>('timeline');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('Tout');
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const filterOptions = ['Tout', 'Ordonnances', 'CR Orthophonie', 'Notes de suivi'];
 
   useEffect(() => {
@@ -82,19 +83,21 @@ const CarnetAuditionPage = () => {
                 <TextInput placeholder="Rechercher" style={styles.searchInput} placeholderTextColor="#999" />
               </View>
               <View style={styles.rightControl}>
-                <Text style={styles.displayText}>Affichage</Text>
-                <View style={styles.displayIcons}>
-                  <TouchableOpacity onPress={() => setViewMode('timeline')}>
-                    <TimelineIcon width={22} height={22} fill={viewMode === 'timeline' ? '#F15A24' : '#D3D3D3'} />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setViewMode('grid')}>
-                    <GridIcon width={22} height={22} fill={viewMode === 'grid' ? '#F15A24' : '#D3D3D3'} />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setViewMode('list')}>
-                    <ListIcon width={22} height={22} fill={viewMode === 'list' ? '#F15A24' : '#D3D3D3'} />
-                  </TouchableOpacity>
-                </View>
-              </View>
+                              <Text style={styles.displayText}>Affichage</Text>
+                              <View style={styles.displayIcons}>
+                                  <TouchableOpacity onPress={() => setViewMode('timeline')}>
+                                    <TimelineIcon width={22} height={22} stroke={viewMode === 'timeline' ? '#F15A24' : '#DDDDDD'} />
+                                  </TouchableOpacity>
+
+                                  <TouchableOpacity onPress={() => setViewMode('grid')}>
+                                    <GridIcon width={22} height={22} stroke={viewMode === 'grid' ? '#F15A24' : '#DDDDDD'} />
+                                  </TouchableOpacity>
+
+                                  <TouchableOpacity onPress={() => setViewMode('list')}>
+                                    <ListIcon width={22} height={22} stroke={viewMode === 'list' ? '#F15A24' : '#DDDDDD'} />
+                                  </TouchableOpacity>
+                              </View>
+                            </View>
             </View>
 
             <View style={[styles.rowBottom, { zIndex: 1000 }]}>
@@ -121,7 +124,7 @@ const CarnetAuditionPage = () => {
                 )}
               </View>
 
-              <TouchableOpacity style={styles.addButton} onPress={() => Alert.alert("Ajouter", "Ouvrir le formulaire")}>
+              <TouchableOpacity style={styles.addButton} onPress={() => setIsModalVisible(true)}>
                 <Text style={styles.addButtonText}>Ajouter un document</Text>
               </TouchableOpacity>
             </View>
@@ -140,7 +143,38 @@ const CarnetAuditionPage = () => {
         </View>
         <View style={{ height: 100 }} />
       </ScrollView>
+        {/* --- MODALE D'AJOUT DE DOCUMENT --- */}
+              <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                <View style={styles.modalOverlay}>
+                  <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>NOUVEAU DOCUMENT</Text>
 
+                    <Text style={styles.inputLabel}>Nom du document</Text>
+                    <TextInput style={styles.input} placeholder="Ex: Audiogramme Mars 2026" placeholderTextColor="#999" />
+
+                    <Text style={styles.inputLabel}>Type de document</Text>
+                    <TextInput style={styles.input} placeholder="Ex: Ordonnance, CR..." placeholderTextColor="#999" />
+
+                    {/* Bouton d'importation de fichier */}
+                    <TouchableOpacity style={styles.uploadButtonModal} onPress={() => Alert.alert("Fichier", "Ouvrir les dossiers du téléphone")}>
+                      <Text style={styles.uploadButtonTextModal}>📁 Choisir un fichier (PDF, PNG...)</Text>
+                    </TouchableOpacity>
+
+                    {/* Boutons d'action */}
+                    <View style={styles.modalActions}>
+                      <TouchableOpacity onPress={() => setIsModalVisible(false)} style={styles.cancelButton}>
+                        <Text style={styles.cancelButtonText}>Annuler</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => {
+                        setIsModalVisible(false);
+                        Alert.alert("Succès", "Document ajouté avec succès !");
+                      }} style={styles.saveButton}>
+                        <Text style={styles.saveButtonText}>Enregistrer</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </Modal>
       <BottomNav currentScreenName="Mon Carnet Audition" />
     </SafeAreaView>
   );
