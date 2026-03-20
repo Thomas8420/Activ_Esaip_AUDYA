@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigation } from '../../context/NavigationContext';
 import {
   View,
   Text,
@@ -38,6 +39,7 @@ import ListIcon from '../../assets/images/list-icon.svg';
 import DropdownIcon from '../../assets/images/dropdown.svg';
 
 const CarnetAuditionPage = () => {
+    const { currentScreen, navigateTo } = useNavigation();
   const [documents, setDocuments] = useState<AuditionDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'timeline' | 'grid' | 'list'>('timeline');
@@ -45,6 +47,12 @@ const CarnetAuditionPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('Tout');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const filterOptions = ['Tout', 'Ordonnances', 'CR Orthophonie', 'Notes de suivi'];
+
+    useEffect(() => {
+        if (currentScreen !== 'carnet-audition') {
+          navigateTo('carnet-audition');
+        }
+      }, [currentScreen, navigateTo]);
 
   useEffect(() => {
     const load = async () => {
@@ -79,24 +87,33 @@ const CarnetAuditionPage = () => {
             <View style={styles.rowTop}>
               <Text style={styles.label}>Filtres</Text>
               <View style={styles.searchBox}>
-                <SearchIcon width={16} height={16} fill="#999" style={{ marginRight: 8 }} />
+                <SearchIcon width={16} height={16} style={{ marginRight: 8 }} />
                 <TextInput placeholder="Rechercher" style={styles.searchInput} placeholderTextColor="#999" />
               </View>
               <View style={styles.rightControl}>
                               <Text style={styles.displayText}>Affichage</Text>
                               <View style={styles.displayIcons}>
-                                  <TouchableOpacity onPress={() => setViewMode('timeline')}>
-                                    <TimelineIcon width={22} height={22} stroke={viewMode === 'timeline' ? '#F15A24' : '#DDDDDD'} />
-                                  </TouchableOpacity>
+                                                  <TouchableOpacity onPress={() => setViewMode('timeline')}>
+                                                    <TimelineIcon
+                                                      width={22} height={22}
+                                                      color={viewMode === 'timeline' ? '#F15A24' : '#DDDDDD'}
+                                                    />
+                                                  </TouchableOpacity>
 
-                                  <TouchableOpacity onPress={() => setViewMode('grid')}>
-                                    <GridIcon width={22} height={22} stroke={viewMode === 'grid' ? '#F15A24' : '#DDDDDD'} />
-                                  </TouchableOpacity>
+                                                  <TouchableOpacity onPress={() => setViewMode('grid')}>
+                                                    <GridIcon
+                                                      width={22} height={22}
+                                                      color={viewMode === 'grid' ? '#F15A24' : '#DDDDDD'}
+                                                    />
+                                                  </TouchableOpacity>
 
-                                  <TouchableOpacity onPress={() => setViewMode('list')}>
-                                    <ListIcon width={22} height={22} stroke={viewMode === 'list' ? '#F15A24' : '#DDDDDD'} />
-                                  </TouchableOpacity>
-                              </View>
+                                                  <TouchableOpacity onPress={() => setViewMode('list')}>
+                                                    <ListIcon
+                                                      width={22} height={22}
+                                                      color={viewMode === 'list' ? '#F15A24' : '#DDDDDD'}
+                                                    />
+                                                  </TouchableOpacity>
+                                              </View>
                             </View>
             </View>
 
@@ -175,7 +192,7 @@ const CarnetAuditionPage = () => {
                   </View>
                 </View>
               </Modal>
-      <BottomNav currentScreenName="Mon Carnet Audition" />
+      <BottomNav />
     </SafeAreaView>
   );
 };

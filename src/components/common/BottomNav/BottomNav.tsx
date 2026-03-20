@@ -37,6 +37,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'agenda': 'Mon agenda',
   'agenda-day': 'Mon agenda',
   'agenda-form': 'Mon agenda',
+  'carnet-audition': 'Mon carnet audition',
 };
 
 /**
@@ -61,6 +62,8 @@ const BottomNav = () => {
       navigateToMessaging();
     } else if (itemId === 'agenda') {
       navigateToAgenda();
+    } else if (itemId === 'notebook') {
+        navigateTo('carnet-audition');
     }
     // TODO: implémenter la navigation pour les autres onglets
   };

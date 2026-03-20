@@ -32,7 +32,7 @@ const MainPage = () => {
     } else if (itemId === 'agenda') {
       navigateToAgenda();
     } else if (itemId === 'notebook') {
-            navigateTo('CarnetAudition');
+            navigateTo('carnet-audition');
     }
     // TODO: Implémenter la navigation pour les autres éléments du menu
   };
