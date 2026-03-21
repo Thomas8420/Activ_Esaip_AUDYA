@@ -26,6 +26,7 @@ const MenuIcon = ({ color }: { color: string }) => (
 /** Correspondance écran → libellé affiché dans le bouton central */
 const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   home: 'Accueil',
+  health: 'Ma santé',
   professionals: 'Mes professionnels',
   'professional-profile': 'Mes professionnels',
   'add-professional': 'Mes professionnels',
@@ -46,14 +47,16 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
  * - Droite : bouton chat (Fab intégré)
  */
 const BottomNav = () => {
-  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda } = useNavigation();
+  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
 
   const handleMenuItemPress = (itemId: string) => {
     setMenuOpen(false);
-    if (itemId === 'professionals') {
+    if (itemId === 'health') {
+      navigateToHealth();
+    } else if (itemId === 'professionals') {
       navigateTo('professionals');
     } else if (itemId === 'home') {
       goHome();
