@@ -13,6 +13,7 @@ import {verifyCodeScreenStyles as styles} from './VerifyCodeScreen.styles';
 import {useAuth} from '../../context/AuthContext';
 import {loginStep2, resend2FACode} from '../../services/authService';
 import {ApiError} from '../../services/api';
+import {maskEmail} from '../../utils/validators';
 
 type Props = {
   visible: boolean;
@@ -96,7 +97,7 @@ const VerifyCodeScreen: React.FC<Props> = ({visible, onClose, onSuccess}) => {
                 <Text style={styles.title}>Code de connexion</Text>
                 <Text style={styles.description}>
                   Un email contenant votre code de connexion a été envoyé
-                  {pendingEmail ? ` à ${pendingEmail}` : ''}.{'\n'}
+                  {pendingEmail ? ` à ${maskEmail(pendingEmail)}` : ''}.{'\n'}
                   Si vous ne l'avez pas reçu, vérifiez vos spams.
                 </Text>
                 <Text style={styles.label}>

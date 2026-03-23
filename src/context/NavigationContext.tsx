@@ -3,7 +3,26 @@ import React, { createContext, useState, useMemo, ReactNode } from 'react';
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form';
+export type Screen =
+  | 'home'
+  | 'professionals'
+  | 'professional-profile'
+  | 'add-professional'
+  | 'invite-professional'
+  | 'settings'
+  | 'my-profile'
+  | 'messaging'
+  | 'messaging-chat'
+  | 'agenda'
+  | 'agenda-day'
+  | 'agenda-form'
+  | 'register-step1'
+  | 'register-step1bis'
+  | 'register-step2'
+  | 'register-step3'
+  | 'register-step4'
+  | 'register-step5'
+  | 'register-success';
 
 /**
  * Données transmises à l'écran de conversation
@@ -89,8 +108,8 @@ export const NavigationContext = createContext<NavigationContextType | undefined
  * que React lit toujours la dernière valeur de l'historique, sans problème
  * de closure périmée (stale closure).
  */
-export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [history, setHistory] = useState<Screen[]>(['home']);
+export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?: Screen }> = ({ children, initialScreen = 'home' }) => {
+  const [history, setHistory] = useState<Screen[]>([initialScreen]);
   const [selectedProfessional, setSelectedProfessional] = useState<SelectedProfessional | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<SelectedConversation | null>(null);
   const [selectedAgendaEvent, setSelectedAgendaEvent] = useState<SelectedAgendaEvent | null>(null);

@@ -17,6 +17,35 @@ export const isValidEmail = (email: string): boolean => {
   return ALLOWED_EMAIL_DOMAINS.includes(domain);
 };
 
+/**
+ * Masque l'email pour l'affichage public.
+ * Ex: jean.dupont@gmail.com → je****@gmail.com
+ */
+export const maskEmail = (email: string): string => {
+  if (!email) return '';
+  const atIndex = email.indexOf('@');
+  if (atIndex < 0) return '***';
+  const local = email.slice(0, atIndex);
+  const domain = email.slice(atIndex + 1);
+  if (local.length <= 2) return `${local}***@${domain}`;
+  const masked = '*'.repeat(Math.min(4, local.length - 2));
+  return `${local.slice(0, 2)}${masked}@${domain}`;
+};
+
+/**
+ * Valide la complexité d'un mot de passe.
+ * Retourne un message d'erreur ou null si le mot de passe est valide.
+ * Règles : >= 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial.
+ */
+export const validatePassword = (password: string): string | null => {
+  if (!password) return ERROR_MESSAGES.PASSWORD_REQUIRED;
+  if (password.length < 8) return ERROR_MESSAGES.PASSWORD_TOO_SHORT;
+  if (!/[A-Z]/.test(password)) return 'Le mot de passe doit contenir au moins une majuscule';
+  if (!/[0-9]/.test(password)) return 'Le mot de passe doit contenir au moins un chiffre';
+  if (!/[^A-Za-z0-9]/.test(password)) return 'Le mot de passe doit contenir au moins un caractère spécial';
+  return null;
+};
+
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "L'email est requis",
   EMAIL_INVALID: 'Veuillez utiliser une adresse Gmail, Outlook, Orange, Yahoo ou similaire',

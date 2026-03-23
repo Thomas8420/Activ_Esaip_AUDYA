@@ -17,6 +17,8 @@ import {resetPassword} from '../../services/authService';
 import {ApiError} from '../../services/api';
 
 type Props = {
+  /** Token de réinitialisation reçu via deep link (audya://reset-password?token=xxx) */
+  token: string;
   onSuccess: () => void;
 };
 
@@ -24,7 +26,7 @@ type Props = {
  * Écran de saisie du nouveau mot de passe.
  * Inclut validation CGV et consentement contact AUDYA.
  */
-const NewPasswordScreen: React.FC<Props> = ({onSuccess}) => {
+const NewPasswordScreen: React.FC<Props> = ({token, onSuccess}) => {
   const form = useNewPassword();
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -34,8 +36,7 @@ const NewPasswordScreen: React.FC<Props> = ({onSuccess}) => {
     setServerError('');
     setLoading(true);
     try {
-      // Le token sera passé depuis le lien email en production
-      await resetPassword('', form.password, form.confirmPassword);
+      await resetPassword(token, form.password, form.confirmPassword);
       onSuccess();
     } catch (err) {
       if (err instanceof ApiError) {
@@ -77,7 +78,7 @@ const NewPasswordScreen: React.FC<Props> = ({onSuccess}) => {
                       ? 'Nouveau mot de passe *'
                       : 'Confirmation du mot de passe *'
                   }
-                  placeholderTextColor="#999"
+                  placeholderTextColor="#767676"
                   value={form[field]}
                   onChangeText={t => {
                     (field === 'password'

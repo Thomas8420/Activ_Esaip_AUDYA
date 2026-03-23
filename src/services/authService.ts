@@ -5,10 +5,12 @@ import {apiFetch, ApiError} from './api';
 const USE_API = false;
 
 /**
- * En mode mock (USE_API = false), passe la vérification 2FA automatiquement.
- * Mettre à false en production (géré automatiquement via USE_API).
+ * ⚠️ SÉCURITÉ — Bypass 2FA pour les tests locaux uniquement.
+ * Laisser à false. Pour tester en local, changer manuellement à true
+ * mais NE JAMAIS committer cette valeur à true.
+ * En mock (USE_API=false), le code 2FA valide est "123456".
  */
-export const DEV_SKIP_2FA = __DEV__ && !USE_API;
+export const DEV_SKIP_2FA = false;
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

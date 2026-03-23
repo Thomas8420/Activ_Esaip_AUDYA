@@ -9,7 +9,7 @@ export const COLORS = {
   backgroundGray: '#E8E8E8',
   textPrimary: '#333333',
   textSecondary: '#666666',
-  textPlaceholder: '#999999',
+  textPlaceholder: '#767676', // Ratio 4.54:1 sur fond blanc — minimum WCAG AA
   textWhite: '#FFFFFF',
   error: '#E74C3C',
   errorLight: '#FADBD8',

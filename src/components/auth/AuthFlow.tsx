@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, StatusBar} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, StatusBar, Linking} from 'react-native';
 import Bubbles from './Bubbles';
 import LoginScreen from '../../screens/Auth/LoginScreen';
 import VerifyCodeScreen from '../../screens/Auth/VerifyCodeScreen';
@@ -7,6 +7,7 @@ import ForgotPasswordScreen from '../../screens/Auth/ForgotPasswordScreen';
 import EmailVerificationScreen from '../../screens/Auth/EmailVerificationScreen';
 import NewPasswordScreen from '../../screens/Auth/NewPasswordScreen';
 import PasswordChangedScreen from '../../screens/Auth/PasswordChangedScreen';
+import RegisterFlow from '../Register/RegisterFlow';
 
 type AuthScreen =
   | 'login'
@@ -14,32 +15,69 @@ type AuthScreen =
   | 'forgot-password'
   | 'email-verification'
   | 'new-password'
-  | 'password-changed';
+  | 'password-changed'
+  | 'register';
 
 /**
  * Gère la navigation entre les écrans d'authentification.
  * Utilise un état local au lieu de React Navigation (cohérent avec le
  * système de navigation custom du projet).
  */
+/** Extrait le token de réinitialisation depuis une URL deep link. */
+function parseResetToken(url: string | null): string {
+  if (!url) return '';
+  try {
+    const match = url.match(/[?&]token=([^&]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  } catch {
+    return '';
+  }
+}
+
 const AuthFlow: React.FC = () => {
   const [screen, setScreen] = useState<AuthScreen>('login');
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [resetToken, setResetToken] = useState('');
+
+  // Capture le token de réinitialisation depuis le deep link (audya://reset-password?token=xxx)
+  useEffect(() => {
+    Linking.getInitialURL().then(url => {
+      const token = parseResetToken(url);
+      if (token) {
+        setResetToken(token);
+        setScreen('new-password');
+      }
+    });
+
+    const subscription = Linking.addEventListener('url', ({url}) => {
+      const token = parseResetToken(url);
+      if (token) {
+        setResetToken(token);
+        setScreen('new-password');
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F5F3EF" />
 
-      {/* Bulles décoratives en arrière-plan */}
-      <Bubbles />
+      {/* ── Flux d'inscription ───────────────────────────────────────── */}
+      {screen === 'register' && (
+        <RegisterFlow onComplete={() => setScreen('login')} />
+      )}
+
+      {/* Bulles décoratives en arrière-plan (hors flux inscription) */}
+      {screen !== 'register' && <Bubbles />}
 
       {/* ── Écran Login ─────────────────────────────────────────────── */}
       {screen === 'login' && (
         <>
           <LoginScreen
             onForgotPassword={() => setScreen('forgot-password')}
-            onRegister={() => {
-              // TODO : naviguer vers l'inscription quand elle sera implémentée
-            }}
+            onRegister={() => setScreen('register')}
             onVerifyCode={() => setShowVerifyModal(true)}
           />
           <VerifyCodeScreen
@@ -58,9 +96,7 @@ const AuthFlow: React.FC = () => {
       {screen === 'forgot-password' && (
         <ForgotPasswordScreen
           onSubmit={() => setScreen('email-verification')}
-          onRegister={() => {
-            // TODO : naviguer vers l'inscription
-          }}
+          onRegister={() => setScreen('register')}
           onBack={() => setScreen('login')}
         />
       )}
@@ -74,7 +110,10 @@ const AuthFlow: React.FC = () => {
 
       {/* ── Nouveau mot de passe ─────────────────────────────────────── */}
       {screen === 'new-password' && (
-        <NewPasswordScreen onSuccess={() => setScreen('password-changed')} />
+        <NewPasswordScreen
+          token={resetToken}
+          onSuccess={() => setScreen('password-changed')}
+        />
       )}
 
       {/* ── Confirmation mot de passe modifié ───────────────────────── */}
