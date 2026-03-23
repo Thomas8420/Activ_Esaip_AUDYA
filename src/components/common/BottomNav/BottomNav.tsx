@@ -38,6 +38,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'agenda-day': 'Mon agenda',
   'agenda-form': 'Mon agenda',
   'carnet-audition': 'Mon carnet audition',
+  'appareillage': 'Mon appareillage',
 };
 
 /**

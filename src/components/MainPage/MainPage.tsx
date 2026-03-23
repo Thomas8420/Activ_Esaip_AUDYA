@@ -33,8 +33,9 @@ const MainPage = () => {
       navigateToAgenda();
     } else if (itemId === 'notebook') {
             navigateTo('carnet-audition');
-    }
-    // TODO: Implémenter la navigation pour les autres éléments du menu
+    } else if (itemId === 'hearing') {
+        navigateTo('appareillage');
+    } // TODO: Implémenter la navigation pour les autres éléments du menu
   };
 
   return (

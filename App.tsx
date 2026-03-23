@@ -14,6 +14,7 @@ import AgendaScreen from './src/screens/Agenda/AgendaScreen';
 import AgendaDayViewScreen from './src/screens/Agenda/AgendaDayViewScreen';
 import AgendaFormScreen from './src/screens/Agenda/AgendaFormScreen';
 import CarnetAuditionScreen from './src/screens/Carnet_Audition/CarnetAuditionScreen';
+import AppareillageScreen from './src/screens/Appareillage/AppareillageScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import AuthFlow from './src/components/auth/AuthFlow';
@@ -43,6 +44,7 @@ function AppContent() {
       {currentScreen === 'agenda-day' && <AgendaDayViewScreen />}
       {currentScreen === 'agenda-form' && <AgendaFormScreen />}
       {currentScreen === 'carnet-audition' && <CarnetAuditionScreen />}
+      {currentScreen === 'appareillage' && <AppareillageScreen />}
     </>
   );
 }
