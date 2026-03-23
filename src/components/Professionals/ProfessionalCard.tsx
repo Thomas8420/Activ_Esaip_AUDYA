@@ -12,6 +12,7 @@ interface ProfessionalCardProps {
   onToggleFavorite: () => void;
   onResendInvitation: () => void;
   onViewProfile: () => void;
+  onMessage: () => void;
 }
 
 /**
@@ -23,6 +24,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   onToggleFavorite,
   onResendInvitation,
   onViewProfile,
+  onMessage,
 }) => {
   const initials = (professional.firstName[0] + professional.lastName[0]).toUpperCase();
 
@@ -78,6 +80,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
       <View style={styles.cardActions}>
         <TouchableOpacity
           style={styles.actionButton}
+          onPress={onMessage}
           accessibilityLabel={`Envoyer un message à ${professional.firstName} ${professional.lastName}`}
           accessibilityRole="button"
         >
@@ -116,4 +119,10 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   );
 };
 
-export default React.memo(ProfessionalCard);
+export default React.memo(ProfessionalCard, (prev, next) =>
+  prev.professional === next.professional &&
+  prev.onToggleFavorite === next.onToggleFavorite &&
+  prev.onResendInvitation === next.onResendInvitation &&
+  prev.onViewProfile === next.onViewProfile &&
+  prev.onMessage === next.onMessage,
+);

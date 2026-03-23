@@ -88,6 +88,8 @@ const BottomNav = () => {
                   style={styles.menuItem}
                   onPress={() => handleMenuItemPress(item.id)}
                   activeOpacity={0.7}
+                  accessibilityLabel={item.label}
+                  accessibilityRole="button"
                 >
                   <item.icon width={22} height={22} fill={COLORS.orange} />
                   <Text style={styles.menuItemLabel}>{item.label}</Text>
@@ -106,6 +108,7 @@ const BottomNav = () => {
           onPress={goHome}
           activeOpacity={0.7}
           accessibilityLabel="Accueil"
+          accessibilityRole="button"
         >
           <HomeIcon color={COLORS.white} />
         </TouchableOpacity>
@@ -116,6 +119,7 @@ const BottomNav = () => {
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
           accessibilityLabel="Ouvrir le menu"
+          accessibilityRole="button"
         >
           <MenuIcon color={COLORS.orange} />
           <Text style={styles.centerLabel} numberOfLines={1}>
@@ -129,6 +133,7 @@ const BottomNav = () => {
           onPress={() => setChatbotOpen(true)}
           activeOpacity={0.7}
           accessibilityLabel="Assistant AUDYA"
+          accessibilityRole="button"
         >
           <ChatIcon width={26} height={26} fill={COLORS.white} />
         </TouchableOpacity>

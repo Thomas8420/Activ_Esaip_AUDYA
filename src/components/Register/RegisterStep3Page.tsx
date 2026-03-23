@@ -28,6 +28,40 @@ const QUESTIONS_OUI_NON = [
 
 type ModalConfig = { visible: boolean; title: string; options: string[]; value: string; onSelect: (v: string) => void };
 
+// ─── Sous-composants au niveau module ────────────────────────────────────────
+// Déclarés HORS du corps de RegisterStep3Page pour éviter le démontage/remontage
+// à chaque re-render (anti-pattern clavier décrit dans CLAUDE.md).
+
+type DropdownProps = { label: string; value: string; placeholder: string; onOpen: () => void };
+
+const Dropdown = ({ label, value, placeholder, onOpen }: DropdownProps) => (
+  <View style={s.questionBlock}>
+    <Text style={s.questionText}>{label}</Text>
+    <TouchableOpacity style={s.inputRow} onPress={onOpen} activeOpacity={0.7}>
+      <Text style={[s.inputRowText, { color: value ? COLORS.text : COLORS.textLight }]}>{value || placeholder}</Text>
+      <Text style={{ color: COLORS.textLight }}>▼</Text>
+    </TouchableOpacity>
+  </View>
+);
+
+type CheckboxGroupProps = { label: string; list: string[]; onToggle: (item: string) => void };
+
+const CheckboxGroup = ({ label, list, onToggle }: CheckboxGroupProps) => (
+  <View style={s.questionBlock}>
+    <Text style={s.questionText}>{label}</Text>
+    {SITUATIONS.map(item => (
+      <TouchableOpacity key={item} style={s.checkboxRow} onPress={() => onToggle(item)} activeOpacity={0.7}>
+        <View style={[s.checkbox, list.includes(item) && s.checkboxGreen]}>
+          {list.includes(item) && <Text style={{ color: COLORS.white, fontSize: 12 }}>✓</Text>}
+        </View>
+        <Text style={s.checkboxLabel}>{item}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const RegisterStep3Page = () => {
   const { navigateTo } = useNavigation();
 
@@ -46,32 +80,6 @@ const RegisterStep3Page = () => {
 
   const toggleSituation = (list: string[], setList: (v: string[]) => void, item: string) =>
     setList(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
-
-  // Dropdown réutilisable
-  const Dropdown = ({ label, value, placeholder, onOpen }: { label: string; value: string; placeholder: string; onOpen: () => void }) => (
-    <View style={s.questionBlock}>
-      <Text style={s.questionText}>{label}</Text>
-      <TouchableOpacity style={s.inputRow} onPress={onOpen} activeOpacity={0.7}>
-        <Text style={[s.inputRowText, { color: value ? COLORS.text : COLORS.textLight }]}>{value || placeholder}</Text>
-        <Text style={{ color: COLORS.textLight }}>▼</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  // Groupe de cases à cocher vertes
-  const CheckboxGroup = ({ label, list, setList }: { label: string; list: string[]; setList: (v: string[]) => void }) => (
-    <View style={s.questionBlock}>
-      <Text style={s.questionText}>{label}</Text>
-      {SITUATIONS.map(item => (
-        <TouchableOpacity key={item} style={s.checkboxRow} onPress={() => toggleSituation(list, setList, item)} activeOpacity={0.7}>
-          <View style={[s.checkbox, list.includes(item) && s.checkboxGreen]}>
-            {list.includes(item) && <Text style={{ color: COLORS.white, fontSize: 12 }}>✓</Text>}
-          </View>
-          <Text style={s.checkboxLabel}>{item}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
 
   return (
     <SafeAreaView style={s.safeArea} edges={['top']}>
@@ -118,8 +126,8 @@ const RegisterStep3Page = () => {
             onOpen={() => openModal('Comment a évolué votre surdité ?', OPTIONS_Q3, q3, setQ3)} />
 
           {/* Q10 et Q10 bis — situations difficiles (cases vertes) */}
-          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10} setList={setQ10} />
-          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10b} setList={setQ10b} />
+          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10} onToggle={item => toggleSituation(q10, setQ10, item)} />
+          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10b} onToggle={item => toggleSituation(q10b, setQ10b, item)} />
 
           {/* Bouton valider */}
           <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]} onPress={() => navigateTo('register-step4')}>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
+
+const MAX_PHOTO_SIZE_MB = 3;
 
 const PAYS = [
   'France', 'Belgique', 'Suisse', 'Luxembourg', 'Canada',
@@ -88,6 +91,27 @@ const RegisterStep2Page = () => {
     else if (!/^\d{13}$/.test(form.numeroSecu.trim())) e.numeroSecu = 'Le numéro doit être composé de 13 chiffres';
     setErrors(e);
     return Object.keys(e).length === 0;
+  };
+
+  const handleImagePickerResponse = (response: ImagePickerResponse) => {
+    setPhotoModal(false);
+    if (response.didCancel || response.errorCode) return;
+    const asset = response.assets?.[0];
+    if (!asset?.uri) return;
+    const sizeMB = (asset.fileSize ?? 0) / (1024 * 1024);
+    if (sizeMB > MAX_PHOTO_SIZE_MB) {
+      Alert.alert('Fichier trop lourd', `La photo ne doit pas dépasser ${MAX_PHOTO_SIZE_MB} Mo.`);
+      return;
+    }
+    setPhotoUri(asset.uri);
+  };
+
+  const handlePickFromGallery = () => {
+    launchImageLibrary({ mediaType: 'photo', quality: 0.8, selectionLimit: 1 }, handleImagePickerResponse);
+  };
+
+  const handlePickFromCamera = () => {
+    launchCamera({ mediaType: 'photo', quality: 0.8, saveToPhotos: false }, handleImagePickerResponse);
   };
 
   const handleSubmit = () => { if (validate()) navigateTo('register-step3'); };
@@ -194,8 +218,11 @@ const RegisterStep2Page = () => {
         <TouchableOpacity style={s.modalOverlay} onPress={() => setPhotoModal(false)} activeOpacity={1}>
           <View style={s.photoModalSheet}>
             <Text style={s.modalTitle}>Ajouter une photo</Text>
-            <TouchableOpacity style={s.photoModalBtn} onPress={() => setPhotoModal(false)} activeOpacity={0.7}>
+            <TouchableOpacity style={s.photoModalBtn} onPress={handlePickFromGallery} activeOpacity={0.7}>
               <Text style={s.photoModalBtnText}>📷  Choisir depuis la galerie</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={s.photoModalBtn} onPress={handlePickFromCamera} activeOpacity={0.7}>
+              <Text style={s.photoModalBtnText}>📸  Prendre une photo</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[s.photoModalBtn, s.photoModalCancel]} onPress={() => setPhotoModal(false)} activeOpacity={0.7}>
               <Text style={[s.photoModalBtnText, { color: COLORS.textLight }]}>Annuler</Text>

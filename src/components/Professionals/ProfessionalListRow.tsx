@@ -51,4 +51,9 @@ const ProfessionalListRow: React.FC<ProfessionalListRowProps> = ({
   );
 };
 
-export default React.memo(ProfessionalListRow);
+export default React.memo(ProfessionalListRow, (prev, next) =>
+  prev.professional === next.professional &&
+  prev.isAlternate === next.isAlternate &&
+  prev.onToggleFavorite === next.onToggleFavorite &&
+  prev.onViewProfile === next.onViewProfile,
+);

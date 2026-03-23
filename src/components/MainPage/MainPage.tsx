@@ -53,6 +53,8 @@ const MainPage = () => {
               style={styles.tile}
               activeOpacity={0.7}
               onPress={() => handleMenuItemPress(item.id)}
+              accessibilityLabel={item.label}
+              accessibilityRole="button"
             >
               <item.icon width={48} height={48} />
               <Text style={styles.tileLabel}>{item.label}</Text>

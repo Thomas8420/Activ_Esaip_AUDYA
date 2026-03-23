@@ -11,14 +11,38 @@ const OPTIONS_SPECIALITE = [
   'Audiologiste', 'Orthophoniste', 'Neurologue', 'Gériatre', 'Pédiatre', 'Autre spécialiste',
 ];
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface SearchResult {
+  id: string;
+  nom: string;
+  prenom: string;
+  specialite: string;
+  ville: string;
+  codePostal: string;
+}
+
 type Errors = { ville?: string };
+
+// ─── Mock résultats de recherche ─────────────────────────────────────────────
+// À remplacer par l'appel API GET /api/professionals/search quand disponible.
+
+const MOCK_SEARCH_RESULTS: SearchResult[] = [
+  { id: '1', nom: 'Martin',  prenom: 'Sophie',  specialite: 'Audioprothésiste',           ville: 'Lyon',  codePostal: '69001' },
+  { id: '2', nom: 'Durand',  prenom: 'Pierre',  specialite: 'ORL (Oto-Rhino-Laryngologiste)', ville: 'Lyon',  codePostal: '69002' },
+  { id: '3', nom: 'Bernard', prenom: 'Claire',  specialite: 'Audiologiste',               ville: 'Lyon',  codePostal: '69003' },
+  { id: '4', nom: 'Petit',   prenom: 'Marc',    specialite: 'Médecin généraliste',        ville: 'Paris', codePostal: '75001' },
+  { id: '5', nom: 'Robert',  prenom: 'Julie',   specialite: 'Orthophoniste',              ville: 'Paris', codePostal: '75008' },
+];
 
 const RegisterStep5Page = () => {
   const { navigateTo } = useNavigation();
 
   const [form, setForm] = useState({ specialite: '', nom: '', prenom: '', codePostal: '', ville: '' });
-  const [errors, setErrors]     = useState<Errors>({});
-  const [showModal, setShowModal] = useState(false);
+  const [errors, setErrors]       = useState<Errors>({});
+  const [showModal, setShowModal]  = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);
+  const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null);
 
   const clearError = (field: keyof Errors) => {
     if (errors[field]) setErrors({ ...errors, [field]: undefined });
@@ -32,9 +56,24 @@ const RegisterStep5Page = () => {
     return Object.keys(e).length === 0;
   };
 
-  const handleSearch   = () => { if (validate()) { /* TODO: appel API */ } };
-  const handleSkip     = () => { if (validate()) navigateTo('register-success'); };
-  const handleValidate = () => { if (validate()) navigateTo('register-success'); };
+  const handleSearch = () => {
+    if (!validate()) return;
+    // TODO: remplacer par apiFetch('/api/professionals/search', { ville, specialite, nom, prenom })
+    const cityLower = form.ville.trim().toLowerCase();
+    const results = MOCK_SEARCH_RESULTS.filter(r => {
+      const matchCity = r.ville.toLowerCase().includes(cityLower);
+      const matchSpecialite = !form.specialite || r.specialite === form.specialite;
+      const matchNom = !form.nom.trim() || r.nom.toLowerCase().includes(form.nom.trim().toLowerCase());
+      const matchPrenom = !form.prenom.trim() || r.prenom.toLowerCase().includes(form.prenom.trim().toLowerCase());
+      const matchCP = !form.codePostal.trim() || r.codePostal.includes(form.codePostal.trim());
+      return matchCity && matchSpecialite && matchNom && matchPrenom && matchCP;
+    });
+    setSearchResults(results);
+    setSelectedResult(null);
+  };
+
+  const handleSkip     = () => { navigateTo('register-success'); };
+  const handleValidate = () => { navigateTo('register-success'); };
 
   return (
     <SafeAreaView style={s.safeArea} edges={['top']}>
@@ -78,6 +117,32 @@ const RegisterStep5Page = () => {
           <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]} onPress={handleSearch}>
             {({ pressed }) => <Text style={[s.btnPrimaryText, pressed && s.btnPrimaryTextPressed]}>Rechercher</Text>}
           </Pressable>
+
+          {/* Résultats de recherche */}
+          {searchResults !== null && (
+            <View style={{ marginTop: 12 }}>
+              {searchResults.length === 0 ? (
+                <Text style={[s.questionIntro, { textAlign: 'center', marginVertical: 8 }]}>
+                  Aucun professionnel trouvé. Modifiez vos critères ou passez cette étape.
+                </Text>
+              ) : (
+                searchResults.map(result => (
+                  <TouchableOpacity
+                    key={result.id}
+                    style={[s.inputRow, selectedResult?.id === result.id && { borderColor: COLORS.orange, borderWidth: 2 }]}
+                    onPress={() => setSelectedResult(result)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={[s.inputRowText, { fontWeight: 'bold' }]}>{result.prenom} {result.nom}</Text>
+                      <Text style={[s.inputRowText, { fontSize: 13, color: COLORS.textLight }]}>{result.specialite} — {result.ville} ({result.codePostal})</Text>
+                    </View>
+                    {selectedResult?.id === result.id && <Text style={{ color: COLORS.orange }}>✓</Text>}
+                  </TouchableOpacity>
+                ))
+              )}
+            </View>
+          )}
 
           {/* Boutons bas — même taille sur la même ligne */}
           <View style={s.btnRow}>

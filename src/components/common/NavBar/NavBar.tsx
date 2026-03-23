@@ -39,13 +39,14 @@ const NavBar = () => {
 
         {/* Actions à droite (pilule orange) */}
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.headerIconBtn} accessibilityLabel="Notifications">
+          <TouchableOpacity style={styles.headerIconBtn} accessibilityLabel="Notifications" accessibilityRole="button">
             <BellIcon width={30} height={30} fill={COLORS.white} />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.headerIconBtn}
             accessibilityLabel="Paramètres"
+            accessibilityRole="button"
             onPress={navigateToSettings}
           >
             <SettingsIcon width={30} height={30} fill={COLORS.white} />
@@ -55,6 +56,8 @@ const NavBar = () => {
           <TouchableOpacity
             style={[styles.headerIconBtn, {flexDirection: 'row', gap: 4, width: 'auto', paddingHorizontal: 5}]}
             onPress={() => setProfileOpen(!profileOpen)}
+            accessibilityLabel="Menu profil"
+            accessibilityRole="button"
           >
             <ProfileIcon width={30} height={30} fill={COLORS.white} />
             <DropdownIcon width={18} height={18} fill={COLORS.white} />
@@ -74,6 +77,8 @@ const NavBar = () => {
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}
+              accessibilityLabel="Mon profil"
+              accessibilityRole="button"
             >
                 <ProfileIcon width={18} height={18} fill={COLORS.white} />
                 <Text style={styles.dropdownLabel}>Profil</Text>
@@ -82,6 +87,8 @@ const NavBar = () => {
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToSettings(); }}
+              accessibilityLabel="Préférences"
+              accessibilityRole="button"
             >
                 <SettingsIcon width={18} height={18} fill={COLORS.white} />
                 <Text style={styles.dropdownLabel}>Préférences</Text>
@@ -90,6 +97,8 @@ const NavBar = () => {
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); logout(); }}
+              accessibilityLabel="Déconnexion"
+              accessibilityRole="button"
             >
                 <LogoutIcon width={18} height={18} fill={COLORS.white} />
                 <Text style={styles.dropdownLabel}>Déconnexion</Text>

@@ -210,16 +210,20 @@ const ProfilePage = () => {
     setIsSaving(true);
     try {
       if (USE_PROFILE_API) {
-        // Upload la nouvelle photo si elle a été modifiée
+        // Résoudre le profil complet à envoyer avant tout appel setState
+        let profileToSave = profile;
         if (localPhotoUri) {
           const filename = localPhotoUri.split('/').pop() ?? 'photo.jpg';
           const ext = filename.split('.').pop()?.toLowerCase() ?? 'jpg';
           const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg';
           const newUrl = await uploadProfilePhoto(localPhotoUri, mimeType, filename);
-          setProfile(prev => prev ? { ...prev, profilePictureUrl: newUrl } : prev);
+          // Mettre à jour profileToSave ET le state en une seule passe pour éviter
+          // d'envoyer l'ancienne URL à updatePatientProfile (race condition)
+          profileToSave = { ...profile, profilePictureUrl: newUrl };
+          setProfile(profileToSave);
           setLocalPhotoUri(null);
         }
-        await updatePatientProfile(profile);
+        await updatePatientProfile(profileToSave);
       }
       // TODO: afficher un toast de confirmation
     } catch {
