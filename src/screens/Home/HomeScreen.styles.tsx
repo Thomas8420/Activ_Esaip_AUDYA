@@ -3,18 +3,15 @@ import { StyleSheet, Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 
 export const COLORS = {
-  // Palette principale — valeurs WCAG AA (ratio ≥ 4.5:1 sur fond blanc)
-  orange: '#C44D1A',       // Anciennement #E8622A (ratio 3.1:1) — corrigé à 4.6:1
-  orangeLight: '#E07040',  // Teinte claire pour hover/pressed
-  teal: '#1A7A7A',         // Anciennement #3ABFBF (ratio 2.4:1) — corrigé à 4.6:1
+  orange: '#E8622A',
+  orangeLight: '#F0936B',
+  teal: '#3ABFBF',
   white: '#FFFFFF',
   offWhite: '#F8F9FA',
   tile: '#FFFFFF',
   text: '#2D2D2D',
-  textLight: '#6B6B6B',    // Ratio 5.74:1 — conforme
-  placeholder: '#767676',  // Ratio 4.54:1 — minimum accessible pour les placeholders
-  border: '#E0E0E0',       // Bordures décoratives non interactives
-  borderInteractive: '#767676', // Bordures checkbox/radio — ratio 4.54:1 (WCAG 1.4.11)
+  textLight: '#6B6B6B',
+  border: '#E0E0E0',
   background: '#f5f3ef',
   overlay: 'rgba(0, 0, 0, 0.4)', // Filtre gris
 };

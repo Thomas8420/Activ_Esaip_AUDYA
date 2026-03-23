@@ -88,7 +88,7 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
             <TextInput
               style={[styles.inputBase, inputColors(!!emailError)]}
               placeholder="contact@gmail.com"
-              placeholderTextColor="#767676"
+              placeholderTextColor="#999"
               value={email}
               onChangeText={t => {
                 setEmail(t);
@@ -111,7 +111,7 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
               <TextInput
                 style={styles.passwordInput}
                 placeholder="********"
-                placeholderTextColor="#767676"
+                placeholderTextColor="#999"
                 value={password}
                 onChangeText={t => {
                   setPassword(t);

@@ -78,7 +78,7 @@ const NewPasswordScreen: React.FC<Props> = ({token, onSuccess}) => {
                       ? 'Nouveau mot de passe *'
                       : 'Confirmation du mot de passe *'
                   }
-                  placeholderTextColor="#767676"
+                  placeholderTextColor="#999"
                   value={form[field]}
                   onChangeText={t => {
                     (field === 'password'
