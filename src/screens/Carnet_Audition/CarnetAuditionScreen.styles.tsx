@@ -182,7 +182,9 @@ export const styles = StyleSheet.create({
   },
   modalActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 40,
   },
   cancelButton: {
     flex: 1,

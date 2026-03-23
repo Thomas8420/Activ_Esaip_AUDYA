@@ -7,7 +7,7 @@ export const COLORS = {
   background: '#F5F3EF',
   backgroundWhite: '#FFFFFF',
   backgroundGray: '#E8E8E8',
-  textPrimary: '#333333',
+  textPrimary: '#172A4F',
   textSecondary: '#666666',
   textPlaceholder: '#999999',
   textWhite: '#FFFFFF',
@@ -24,6 +24,7 @@ export const COLORS = {
   border: '#DDDDDD',
   shadow: '#000000',
   overlay: 'rgba(0, 0, 0, 0.5)',
+  text: '#172A4F',
 } as const;
 
 export default COLORS;

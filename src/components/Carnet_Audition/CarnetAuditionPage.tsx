@@ -16,6 +16,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // Navigation & Communs
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import CTA1 from '../common/Button/CTA1';
+import CTA4 from '../common/Button/CTA4';
 
 // Vues déportées
 import { CarnetTimelineView } from './CarnetTimelineView';
@@ -91,30 +93,30 @@ const CarnetAuditionPage = () => {
                 <TextInput placeholder="Rechercher" style={styles.searchInput} placeholderTextColor="#999" />
               </View>
               <View style={styles.rightControl}>
-                              <Text style={styles.displayText}>Affichage</Text>
-                              <View style={styles.displayIcons}>
-                                                  <TouchableOpacity onPress={() => setViewMode('timeline')}>
-                                                    <TimelineIcon
-                                                      width={22} height={22}
-                                                      color={viewMode === 'timeline' ? '#F15A24' : '#DDDDDD'}
-                                                    />
-                                                  </TouchableOpacity>
+                <Text style={styles.displayText}>Affichage</Text>
+                <View style={styles.displayIcons}>
+                    <TouchableOpacity onPress={() => setViewMode('timeline')}>
+                        <TimelineIcon
+                            width={22} height={22}
+                            color={viewMode === 'timeline' ? '#F15A24' : '#DDDDDD'}
+                        />
+                    </TouchableOpacity>
 
-                                                  <TouchableOpacity onPress={() => setViewMode('grid')}>
-                                                    <GridIcon
-                                                      width={22} height={22}
-                                                      color={viewMode === 'grid' ? '#F15A24' : '#DDDDDD'}
-                                                    />
-                                                  </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setViewMode('grid')}>
+                        <GridIcon
+                            width={22} height={22}
+                            color={viewMode === 'grid' ? '#F15A24' : '#DDDDDD'}
+                        />
+                    </TouchableOpacity>
 
-                                                  <TouchableOpacity onPress={() => setViewMode('list')}>
-                                                    <ListIcon
-                                                      width={22} height={22}
-                                                      color={viewMode === 'list' ? '#F15A24' : '#DDDDDD'}
-                                                    />
-                                                  </TouchableOpacity>
-                                              </View>
-                            </View>
+                    <TouchableOpacity onPress={() => setViewMode('list')}>
+                        <ListIcon
+                            width={22} height={22}
+                            color={viewMode === 'list' ? '#F15A24' : '#DDDDDD'}
+                        />
+                    </TouchableOpacity>
+                </View>
+              </View>
             </View>
 
             <View style={[styles.rowBottom, { zIndex: 1000 }]}>
@@ -141,9 +143,10 @@ const CarnetAuditionPage = () => {
                 )}
               </View>
 
-              <TouchableOpacity style={styles.addButton} onPress={() => setIsModalVisible(true)}>
-                <Text style={styles.addButtonText}>Ajouter un document</Text>
-              </TouchableOpacity>
+              <CTA1
+                label="Ajouter un document"
+                onPress={() => setIsModalVisible(true)}
+              />
             </View>
           </View>
 
@@ -158,7 +161,6 @@ const CarnetAuditionPage = () => {
             </>
           )}
         </View>
-        <View style={{ height: 100 }} />
       </ScrollView>
         {/* --- MODALE D'AJOUT DE DOCUMENT --- */}
               <Modal visible={isModalVisible} animationType="slide" transparent={true}>
@@ -179,15 +181,20 @@ const CarnetAuditionPage = () => {
 
                     {/* Boutons d'action */}
                     <View style={styles.modalActions}>
-                      <TouchableOpacity onPress={() => setIsModalVisible(false)} style={styles.cancelButton}>
-                        <Text style={styles.cancelButtonText}>Annuler</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => {
-                        setIsModalVisible(false);
-                        Alert.alert("Succès", "Document ajouté avec succès !");
-                      }} style={styles.saveButton}>
-                        <Text style={styles.saveButtonText}>Enregistrer</Text>
-                      </TouchableOpacity>
+                        {/* 👉 UTILISATION DU CTA4 POUR ANNULER */}
+                        <CTA4
+                            label="Annuler"
+                            onPress={() => setIsModalVisible(false)}
+                        />
+
+                        {/* 👉 UTILISATION DU CTA1 POUR ENREGISTRER */}
+                        <CTA1
+                            label="Enregistrer"
+                            onPress={() => {
+                                setIsModalVisible(false);
+                                Alert.alert("Succès", "Document ajouté avec succès !");
+                            }}
+                        />
                     </View>
                   </View>
                 </View>

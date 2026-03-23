@@ -48,7 +48,7 @@ const NavBar = () => {
             accessibilityLabel="Paramètres"
             onPress={navigateToSettings}
           >
-            <SettingsIcon width={30} height={30} fill={COLORS.white} />
+            <SettingsIcon width={30} height={30} color="white" />
           </TouchableOpacity>
 
           {/* Bouton pour ouvrir/fermer le menu déroulant */}
@@ -56,8 +56,8 @@ const NavBar = () => {
             style={[styles.headerIconBtn, {flexDirection: 'row', gap: 4, width: 'auto', paddingHorizontal: 5}]}
             onPress={() => setProfileOpen(!profileOpen)}
           >
-            <ProfileIcon width={30} height={30} fill={COLORS.white} />
-            <DropdownIcon width={18} height={18} fill={COLORS.white} />
+            <ProfileIcon width={30} height={30} color="white" />
+            <DropdownIcon width={18} height={18} color="white" />
           </TouchableOpacity>
         </View>
       </View>
@@ -75,7 +75,7 @@ const NavBar = () => {
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}
             >
-                <ProfileIcon width={18} height={18} fill={COLORS.white} />
+                <ProfileIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Profil</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
@@ -83,7 +83,7 @@ const NavBar = () => {
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToSettings(); }}
             >
-                <SettingsIcon width={18} height={18} fill={COLORS.white} />
+                <SettingsIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Préférences</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
@@ -91,7 +91,7 @@ const NavBar = () => {
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); logout(); }}
             >
-                <LogoutIcon width={18} height={18} fill={COLORS.white} />
+                <LogoutIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Déconnexion</Text>
             </TouchableOpacity>
           </View>
