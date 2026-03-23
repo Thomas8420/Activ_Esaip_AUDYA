@@ -36,7 +36,6 @@ const MOCK_HEALTH: PatientHealth = {
   ],
 };
 
-
 /**
  * Page Ma sante : resume de l'etat de sante + informations generales.
  */
@@ -61,6 +60,46 @@ const HealthPage = () => {
 
     load();
   }, []);
+
+  const calculateBMI = (weight: number, height: number) => {
+    if (height > 0) {
+      return weight / ((height / 100) * (height / 100));
+    }
+    return 0;
+  };
+
+  const handleUpdateField = (key: keyof PatientHealth, value: any) => {
+    setHealth(prev => {
+      if (!prev) {return prev;}
+      const updated = { ...prev, [key]: value };
+
+      // Sync gender if sex is changed
+      if (key === 'sex') {
+        updated.gender = value;
+      }
+
+      // Recalculate BMI if height or weight changes
+      if (key === 'heightCm' || key === 'weightKg') {
+        const h = key === 'heightCm' ? Number(value) : prev.heightCm;
+        const w = key === 'weightKg' ? Number(value) : prev.weightKg;
+        updated.bmi = calculateBMI(w, h);
+      }
+
+      return updated;
+    });
+  };
+
+  const toggleSex = () => {
+    if (!health) {return;}
+    const newValue = health.sex === 'Homme' ? 'Femme' : 'Homme';
+    handleUpdateField('sex', newValue);
+  };
+
+  const toggleSmoker = () => {
+    if (!health) {return;}
+    const newValue = health.smoker === 'Oui' ? 'Non' : 'Oui';
+    handleUpdateField('smoker', newValue);
+  };
 
   const bmiValue = useMemo(() => {
     if (!health) {
@@ -109,22 +148,30 @@ const HealthPage = () => {
               <View style={styles.twoColumnRow}>
                 <View style={styles.fieldColumn}>
                   <Text style={styles.fieldLabel}>Sexe *</Text>
-                  <View style={styles.fieldValuePill}>
+                  <TouchableOpacity
+                    style={styles.fieldValuePill}
+                    onPress={toggleSex}
+                    activeOpacity={0.7}
+                  >
                     <Text style={styles.fieldValueText}>{health.sex}</Text>
                     <View style={styles.chevronBubble}>
                       <Icon name="chevron-down" size={14} color="#FFFFFF" />
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 </View>
 
                 <View style={styles.fieldColumn}>
                   <Text style={styles.fieldLabel}>Fumeur</Text>
-                  <View style={styles.fieldValuePill}>
+                  <TouchableOpacity
+                    style={styles.fieldValuePill}
+                    onPress={toggleSmoker}
+                    activeOpacity={0.7}
+                  >
                     <Text style={styles.fieldValueText}>{health.smoker}</Text>
                     <View style={styles.chevronBubble}>
                       <Icon name="chevron-down" size={14} color="#FFFFFF" />
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
 
@@ -132,8 +179,9 @@ const HealthPage = () => {
                 <View style={styles.fieldColumn}>
                   <Text style={styles.fieldLabel}>Taille (cm) *</Text>
                   <TextInput
-                    value={String(health.heightCm)}
-                    editable={false}
+                    value={health.heightCm === 0 ? '' : String(health.heightCm)}
+                    onChangeText={(val) => handleUpdateField('heightCm', val.replace(/[^0-9]/g, ''))}
+                    keyboardType="numeric"
                     style={styles.textInputReadonly}
                   />
                 </View>
@@ -141,8 +189,9 @@ const HealthPage = () => {
                 <View style={styles.fieldColumn}>
                   <Text style={styles.fieldLabel}>Poids (kg) *</Text>
                   <TextInput
-                    value={String(health.weightKg)}
-                    editable={false}
+                    value={health.weightKg === 0 ? '' : String(health.weightKg)}
+                    onChangeText={(val) => handleUpdateField('weightKg', val.replace(/[^0-9]/g, ''))}
+                    keyboardType="numeric"
                     style={styles.textInputReadonly}
                   />
                 </View>
@@ -151,7 +200,12 @@ const HealthPage = () => {
               <Text style={styles.subsectionLabel}>Antecedents familiaux</Text>
               <View style={styles.inlineRowCard}>
                 <View style={styles.inlineInputLike}>
-                  <Text style={styles.inlineInputLikeText}>{health.familyHistory}</Text>
+                  <TextInput
+                    style={styles.inlineInputLikeText}
+                    value={health.familyHistory}
+                    onChangeText={(val) => handleUpdateField('familyHistory', val)}
+                    placeholder="Saisir..."
+                  />
                 </View>
                 <View style={styles.inlineDivider} />
                 <TouchableOpacity style={styles.documentButton} activeOpacity={0.7}>
@@ -163,11 +217,19 @@ const HealthPage = () => {
               <Text style={styles.subsectionLabel}>Antecedents medicaux</Text>
               <View style={styles.inlineRowCard}>
                 <View style={styles.tagsWrap}>
-                  {health.medicalHistory.map(item => (
-                    <View key={item} style={styles.tag}>
+                  {health.medicalHistory.map((item, idx) => (
+                    <TouchableOpacity
+                      key={`${item}-${idx}`}
+                      style={styles.tag}
+                      onPress={() => {
+                        const newList = [...health.medicalHistory];
+                        newList.splice(idx, 1);
+                        handleUpdateField('medicalHistory', newList);
+                      }}
+                    >
                       <Text style={styles.tagText}>{item}</Text>
                       <Text style={styles.tagClose}>x</Text>
-                    </View>
+                    </TouchableOpacity>
                   ))}
                 </View>
                 <View style={styles.inlineDivider} />
@@ -194,4 +256,3 @@ const HealthPage = () => {
 };
 
 export default HealthPage;
-
