@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Modal,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -121,7 +122,7 @@ const BottomNav = () => {
       )}
 
       {/* ── Barre ── */}
-      <View style={[styles.container, { paddingBottom: Math.max(10, bottomInset) }]}>
+      <View style={[styles.container, { paddingBottom: Platform.OS === 'ios' ? Math.max(6, bottomInset / 2) : Math.max(10, bottomInset) }]}>
         {/* Bouton Accueil */}
         <TouchableOpacity
           style={styles.sideButton}
@@ -210,12 +211,12 @@ const styles = StyleSheet.create({
   },
   menuPopup: {
       backgroundColor: COLORS.white,
-      borderRadius: 20, // 👈 Arrondi partout pour faire une bulle
-      marginHorizontal: 76, // 👈 Règle la largeur pile sur celle du bouton central
-      marginBottom: 10, // 👈 La fait flotter juste au-dessus de ta barre
+      borderRadius: 20,
+      marginHorizontal: 76,
+      marginBottom: 10,
       paddingVertical: 8,
-      paddingBottom: 8, // 👈 On réduit un peu l'espace vide en bas
-      elevation: 5, // 👈 Petite ombre (optionnel mais plus joli)
+      paddingBottom: 8,
+      elevation: 5,
     },
   menuItem: {
     flexDirection: 'row',
