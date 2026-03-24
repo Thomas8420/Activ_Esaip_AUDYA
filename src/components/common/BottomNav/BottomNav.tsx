@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ChatIcon from '../../../assets/images/chat.svg';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
@@ -50,6 +51,7 @@ const BottomNav = () => {
   const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatbotOpen, setChatbotOpen] = useState(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
 
@@ -101,7 +103,7 @@ const BottomNav = () => {
       </Modal>
 
       {/* ── Barre ── */}
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingBottom: 10 + bottomInset / 4 }]}>
         {/* Bouton Accueil */}
         <TouchableOpacity
           style={styles.sideButton}

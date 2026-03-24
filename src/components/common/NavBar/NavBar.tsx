@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles, COLORS } from '../../../screens/Home/HomeScreen.styles';
 import { useNavigation } from '../../../context/NavigationContext';
 import { useAuth } from '../../../context/AuthContext';
@@ -27,6 +28,7 @@ const NavBar = () => {
   const { navigateToSettings, navigateToMyProfile } = useNavigation();
   const { logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
+  const { top: topInset } = useSafeAreaInsets();
 
   return (
     <>
@@ -73,7 +75,7 @@ const NavBar = () => {
           <Pressable style={styles.dropdownOverlay} onPress={() => setProfileOpen(false)} />
 
           {/* Contenu du menu déroulant */}
-          <View style={styles.dropdown}>
+          <View style={[styles.dropdown, { top: 25 + topInset }]}>
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}

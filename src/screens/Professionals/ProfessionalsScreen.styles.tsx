@@ -118,6 +118,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
+    marginTop: 10,
   },
   filterButton: {
     flex: 1,

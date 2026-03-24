@@ -8,7 +8,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
@@ -230,7 +231,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             activeOpacity={0.8}
           >
             <View style={[styles.formCheckbox, consentChecked && styles.formCheckboxChecked]}>
-              {consentChecked && <Text style={styles.formCheckboxTick}>✓</Text>}
+              {consentChecked && <Icon name="checkmark" size={14} color={COLORS.white} />}
             </View>
             <Text style={styles.formCheckboxLabel}>
               Attention, l'ajout d'un professionnel donne accès à vos données médicales.
