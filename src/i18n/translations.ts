@@ -3,7 +3,7 @@
 // Pour ajouter une langue : dupliquer un bloc et renseigner toutes les clés.
 // Pour ajouter une clé : l'ajouter dans les 3 langues.
 
-export type Language = 'FR' | 'EN' | 'ES' | 'TH' | 'AR' | 'HY';
+export type Language = 'FR' | 'EN' | 'ES' | 'TH' | 'AR' | 'HY' | 'RU' | 'TR';
 
 type TranslationMap = Record<string, string>;
 
@@ -505,4 +505,170 @@ const HY: TranslationMap = {
   'error.delete':   'Հնարավոր չէ ջնջել հաշիվը։',
 };
 
-export const TRANSLATIONS: Record<Language, TranslationMap> = { FR, EN, ES, TH, AR, HY };
+const RU: TranslationMap = {
+  // ── Главное меню ───────────────────────────────────────────────────────
+  'menu.health':         'Моё здоровье',
+  'menu.hearing':        'Мои слуховые аппараты',
+  'menu.notebook':       'Мой слуховой дневник',
+  'menu.professionals':  'Мои специалисты',
+  'menu.agenda':         'Моё расписание',
+  'menu.message':        'Мои сообщения',
+  'menu.questionnaire':  'Мои анкеты',
+  'menu.news':           'Новости',
+
+  // ── Метки экрана ──────────────────────────────────────────────────────
+  'screen.home':              'Главная',
+  'screen.health':            'Моё здоровье',
+  'screen.professionals':     'Мои специалисты',
+  'screen.settings':          'Мои настройки',
+  'screen.profile':           'Мой профиль',
+  'screen.messaging':         'Мои сообщения',
+  'screen.agenda':            'Моё расписание',
+  'screen.notebook':          'Мой слуховой дневник',
+  'screen.hearing':           'Мои слуховые аппараты',
+  'screen.questionnaire':     'Мои анкеты',
+  'screen.news':              'Новости',
+  'screen.menu':              'Меню',
+
+  // ── NavBar ─────────────────────────────────────────────────────────────
+  'navbar.notifications':   'Уведомления',
+  'navbar.settings':        'Настройки',
+  'navbar.profileMenu':     'Меню профиля',
+  'navbar.profile':         'Профиль',
+  'navbar.preferences':     'Предпочтения',
+  'navbar.logout':          'Выйти',
+
+  // ── BottomNav ──────────────────────────────────────────────────────────
+  'bottomnav.home':      'Главная',
+  'bottomnav.openMenu':  'Открыть меню',
+  'bottomnav.assistant': 'Ассистент AUDYA',
+
+  // ── Главная страница ───────────────────────────────────────────────────
+  'main.banner':           'Audya упрощает наблюдение за пациентами и укрепляет многопрофильную координацию',
+  'main.footer.copyright': '© {year} AUDYA — Все права защищены',
+  'main.footer.legal':     'Правовая информация',
+  'main.footer.rgpd':      'GDPR',
+  'main.footer.cookies':   'Файлы cookie',
+  'main.footer.contact':   'Связаться с нами',
+
+  // ── Настройки ─────────────────────────────────────────────────────────
+  'settings.title':                 'МОИ НАСТРОЙКИ',
+  'settings.preferences':           'Предпочтения',
+  'settings.language':              'Язык',
+  'settings.date':                  'Дата',
+  'settings.time':                  'Время',
+  'settings.notifications':         'Уведомления',
+  'settings.notif.messages':        'Уведомления о сообщениях',
+  'settings.notif.alerts':          'Уведомления об оповещениях',
+  'settings.notif.tasks':           'Уведомления о задачах',
+  'settings.password':              'Мой пароль',
+  'settings.password.new':          'Новый пароль',
+  'settings.password.confirm':      'Подтвердить пароль',
+  'settings.password.mismatch':     'Пароли не совпадают.',
+  'settings.password.change':       'Изменить пароль',
+  'settings.password.changing':     'Обновление…',
+  'settings.password.show':         'Показать пароль',
+  'settings.password.hide':         'Скрыть пароль',
+  'settings.password.showConfirm':  'Показать подтверждение',
+  'settings.password.hideConfirm':  'Скрыть подтверждение',
+  'settings.account':               'Мой аккаунт',
+  'settings.account.delete':        'Удалить мой аккаунт',
+  'settings.save':                  'Сохранить изменения',
+  'settings.saving':                'Сохранение…',
+
+  // ── Модальное окно удаления ────────────────────────────────────────────
+  'modal.delete.text':    'Вы действительно хотите удалить свой аккаунт?',
+  'modal.delete.cancel':  'Отмена',
+  'modal.delete.confirm': 'Да',
+
+  // ── Ошибки ────────────────────────────────────────────────────────────
+  'error.load':     'Не удалось загрузить настройки.',
+  'error.save':     'Не удалось сохранить настройки.',
+  'error.password': 'Не удалось изменить пароль.',
+  'error.delete':   'Не удалось удалить аккаунт.',
+};
+
+const TR: TranslationMap = {
+  // ── Ana menü ───────────────────────────────────────────────────────────
+  'menu.health':         'Sağlığım',
+  'menu.hearing':        'İşitme cihazlarım',
+  'menu.notebook':       'İşitme günlüğüm',
+  'menu.professionals':  'Uzmanlarım',
+  'menu.agenda':         'Ajandам',
+  'menu.message':        'Mesajlarım',
+  'menu.questionnaire':  'Anketlerim',
+  'menu.news':           'Haberler',
+
+  // ── Ekran etiketleri ──────────────────────────────────────────────────
+  'screen.home':              'Ana sayfa',
+  'screen.health':            'Sağlığım',
+  'screen.professionals':     'Uzmanlarım',
+  'screen.settings':          'Ayarlarım',
+  'screen.profile':           'Profilim',
+  'screen.messaging':         'Mesajlarım',
+  'screen.agenda':            'Ajandам',
+  'screen.notebook':          'İşitme günlüğüm',
+  'screen.hearing':           'İşitme cihazlarım',
+  'screen.questionnaire':     'Anketlerim',
+  'screen.news':              'Haberler',
+  'screen.menu':              'Menü',
+
+  // ── NavBar ─────────────────────────────────────────────────────────────
+  'navbar.notifications':   'Bildirimler',
+  'navbar.settings':        'Ayarlar',
+  'navbar.profileMenu':     'Profil menüsü',
+  'navbar.profile':         'Profil',
+  'navbar.preferences':     'Tercihler',
+  'navbar.logout':          'Çıkış yap',
+
+  // ── BottomNav ──────────────────────────────────────────────────────────
+  'bottomnav.home':      'Ana sayfa',
+  'bottomnav.openMenu':  'Menüyü aç',
+  'bottomnav.assistant': 'AUDYA Asistanı',
+
+  // ── Ana sayfa ─────────────────────────────────────────────────────────
+  'main.banner':           'Audya hasta takibini kolaylaştırır ve multidisipliner koordinasyonu güçlendirir',
+  'main.footer.copyright': '© {year} AUDYA — Tüm hakları saklıdır',
+  'main.footer.legal':     'Yasal bildirim',
+  'main.footer.rgpd':      'KVKK',
+  'main.footer.cookies':   'Çerezler',
+  'main.footer.contact':   'Bize ulaşın',
+
+  // ── Ayarlar ────────────────────────────────────────────────────────────
+  'settings.title':                 'AYARLARIM',
+  'settings.preferences':           'Tercihler',
+  'settings.language':              'Dil',
+  'settings.date':                  'Tarih',
+  'settings.time':                  'Saat',
+  'settings.notifications':         'Bildirimler',
+  'settings.notif.messages':        'Mesaj bildirimleri',
+  'settings.notif.alerts':          'Uyarı bildirimleri',
+  'settings.notif.tasks':           'Görev bildirimleri',
+  'settings.password':              'Şifrem',
+  'settings.password.new':          'Yeni şifre',
+  'settings.password.confirm':      'Şifreyi onayla',
+  'settings.password.mismatch':     'Şifreler eşleşmiyor.',
+  'settings.password.change':       'Şifreyi değiştir',
+  'settings.password.changing':     'Güncelleniyor…',
+  'settings.password.show':         'Şifreyi göster',
+  'settings.password.hide':         'Şifreyi gizle',
+  'settings.password.showConfirm':  'Onayı göster',
+  'settings.password.hideConfirm':  'Onayı gizle',
+  'settings.account':               'Hesabım',
+  'settings.account.delete':        'Hesabımı sil',
+  'settings.save':                  'Değişiklikleri kaydet',
+  'settings.saving':                'Kaydediliyor…',
+
+  // ── Hesap silme modalı ─────────────────────────────────────────────────
+  'modal.delete.text':    'Hesabınızı gerçekten silmek istiyor musunuz?',
+  'modal.delete.cancel':  'İptal',
+  'modal.delete.confirm': 'Evet',
+
+  // ── Hatalar ────────────────────────────────────────────────────────────
+  'error.load':     'Ayarlar yüklenemedi.',
+  'error.save':     'Ayarlar kaydedilemedi.',
+  'error.password': 'Şifre değiştirilemedi.',
+  'error.delete':   'Hesap silinemedi.',
+};
+
+export const TRANSLATIONS: Record<Language, TranslationMap> = { FR, EN, ES, TH, AR, HY, RU, TR };

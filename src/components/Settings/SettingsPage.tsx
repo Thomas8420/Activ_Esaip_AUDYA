@@ -43,7 +43,7 @@ const MOCK_SETTINGS: UserSettings = {
 };
 
 // ─── Preference options ────────────────────────────────────────────────────────
-const LANGUAGE_OPTIONS: Language[] = ['FR', 'EN', 'ES', 'TH', 'AR', 'HY'];
+const LANGUAGE_OPTIONS: Language[] = ['FR', 'EN', 'ES', 'TH', 'AR', 'HY', 'RU', 'TR'];
 const DATE_FORMAT_OPTIONS = ['JJ/MM/AAAA', 'MM/JJ/AAAA', 'AAAA/MM/JJ'];
 const TIME_FORMAT_OPTIONS = ['24h', '12h'];
 
