@@ -263,10 +263,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     gap: 12,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.offWhite,
   },
   rowUnread: {
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.white,
   },
   iconCircle: {
     width: 38,
