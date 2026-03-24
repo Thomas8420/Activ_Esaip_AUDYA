@@ -14,6 +14,7 @@ import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { styles, COLORS } from '../../screens/Health/HealthScreen.styles';
 import { fetchPatientHealth, PatientHealth, USE_HEALTH_API } from '../../services/healthService';
+import QrCode from '../../assets/images/qr-code.svg';
 
 // ─── Mock Data (remove once API is ready) ────────────────────────────────────
 const MOCK_HEALTH: PatientHealth = {
@@ -133,10 +134,18 @@ const HealthPage = () => {
 
                 <View style={styles.verticalDivider} />
 
-                <View style={styles.bmiBlock}>
-                  <Text style={styles.bmiLabel}>Mon IMC</Text>
-                  <View style={styles.bmiCircle}>
-                    <Text style={styles.bmiValue}>{bmiValue}</Text>
+                <View style={styles.summaryMetrics}>
+                  <View style={styles.bmiBlock}>
+                    <Text style={styles.bmiLabel}>Mon IMC</Text>
+                    <View style={styles.bmiCircle}>
+                      <Text style={styles.bmiValue}>{bmiValue}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.metricDivider} />
+
+                  <View style={styles.qrCodeContainer}>
+                    <QrCode width={56} height={56} />
                   </View>
                 </View>
               </View>

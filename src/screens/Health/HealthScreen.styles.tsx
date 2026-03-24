@@ -90,6 +90,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 80,
   },
+  summaryMetrics: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  metricDivider: {
+    width: 1,
+    height: 56,
+    backgroundColor: '#999999',
+  },
   bmiLabel: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 10,
@@ -110,25 +120,9 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.text,
   },
-  qrPlaceholder: {
-    width: 56,
-    height: 56,
-    borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: COLORS.white,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    overflow: 'hidden',
-    marginLeft: 4,
-  },
-  qrCell: {
-    width: '25%',
-    height: '25%',
-    borderWidth: 0.5,
-    borderColor: '#CCCCCC',
-  },
-  qrCellFilled: {
-    backgroundColor: '#333333',
+  qrCodeContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   sectionCard: {
