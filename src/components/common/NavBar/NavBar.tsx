@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Pressable,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { styles, COLORS } from '../../../screens/Home/HomeScreen.styles';
+import { styles, COLORS, FONT_BOLD } from '../../../screens/Home/HomeScreen.styles';
 import { useNavigation } from '../../../context/NavigationContext';
 import { useAuth } from '../../../context/AuthContext';
+import {
+  fetchNotifications,
+  markAsRead,
+  markAllAsRead,
+  AppNotification,
+} from '../../../services/notificationService';
+import NotificationPanel from './NotificationPanel';
 
 // --- Imports des icônes SVG ---
 // Chaque icône est un composant React à part entière.
@@ -28,7 +36,34 @@ const NavBar = () => {
   const { navigateToSettings, navigateToMyProfile } = useNavigation();
   const { logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const { top: topInset } = useSafeAreaInsets();
+
+  useEffect(() => {
+    fetchNotifications()
+      .then(setNotifications)
+      .catch(() => {});
+  }, []);
+
+  const unreadCount = notifications.filter(n => n.readAt === null).length;
+
+  const handleBellPress = () => {
+    setNotifOpen(prev => !prev);
+    setProfileOpen(false);
+  };
+
+  const handleMarkAsRead = async (id: string) => {
+    await markAsRead(id);
+    const updated = await fetchNotifications();
+    setNotifications(updated);
+  };
+
+  const handleMarkAllAsRead = async () => {
+    await markAllAsRead();
+    const updated = await fetchNotifications();
+    setNotifications(updated);
+  };
 
   return (
     <>
@@ -41,8 +76,22 @@ const NavBar = () => {
 
         {/* Actions à droite (pilule orange) */}
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.headerIconBtn} accessibilityLabel="Notifications" accessibilityRole="button">
+
+          {/* Cloche notifications + badge */}
+          <TouchableOpacity
+            style={styles.headerIconBtn}
+            accessibilityLabel={`Notifications${unreadCount > 0 ? `, ${unreadCount} non lue${unreadCount > 1 ? 's' : ''}` : ''}`}
+            accessibilityRole="button"
+            onPress={handleBellPress}
+          >
             <BellIcon width={30} height={30} fill={COLORS.white} />
+            {unreadCount > 0 && (
+              <View style={badgeStyles.badge}>
+                <Text style={badgeStyles.badgeText}>
+                  {unreadCount > 9 ? '9+' : String(unreadCount)}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -57,7 +106,7 @@ const NavBar = () => {
           {/* Bouton pour ouvrir/fermer le menu déroulant */}
           <TouchableOpacity
             style={styles.headerIconBtnWide}
-            onPress={() => setProfileOpen(!profileOpen)}
+            onPress={() => { setProfileOpen(prev => !prev); setNotifOpen(false); }}
             accessibilityLabel="Menu profil"
             accessibilityRole="button"
           >
@@ -67,8 +116,18 @@ const NavBar = () => {
         </View>
       </View>
 
+      {/* -- Panel notifications -- */}
+      {notifOpen && (
+        <NotificationPanel
+          notifications={notifications}
+          topOffset={25 + topInset}
+          onClose={() => setNotifOpen(false)}
+          onMarkAsRead={handleMarkAsRead}
+          onMarkAllAsRead={handleMarkAllAsRead}
+        />
+      )}
+
       {/* -- Menu déroulant du profil -- */}
-      {/* Conditionnellement rendu en fonction de l'état `profileOpen` */}
       {profileOpen && (
         <>
           {/* Filtre gris semi-transparent qui ferme le menu au clic */}
@@ -111,5 +170,28 @@ const NavBar = () => {
     </>
   );
 };
+
+// ─── Styles locaux (badge uniquement) ─────────────────────────────────────────
+
+const badgeStyles = StyleSheet.create({
+  badge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: COLORS.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  badgeText: {
+    fontFamily: FONT_BOLD,
+    fontSize: 9,
+    color: COLORS.orange,
+    lineHeight: 12,
+  },
+});
 
 export default NavBar;
