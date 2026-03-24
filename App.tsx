@@ -26,8 +26,6 @@ function AppContent() {
   const isDarkMode = useColorScheme() === 'dark';
   const { currentScreen } = useNavigation();
 
-    console.log("L'écran actuel selon le système est :", currentScreen);
-
   return (
     <>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />

@@ -8,9 +8,9 @@ import OreilleDroiteIcon from '../../assets/images/oreille-droite.svg';
 import OreilleGaucheIcon from '../../assets/images/oreille-gauche.svg';
 
 interface DeviceCardProps {
-  side: 'DROITE' | 'GAUCHE';
-  data: AppareilDetails;
-  dotColor: string;
+  readonly side: 'DROITE' | 'GAUCHE';
+  readonly data: AppareilDetails;
+  readonly dotColor: string;
 }
 
 const DeviceCard: React.FC<DeviceCardProps> = ({ side, data, dotColor }) => {

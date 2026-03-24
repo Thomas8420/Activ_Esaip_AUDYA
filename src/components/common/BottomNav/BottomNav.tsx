@@ -89,44 +89,28 @@ const BottomNav = () => {
         <Pressable style={styles.menuOverlay} onPress={() => setMenuOpen(false)}>
           <View style={styles.menuPopup}>
             {MENU_ITEMS.map((item, index) => {
-                          const isActive = item.label === sectionLabel; // 👈 1. On vérifie si c'est la page actuelle
-                          return (
-                            <React.Fragment key={item.id}>
-                              {index > 0 && <View style={styles.menuSeparator} />}
-                              <TouchableOpacity
-                                style={styles.menuItem}
-                                onPress={() => handleMenuItemPress(item.id)}
-                                activeOpacity={0.7}
-                              >
-                                {/* 👈 2. L'icône passe en gris si non active, orange si active */}
-                                <item.icon width={22} height={22} fill={isActive ? COLORS.orange : COLORS.text} color={isActive ? COLORS.orange : COLORS.text} />
-
-                                {/* 👈 3. Le texte passe en orange et gras si actif */}
-                                <Text style={[
-                                  styles.menuItemLabel,
-                                  isActive && { color: COLORS.orange, fontFamily: FONT_SEMIBOLD }
-                                ]}>
-                                  {item.label}
-                                </Text>
-                              </TouchableOpacity>
-                            </React.Fragment>
-                          );
-                        })}
-            {MENU_ITEMS.map((item, index) => (
-              <React.Fragment key={item.id}>
-                {index > 0 && <View style={styles.menuSeparator} />}
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => handleMenuItemPress(item.id)}
-                  activeOpacity={0.7}
-                  accessibilityLabel={item.label}
-                  accessibilityRole="button"
-                >
-                  <item.icon width={22} height={22} fill={COLORS.orange} />
-                  <Text style={styles.menuItemLabel}>{item.label}</Text>
-                </TouchableOpacity>
-              </React.Fragment>
-            ))}
+              const isActive = item.label === sectionLabel;
+              return (
+                <React.Fragment key={item.id}>
+                  {index > 0 && <View style={styles.menuSeparator} />}
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => handleMenuItemPress(item.id)}
+                    activeOpacity={0.7}
+                    accessibilityLabel={item.label}
+                    accessibilityRole="button"
+                  >
+                    <item.icon width={22} height={22} fill={isActive ? COLORS.orange : COLORS.text} />
+                    <Text style={[
+                      styles.menuItemLabel,
+                      isActive && { color: COLORS.orange, fontFamily: FONT_SEMIBOLD },
+                    ]}>
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                </React.Fragment>
+              );
+            })}
           </View>
         </Pressable>
       </Modal>

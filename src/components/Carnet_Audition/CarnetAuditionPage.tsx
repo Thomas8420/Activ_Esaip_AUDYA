@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigation } from '../../context/NavigationContext';
 import {
   View,
   Text,
@@ -17,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import CTA1 from '../common/Button/CTA1';
+import { COLORS } from '../../screens/Home/HomeScreen.styles';
 import CTA4 from '../common/Button/CTA4';
 
 // Vues déportées
@@ -41,7 +41,6 @@ import ListIcon from '../../assets/images/list-icon.svg';
 import DropdownIcon from '../../assets/images/dropdown.svg';
 
 const CarnetAuditionPage = () => {
-    const { currentScreen, navigateTo } = useNavigation();
   const [documents, setDocuments] = useState<AuditionDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'timeline' | 'grid' | 'list'>('timeline');
@@ -49,12 +48,6 @@ const CarnetAuditionPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('Tout');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const filterOptions = ['Tout', 'Ordonnances', 'CR Orthophonie', 'Notes de suivi'];
-
-    useEffect(() => {
-        if (currentScreen !== 'carnet-audition') {
-          navigateTo('carnet-audition');
-        }
-      }, [currentScreen, navigateTo]);
 
   useEffect(() => {
     const load = async () => {
@@ -66,7 +59,7 @@ const CarnetAuditionPage = () => {
         } else {
           setDocuments(getMockDocuments());
         }
-      } catch (error) {
+      } catch {
         Alert.alert('Erreur', 'Impossible de charger les documents.');
       } finally {
         setIsLoading(false);
@@ -76,7 +69,7 @@ const CarnetAuditionPage = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f3ef' }} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <StatusBar barStyle="dark-content" />
       <NavBar />
 
@@ -95,25 +88,14 @@ const CarnetAuditionPage = () => {
               <View style={styles.rightControl}>
                 <Text style={styles.displayText}>Affichage</Text>
                 <View style={styles.displayIcons}>
-                    <TouchableOpacity onPress={() => setViewMode('timeline')}>
-                        <TimelineIcon
-                            width={22} height={22}
-                            color={viewMode === 'timeline' ? '#F15A24' : '#DDDDDD'}
-                        />
+                    <TouchableOpacity onPress={() => setViewMode('timeline')} accessibilityLabel="Vue timeline" accessibilityRole="button">
+                      <TimelineIcon width={22} height={22} color={viewMode === 'timeline' ? COLORS.orange : COLORS.border} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => setViewMode('grid')}>
-                        <GridIcon
-                            width={22} height={22}
-                            color={viewMode === 'grid' ? '#F15A24' : '#DDDDDD'}
-                        />
+                    <TouchableOpacity onPress={() => setViewMode('grid')} accessibilityLabel="Vue grille" accessibilityRole="button">
+                      <GridIcon width={22} height={22} color={viewMode === 'grid' ? COLORS.orange : COLORS.border} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => setViewMode('list')}>
-                        <ListIcon
-                            width={22} height={22}
-                            color={viewMode === 'list' ? '#F15A24' : '#DDDDDD'}
-                        />
+                    <TouchableOpacity onPress={() => setViewMode('list')} accessibilityLabel="Vue liste" accessibilityRole="button">
+                      <ListIcon width={22} height={22} color={viewMode === 'list' ? COLORS.orange : COLORS.border} />
                     </TouchableOpacity>
                 </View>
               </View>
@@ -152,7 +134,7 @@ const CarnetAuditionPage = () => {
 
           {/* --- AFFICHAGE DU CONTENU --- */}
           {isLoading ? (
-            <ActivityIndicator size="large" color="#F15A24" style={{ marginTop: 50 }} />
+            <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 50 }} />
           ) : (
             <>
               {viewMode === 'timeline' && <CarnetTimelineView documents={documents} />}

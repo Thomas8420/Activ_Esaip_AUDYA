@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { Pressable, Text, StyleSheet, GestureResponderEvent } from 'react-native';
-
-// 👉 Définition de tes couleurs (à adapter selon tes constantes globales)
-// Utilisation d'un orange primary estimé à partir des images.
-const PRIMARY_COLOR = '#F15A24'; // Orange primary
-const WHITE_COLOR = '#FFFFFF';
-const TEXT_DARK = '#333333'; // Gris foncé pour le texte par défaut
-// const FONT_SEMIBOLD = 'Montserrat-SemiBold'; // Si tu as une police spécifique
+import { COLORS, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 
 interface Cta1ButtonProps {
   label: string;
@@ -22,30 +16,26 @@ const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style }) => {
   const buttonStyle = [
     styles.button,
     {
-      // Défaut : orange plein, Pressé : blanc avec contour orange
-      backgroundColor: isPressed ? WHITE_COLOR : PRIMARY_COLOR,
-      borderColor: PRIMARY_COLOR, // Toujours la même couleur pour le contour
-      borderWidth: 1, // Contour toujours présent pour la constance de taille
+      backgroundColor: isPressed ? COLORS.white : COLORS.orange,
+      borderColor: COLORS.orange,
+      borderWidth: 1,
     },
-    style, // Application des styles externes (marges, etc.)
+    style,
   ];
 
-  // 👉 Styles dynamiques pour le texte à l'intérieur
   const textStyle = [
     styles.text,
-    {
-      // Défaut : texte blanc, Pressé : texte orange
-      color: isPressed ? PRIMARY_COLOR : WHITE_COLOR,
-    },
+    { color: isPressed ? COLORS.orange : COLORS.white },
   ];
 
   return (
     <Pressable
-      // 👉 Gestion des états de presse
-      onPressIn={() => setIsPressed(true)}   // Quand on commence à appuyer
-      onPressOut={() => setIsPressed(false)} // Quand on relâche
-      onPress={onPress}                     // L'action principale
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      onPress={onPress}
       style={buttonStyle}
+      accessibilityRole="button"
+      accessibilityLabel={label}
     >
       <Text style={textStyle}>{label}</Text>
     </Pressable>
@@ -54,20 +44,17 @@ const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style }) => {
 
 const styles = StyleSheet.create({
   button: {
-    // 👉 Style de base du bouton (layout, arrondis)
-    borderRadius: 20, // Coins très arrondis comme sur les images
-    paddingVertical: 10, // Espace vertical à l'intérieur
-    paddingHorizontal: 20, // Espace horizontal à l'intérieur
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 100, // Taille minimale pour éviter des boutons trop étroits
+    minWidth: 100,
   },
   text: {
-    // 👉 Style de base du texte
-    // fontFamily: FONT_SEMIBOLD,
+    fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
     textAlign: 'center',
-    fontWeight: '600', // Poids du texte (SemiBold)
   },
 });
 

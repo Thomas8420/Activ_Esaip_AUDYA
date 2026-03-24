@@ -5,26 +5,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import DeviceCard from './DeviceCard';
+import { COLORS } from '../../screens/Home/HomeScreen.styles';
 
-// Imports des icônes (Assure-toi que ces chemins sont corrects selon ton projet !)
 import EyeIcon from '../../assets/images/eye.svg';
 import DownloadIcon from '../../assets/images/download.svg';
 import TrashIcon from '../../assets/images/trash.svg';
 
 export interface AppareilDetails {
-    id: number;
-    type: string;
-    marque: string;
-    date: string;
-    serial: string;
-    rppsP: string;
-    rppsR: string;
+  id: number;
+  type: string;
+  marque: string;
+  modele: string;
+  date: string;
+  serial: string;
+  rppsP: string;
+  rppsR: string;
+  classe: number;
 }
 
 // Nos fausses données pour le tableau
 const appareilsMock: AppareilDetails[] = [
-  { id: 1, type: "Contour d'oreilles", marque: "Phonak", date: "04/07/2018", serial: "76543456789", rppsP: "10003439196", rppsR: "12121212121" },
-  { id: 2, type: "Contour d'oreilles", marque: "Starkey", date: "11/09/2024", serial: "98765432100", rppsP: "20003439196", rppsR: "32323232323" },
+  { id: 1, type: "Contour d'oreilles", marque: 'Phonak', modele: 'Lumity', date: '04/07/2018', serial: '76543456789', rppsP: '10003439196', rppsR: '12121212121', classe: 1 },
+  { id: 2, type: "Contour d'oreilles", marque: 'Starkey', modele: 'Starkey', date: '11/09/2024', serial: '98765432100', rppsP: '20003439196', rppsR: '32323232323', classe: 2 },
 ];
 
 const AppareillagePage = () => {
@@ -56,12 +58,12 @@ const AppareillagePage = () => {
           {/* --- CARTES OREILLES --- */}
           <DeviceCard
             side="DROITE"
-            data={{ ...appareilsMock[0], modele: "Lumity", classe: 1 }}
+            data={appareilsMock[0]}
             dotColor="#FF0000"
           />
           <DeviceCard
             side="GAUCHE"
-            data={{ ...appareilsMock[1], modele: "Starkey", classe: 2 }}
+            data={appareilsMock[1]}
             dotColor="#00AFA3"
           />
 
@@ -79,8 +81,8 @@ const AppareillagePage = () => {
             </View>
 
             {/* --- LIGNES DU TABLEAU --- */}
-            {appareilsMock.map((appareil, index) => (
-              <View key={appareil.id || index} style={styles.row}>
+            {appareilsMock.map((appareil) => (
+              <View key={String(appareil.id)} style={styles.row}>
                 <View style={styles.col1}>
                   <Text style={styles.nameText} numberOfLines={1}>{appareil.type}</Text>
                 </View>
@@ -91,8 +93,13 @@ const AppareillagePage = () => {
                   <Text style={styles.dateText}>{appareil.date.substring(0, 5)}</Text>
                 </View>
                 <View style={styles.col4}>
-                  <TouchableOpacity style={styles.eyeCircle} onPress={() => openDetailsModal(appareil)}>
-                      <EyeIcon width={14} height={14} color="#333" />
+                  <TouchableOpacity
+                    style={styles.eyeCircle}
+                    onPress={() => openDetailsModal(appareil)}
+                    accessibilityLabel={`Voir détails ${appareil.marque}`}
+                    accessibilityRole="button"
+                  >
+                    <EyeIcon width={14} height={14} color="#333" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -131,7 +138,7 @@ const AppareillagePage = () => {
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>OREILLE</Text>
                   {/* Simulation de l'oreille selon la donnée mockée (ici en dur pour l'exemple) */}
-                  <Text style={styles.detailValue}>{selectedAppareil.id === 1 ? 'DROITE' : 'GAUCHE'}</Text>
+                  <Text style={styles.detailValue}>{selectedAppareil.id === appareilsMock[0].id ? 'DROITE' : 'GAUCHE'}</Text>
                 </View>
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>DATE</Text>
@@ -176,7 +183,7 @@ const AppareillagePage = () => {
 // --- STYLES REPRIS DU CARNET AUDITION ---
 const styles = StyleSheet.create({
   // --- FOND PRINCIPAL ---
-  safeArea: { flex: 1, backgroundColor: '#F5F5F0' }, // Beige très clair pour faire ressortir le bloc central
+  safeArea: { flex: 1, backgroundColor: COLORS.background },
   scrollContent: { flex: 1 },
 
   // --- LE GRAND BLOC BLANC CENTRAL ---
@@ -195,7 +202,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
 
-  pageTitle: { fontSize: 18, fontFamily: 'Montserrat-Bold', fontWeight: 'bold', color: '#E85B2A', textAlign: 'center', marginBottom: 25 },
+  pageTitle: { fontSize: 18, fontFamily: 'Montserrat-Bold', fontWeight: 'bold', color: COLORS.orange, textAlign: 'center', marginBottom: 25 },
   historyTitle: { fontSize: 14, fontFamily: 'Montserrat-Bold', fontWeight: 'bold', color: '#002C5B', textAlign: 'center', marginTop: 10, marginBottom: 15 },
 
   // --- TABLEAU HISTORIQUE ---

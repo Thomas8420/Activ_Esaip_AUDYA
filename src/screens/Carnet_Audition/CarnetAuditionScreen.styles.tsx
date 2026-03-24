@@ -1,7 +1,9 @@
 import { StyleSheet } from 'react-native';
+import { COLORS } from '../Home/HomeScreen.styles';
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f3ef' },
+  safeArea: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: COLORS.background },
   scrollContent: { padding: 15, paddingBottom: 100 },
   card: {
     backgroundColor: 'white',
@@ -16,7 +18,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
-    color: '#F15A24',
+    color: COLORS.orange,
     textAlign: 'center',
     marginBottom: 30,
     textTransform: 'uppercase',
@@ -117,7 +119,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 2,
   },
-  iconLeft: { right: -15, borderColor: '#F15A24' },
+  iconLeft: { right: -15, borderColor: COLORS.orange },
   iconRight: { left: -15, borderColor: '#3ABFBF' },
   itemContent: {
     backgroundColor: '#F8F9FA',
@@ -148,7 +150,7 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#F15A24',
+    color: COLORS.orange,
     marginBottom: 20,
     textAlign: 'center'
   },
@@ -202,7 +204,7 @@ export const styles = StyleSheet.create({
     padding: 15,
     alignItems: 'center',
     borderRadius: 8,
-    backgroundColor: '#F15A24',
+    backgroundColor: COLORS.orange,
     marginLeft: 10
   },
   saveButtonText: { color: 'white', fontWeight: 'bold' },

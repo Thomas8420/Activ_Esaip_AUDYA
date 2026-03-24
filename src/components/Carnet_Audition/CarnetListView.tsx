@@ -38,13 +38,17 @@ export const CarnetListView: React.FC<Props> = ({ documents }) => {
       </View>
 
       {/* --- LIGNES DU TABLEAU --- */}
-      {documents.map((doc, index) => (
-        <View key={doc.id || index} style={localStyles.row}>
+      {documents.map((doc) => (
+        <View key={String(doc.id)} style={localStyles.row}>
 
          <View style={localStyles.col1}>
-            {/* LE CLIC SUR L'ŒIL EST ICI */}
-            <TouchableOpacity style={localStyles.eyeCircle} onPress={() => openDetailsModal(doc)}>
-                <EyeIcon width={14} height={14} color="#333" />
+            <TouchableOpacity
+              style={localStyles.eyeCircle}
+              onPress={() => openDetailsModal(doc)}
+              accessibilityLabel={`Voir ${doc.title ?? doc.type}`}
+              accessibilityRole="button"
+            >
+              <EyeIcon width={14} height={14} color="#333" />
             </TouchableOpacity>
 
             <View style={{ flex: 1, paddingLeft: 8 }}>
@@ -68,11 +72,11 @@ export const CarnetListView: React.FC<Props> = ({ documents }) => {
 
           <View style={localStyles.col4}>
             <View style={localStyles.actionsContainer}>
-              <TouchableOpacity>
+              <TouchableOpacity accessibilityLabel="Télécharger" accessibilityRole="button">
                 <DownloadIcon width={14} height={14} color="#333" />
               </TouchableOpacity>
-                <View style={localStyles.spacer} />
-              <TouchableOpacity>
+              <View style={localStyles.spacer} />
+              <TouchableOpacity accessibilityLabel="Supprimer" accessibilityRole="button">
                 <TrashIcon width={14} height={14} color="#333" />
               </TouchableOpacity>
             </View>

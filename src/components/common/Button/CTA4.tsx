@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, GestureResponderEvent, ViewStyle, TextStyle } from 'react-native';
+import { FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 
-// 👉 Définition de tes couleurs Figma (image_50.png)
-const CTA4_BACKGROUND = '#C8D6E1'; // Gris-bleu très clair uni
-const CTA4_TEXT = '#172A4F'; // Marine très foncé
+const CTA4_BACKGROUND = '#C8D6E1';
+const CTA4_TEXT = '#172A4F';
 
 interface CTA4Props {
   label: string;
@@ -13,22 +13,15 @@ interface CTA4Props {
 }
 
 const CTA4: React.FC<CTA4Props> = ({ label, onPress, style, textStyle }) => {
-  // 👉 Style du bouton
-  const buttonStyle: ViewStyle[] = [
-    styles.button,
-    style, // Application des styles externes
-  ];
-
-  // 👉 Style du texte
-  const textStyleComputed: TextStyle[] = [
-    styles.text,
-    textStyle,
-  ];
+  const buttonStyle: ViewStyle[] = style ? [styles.button, style] : [styles.button];
+  const textStyleComputed: TextStyle[] = textStyle ? [styles.text, textStyle] : [styles.text];
 
   return (
     <Pressable
-      onPress={onPress} // L'action principale
+      onPress={onPress}
       style={buttonStyle}
+      accessibilityRole="button"
+      accessibilityLabel={label}
     >
       <Text style={textStyleComputed}>{label}</Text>
     </Pressable>
@@ -37,20 +30,18 @@ const CTA4: React.FC<CTA4Props> = ({ label, onPress, style, textStyle }) => {
 
 const styles = StyleSheet.create({
   button: {
-    // 👉 Style de base du bouton selon Figma (image_50.png)
-    borderRadius: 20, // Corner radius
-    backgroundColor: CTA4_BACKGROUND, // Fill
-    paddingVertical: 10, // Padding vertical
-    paddingHorizontal: 20, // Padding horizontal
+    borderRadius: 20,
+    backgroundColor: CTA4_BACKGROUND,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    // 👉 Style de base du texte selon Figma (image_50.png)
+    fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
     textAlign: 'center',
-    color: CTA4_TEXT, // Texte color
-    fontWeight: '600', // Poids du texte (SemiBold)
+    color: CTA4_TEXT,
   },
 });
 
