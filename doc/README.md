@@ -8,6 +8,7 @@ Application mobile React Native de suivi audiologique patient.
 
 | Document | Contenu |
 |----------|---------|
+| [00 — Fichiers racine](dev/00_fichiers_racine.md) | Utilité de chaque fichier/dossier hors `src/` |
 | [01 — Setup & commandes](dev/01_setup.md) | Installation, lancement, lint, tests |
 | [02 — Architecture](dev/02_architecture.md) | Pattern Screen→Page→Component, structure fichiers |
 | [03 — Navigation](dev/03_navigation.md) | Routeur stack maison, ajout d'écran |
@@ -27,4 +28,4 @@ Application mobile React Native de suivi audiologique patient.
 
 ---
 
-*Généré le 24 mars 2026 — branche `main`*
+*Écrit le 24 mars 2026 — branche `main`*
