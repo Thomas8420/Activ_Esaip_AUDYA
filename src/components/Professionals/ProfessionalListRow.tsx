@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import { Professional } from '../../services/professionalsService';
 
 interface ProfessionalListRowProps {
@@ -35,20 +36,31 @@ const ProfessionalListRow: React.FC<ProfessionalListRowProps> = ({
         <TouchableOpacity
           onPress={onToggleFavorite}
           style={styles.listActionButton}
+          accessibilityLabel={professional.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          accessibilityRole="button"
         >
-          <Text style={styles.listActionIcon}>
-            {professional.isFavorite ? '⭐' : '☆'}
-          </Text>
+          <Icon
+            name={professional.isFavorite ? 'star' : 'star-outline'}
+            size={14}
+            color={professional.isFavorite ? COLORS.orange : COLORS.textLight}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={onViewProfile}
           style={[styles.listActionButton, styles.listActionButtonPrimary]}
+          accessibilityLabel={`Voir la fiche de ${professional.firstName} ${professional.lastName}`}
+          accessibilityRole="button"
         >
-          <Text style={styles.listActionIcon}>👁</Text>
+          <Icon name="eye-outline" size={14} color={COLORS.white} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default React.memo(ProfessionalListRow);
+export default React.memo(ProfessionalListRow, (prev, next) =>
+  prev.professional === next.professional &&
+  prev.isAlternate === next.isAlternate &&
+  prev.onToggleFavorite === next.onToggleFavorite &&
+  prev.onViewProfile === next.onViewProfile,
+);

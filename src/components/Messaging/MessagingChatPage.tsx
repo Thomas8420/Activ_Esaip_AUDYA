@@ -136,7 +136,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
     if (!USE_MESSAGING_API) {
       return;
     }
-    const interval = setInterval(async () => {
+    const poll = async () => {
       const convId = conversationIdRef.current;
       if (convId == null) {
         return;
@@ -151,7 +151,8 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
       } catch {
         // Polling failure is silent — will retry on next interval
       }
-    }, POLL_INTERVAL_MS);
+    };
+    const interval = setInterval(() => { void poll(); }, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, []);
 
@@ -240,9 +241,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
           fileIds,
         });
         // Mise à jour de l'ID de conversation si c'était une nouvelle conv
-        if (conversationIdRef.current == null) {
-          conversationIdRef.current = result.conversationId;
-        }
+        conversationIdRef.current ??= result.conversationId;
         const newMsg = result.messages[result.messages.length - 1];
         if (newMsg) {
           lastMessageIdRef.current = newMsg.id;
@@ -321,7 +320,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
   }, []);
 
   // ── Localisation ─────────────────────────────────────────────────────────────
-  const hasLocation = conversation.correspondentZip || conversation.correspondentCity;
+  const hasLocation = Boolean(conversation.correspondentZip || conversation.correspondentCity);
   const locationText = [conversation.correspondentZip, conversation.correspondentCity]
     .filter(Boolean)
     .join(' • ');
@@ -405,7 +404,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
         {pendingAttachments.length > 0 && (
           <View style={styles.pendingStrip} testID="pendingStrip">
             {pendingAttachments.map((att, i) => (
-              <View key={i} style={styles.pendingItem}>
+              <View key={`${att.uri}-${att.name}`} style={styles.pendingItem}>
                 <Text style={styles.pendingItemText} numberOfLines={1}>{att.name}</Text>
                 <TouchableOpacity onPress={() => removeAttachment(i)}>
                   <Text style={styles.pendingRemove}>✕</Text>
@@ -439,7 +438,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
 
           <TouchableOpacity
             style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
-            onPress={handleSend}
+            onPress={() => { void handleSend(); }}
             disabled={!canSend}
             accessibilityLabel="Envoyer"
             testID="sendButton"

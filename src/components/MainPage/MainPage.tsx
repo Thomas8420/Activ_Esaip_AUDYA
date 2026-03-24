@@ -33,8 +33,11 @@ const MainPage = () => {
       navigateToMessaging();
     } else if (itemId === 'agenda') {
       navigateToAgenda();
-    }
-    // TODO: Implémenter la navigation pour les autres éléments du menu
+    } else if (itemId === 'notebook') {
+            navigateTo('carnet-audition');
+    } else if (itemId === 'hearing') {
+        navigateTo('appareillage');
+    } // TODO: Implémenter la navigation pour les autres éléments du menu
   };
 
   return (
@@ -55,6 +58,8 @@ const MainPage = () => {
               style={styles.tile}
               activeOpacity={0.7}
               onPress={() => handleMenuItemPress(item.id)}
+              accessibilityLabel={item.label}
+              accessibilityRole="button"
             >
               <item.icon width={48} height={48} />
               <Text style={styles.tileLabel}>{item.label}</Text>

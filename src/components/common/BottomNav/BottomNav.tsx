@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import {
   Modal,
-  Pressable,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ChatIcon from '../../../assets/images/chat.svg';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 import { Screen, useNavigation } from '../../../context/NavigationContext';
 import { MENU_ITEMS } from '../../../constants';
+import ChatbotModal from '../../Chatbot/ChatbotModal';
 
 /** Icône maison */
 const HomeIcon = ({ color }: { color: string }) => (
@@ -38,6 +40,8 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'agenda': 'Mon agenda',
   'agenda-day': 'Mon agenda',
   'agenda-form': 'Mon agenda',
+  'carnet-audition': 'Mon carnet audition',
+  'appareillage': 'Mon appareillage',
 };
 
 /**
@@ -49,6 +53,8 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
 const BottomNav = () => {
   const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
 
@@ -64,46 +70,69 @@ const BottomNav = () => {
       navigateToMessaging();
     } else if (itemId === 'agenda') {
       navigateToAgenda();
+    } else if (itemId === 'notebook') {
+        navigateTo('carnet-audition');
+    } else if (itemId === 'hearing') {
+        navigateTo('appareillage');
     }
-    // TODO: implémenter la navigation pour les autres onglets
   };
 
   return (
     <>
-      {/* ── Popup menu ── */}
+      {/* ── Chatbot — rendu conditionnel : évite qu'un Modal visible={false}
+          intercepte les touches sur la barre (bug Android) ── */}
+      {chatbotOpen && (
+        <ChatbotModal visible onClose={() => setChatbotOpen(false)} />
+      )}
+
+      {/* ── Popup menu — même logique : conditionnel pour éviter le touch-up
+          du bouton central qui rouvre/ferme immédiatement la modale ── */}
+      {menuOpen && (
       <Modal
-        visible={menuOpen}
+        visible
         transparent
         animationType="fade"
         onRequestClose={() => setMenuOpen(false)}
       >
-        <Pressable style={styles.menuOverlay} onPress={() => setMenuOpen(false)}>
+        <TouchableOpacity style={styles.menuOverlay} onPress={() => setMenuOpen(false)} activeOpacity={1}>
           <View style={styles.menuPopup}>
-            {MENU_ITEMS.map((item, index) => (
-              <React.Fragment key={item.id}>
-                {index > 0 && <View style={styles.menuSeparator} />}
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => handleMenuItemPress(item.id)}
-                  activeOpacity={0.7}
-                >
-                  <item.icon width={22} height={22} fill={COLORS.orange} />
-                  <Text style={styles.menuItemLabel}>{item.label}</Text>
-                </TouchableOpacity>
-              </React.Fragment>
-            ))}
+            {MENU_ITEMS.map((item, index) => {
+              const isActive = item.label === sectionLabel;
+              return (
+                <React.Fragment key={item.id}>
+                  {index > 0 && <View style={styles.menuSeparator} />}
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => handleMenuItemPress(item.id)}
+                    activeOpacity={0.7}
+                    accessibilityLabel={item.label}
+                    accessibilityRole="button"
+                  >
+                    <item.icon width={22} height={22} fill={isActive ? COLORS.orange : COLORS.text} />
+                    <Text style={[
+                      styles.menuItemLabel,
+                      isActive && { color: COLORS.orange, fontFamily: FONT_SEMIBOLD },
+                    ]}>
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                </React.Fragment>
+              );
+            })}
           </View>
-        </Pressable>
+        </TouchableOpacity>
       </Modal>
+      )}
 
       {/* ── Barre ── */}
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingBottom: Platform.OS === 'ios' ? Math.max(6, bottomInset / 2) : Math.max(10, bottomInset) }]}>
         {/* Bouton Accueil */}
         <TouchableOpacity
           style={styles.sideButton}
           onPress={goHome}
           activeOpacity={0.7}
           accessibilityLabel="Accueil"
+          accessibilityRole="button"
         >
           <HomeIcon color={COLORS.white} />
         </TouchableOpacity>
@@ -114,6 +143,7 @@ const BottomNav = () => {
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
           accessibilityLabel="Ouvrir le menu"
+          accessibilityRole="button"
         >
           <MenuIcon color={COLORS.orange} />
           <Text style={styles.centerLabel} numberOfLines={1}>
@@ -121,12 +151,13 @@ const BottomNav = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Bouton Chat (Fab intégré) */}
+        {/* Bouton Chat (Fab intégré) — ouvre le chatbot AUDYA */}
         <TouchableOpacity
           style={styles.fabButton}
-          onPress={navigateToMessaging}
+          onPress={() => setChatbotOpen(true)}
           activeOpacity={0.7}
-          accessibilityLabel="Messagerie"
+          accessibilityLabel="Assistant AUDYA"
+          accessibilityRole="button"
         >
           <ChatIcon width={26} height={26} fill={COLORS.white} />
         </TouchableOpacity>
@@ -182,12 +213,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   menuPopup: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingVertical: 8,
-    paddingBottom: 24,
-  },
+      backgroundColor: COLORS.white,
+      borderRadius: 20,
+      marginHorizontal: 76,
+      marginBottom: 10,
+      paddingVertical: 8,
+      paddingBottom: 8,
+      elevation: 5,
+    },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',

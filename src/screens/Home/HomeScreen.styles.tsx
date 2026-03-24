@@ -58,6 +58,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerIconBtnWide: {
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 5,
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   // ── Dropdown Profil (Main Page 3) ──
   dropdownOverlay: {
@@ -70,7 +78,7 @@ export const styles = StyleSheet.create({
     top: 25,
     right: 16,
     width: 192,
-    backgroundColor: COLORS.orangeLight,
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     paddingVertical: 8,
     zIndex: 30,
@@ -84,13 +92,13 @@ export const styles = StyleSheet.create({
   },
   dropdownSeparator: {
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(232, 98, 42, 0.15)',
     marginHorizontal: 15,
   },
   dropdownLabel: {
     fontSize: 14,
     fontFamily: FONT_REGULAR,
-    color: COLORS.white,
+    color: COLORS.orange,
     marginLeft: 10,
   },
 

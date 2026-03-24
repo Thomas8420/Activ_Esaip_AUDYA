@@ -7,8 +7,7 @@ import ReactTestRenderer from 'react-test-renderer';
 import AgendaPage from '../src/components/Agenda/AgendaPage';
 import AgendaDayViewPage from '../src/components/Agenda/AgendaDayViewPage';
 import AgendaFormPage from '../src/components/Agenda/AgendaFormPage';
-import { NavigationProvider } from '../src/context/NavigationContext';
-import { SelectedAgendaEvent } from '../src/context/NavigationContext';
+import { NavigationProvider, SelectedAgendaEvent } from '../src/context/NavigationContext';
 
 const TODAY = '2026-03-13';
 

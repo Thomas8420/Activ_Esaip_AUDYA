@@ -35,13 +35,50 @@ type Props = {
   testID?: string;
 };
 
-const resolveBase = (
-  variant: ButtonVariant,
-): 'primary' | 'secondary' | 'outline' | 'newEmail' => {
+type ResolvedBase = 'primary' | 'secondary' | 'outline' | 'newEmail';
+
+const resolveBase = (variant: ButtonVariant): ResolvedBase => {
   if (['verify', 'validatePwd'].includes(variant)) return 'primary';
   if (['resend', 'register'].includes(variant)) return 'outline';
   if (variant === 'newEmail') return 'newEmail';
-  return variant as 'primary' | 'secondary' | 'outline';
+  return variant as ResolvedBase;
+};
+
+const resolveButtonStyles = (
+  base: ResolvedBase,
+  variant: ButtonVariant,
+  pressed: boolean,
+  disabled: boolean,
+  loading: boolean,
+): ViewStyle[] => {
+  const s: ViewStyle[] = [styles.button];
+  if (base === 'primary') { s.push(styles.button_primary); }
+  if (base === 'secondary') { s.push(styles.button_secondary); }
+  if (base === 'outline') { s.push(styles.button_outline); }
+  if (base === 'newEmail' && !pressed) { s.push(styles.button_newEmail); }
+  if (base === 'newEmail' && pressed) { s.push(styles.button_newEmailPressed); }
+  if (variant === 'verify' || variant === 'resend') { s.push(styles.button_compact); }
+  if (variant === 'validatePwd') { s.push(styles.button_fullWidth); }
+  if (pressed && base === 'primary') { s.push(styles.button_primaryPressed); }
+  if (pressed && base === 'outline') { s.push(styles.button_outlinePressed); }
+  if (disabled || loading) { s.push(styles.button_disabled); }
+  return s;
+};
+
+const resolveLabelStyles = (
+  base: ResolvedBase,
+  variant: ButtonVariant,
+  pressed: boolean,
+): TextStyle[] => {
+  const s: TextStyle[] = [styles.text];
+  if (base === 'primary') { s.push(styles.text_primary); }
+  if (base === 'secondary') { s.push(styles.text_secondary); }
+  if (base === 'outline') { s.push(styles.text_outline); }
+  if (base === 'newEmail' && !pressed) { s.push(styles.text_newEmail); }
+  if (base === 'newEmail' && pressed) { s.push(styles.text_newEmailPressed); }
+  if (variant === 'verify' || variant === 'resend') { s.push(styles.text_compact); }
+  if (pressed && base === 'primary') { s.push(styles.text_primaryPressed); }
+  return s;
 };
 
 const AuthButton: React.FC<Props> = ({
@@ -56,31 +93,8 @@ const AuthButton: React.FC<Props> = ({
 }) => {
   const [pressed, setPressed] = useState(false);
   const base = resolveBase(variant);
-
-  const buttonStyles: ViewStyle[] = [
-    styles.button,
-    ...(base === 'primary' ? [styles.button_primary] : []),
-    ...(base === 'secondary' ? [styles.button_secondary] : []),
-    ...(base === 'outline' ? [styles.button_outline] : []),
-    ...(base === 'newEmail' && !pressed ? [styles.button_newEmail] : []),
-    ...(base === 'newEmail' && pressed ? [styles.button_newEmailPressed] : []),
-    ...(variant === 'verify' || variant === 'resend' ? [styles.button_compact] : []),
-    ...(variant === 'validatePwd' ? [styles.button_fullWidth] : []),
-    ...(pressed && base === 'primary' ? [styles.button_primaryPressed] : []),
-    ...(pressed && base === 'outline' ? [styles.button_outlinePressed] : []),
-    ...((disabled || loading) ? [styles.button_disabled] : []),
-  ];
-
-  const labelStyles: TextStyle[] = [
-    styles.text,
-    ...(base === 'primary' ? [styles.text_primary] : []),
-    ...(base === 'secondary' ? [styles.text_secondary] : []),
-    ...(base === 'outline' ? [styles.text_outline] : []),
-    ...(base === 'newEmail' && !pressed ? [styles.text_newEmail] : []),
-    ...(base === 'newEmail' && pressed ? [styles.text_newEmailPressed] : []),
-    ...(variant === 'verify' || variant === 'resend' ? [styles.text_compact] : []),
-    ...(pressed && base === 'primary' ? [styles.text_primaryPressed] : []),
-  ];
+  const buttonStyles = resolveButtonStyles(base, variant, pressed, disabled, loading);
+  const labelStyles = resolveLabelStyles(base, variant, pressed);
 
   return (
     <TouchableOpacity

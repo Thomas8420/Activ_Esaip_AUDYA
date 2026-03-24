@@ -1,4 +1,4 @@
-import React, { createContext, useState, useMemo, ReactNode } from 'react';
+import React, { createContext, useState, useMemo, useCallback, ReactNode } from 'react';
 
 /**
  * Types d'écran disponibles dans l'application
@@ -90,72 +90,76 @@ export const NavigationContext = createContext<NavigationContextType | undefined
  * que React lit toujours la dernière valeur de l'historique, sans problème
  * de closure périmée (stale closure).
  */
-export const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [history, setHistory] = useState<Screen[]>(['home']);
+export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?: Screen }> = ({ children, initialScreen = 'home' }) => {
+  const [history, setHistory] = useState<Screen[]>([initialScreen]);
   const [selectedProfessional, setSelectedProfessional] = useState<SelectedProfessional | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<SelectedConversation | null>(null);
   const [selectedAgendaEvent, setSelectedAgendaEvent] = useState<SelectedAgendaEvent | null>(null);
   const [selectedAgendaDate, setSelectedAgendaDate] = useState<string | null>(null);
 
-  const currentScreen = history[history.length - 1];
-  const previousScreen = history.length > 1 ? history[history.length - 2] : 'home';
+  const currentScreen = history.at(-1)!;
+  const previousScreen = history.length > 1 ? history.at(-2)! : 'home';
 
-  const navigateTo = (screen: Screen) => {
+  const navigateTo = useCallback((screen: Screen) => {
     setHistory(prev => [...prev, screen]);
-  };
+  }, []);
 
-  const goHome = () => {
+  const goHome = useCallback(() => {
     setHistory(['home']);
-  };
+  }, []);
 
   /** Dépile le dernier écran — toujours fiable grâce à la mise à jour fonctionnelle */
-  const goBack = () => {
+  const goBack = useCallback(() => {
     setHistory(prev => (prev.length > 1 ? prev.slice(0, -1) : prev));
-  };
+  }, []);
 
-  const navigateToProfile = (professional: SelectedProfessional) => {
+  const navigateToProfile = useCallback((professional: SelectedProfessional) => {
     setSelectedProfessional(professional);
     setHistory(prev => [...prev, 'professional-profile']);
-  };
+  }, []);
 
-  const navigateToAdd = () => {
+  const navigateToAdd = useCallback(() => {
     setHistory(prev => [...prev, 'add-professional']);
-  };
+  }, []);
 
-  const navigateToInvite = () => {
+  const navigateToInvite = useCallback(() => {
     setHistory(prev => [...prev, 'invite-professional']);
-  };
+  }, []);
 
-  const navigateToSettings = () => {
+  const navigateToSettings = useCallback(() => {
     setHistory(prev => [...prev, 'settings']);
-  };
+  }, []);
 
-  const navigateToMyProfile = () => {
+  const navigateToMyProfile = useCallback(() => {
     setHistory(prev => [...prev, 'my-profile']);
-  };
+  }, []);
 
-  const navigateToMessaging = () => {
+  const navigateToMessaging = useCallback(() => {
     setHistory(prev => [...prev, 'messaging']);
-  };
+  }, []);
 
-  const navigateToMessagingChat = (conversation: SelectedConversation) => {
+  const navigateToMessagingChat = useCallback((conversation: SelectedConversation) => {
     setSelectedConversation(conversation);
     setHistory(prev => [...prev, 'messaging-chat']);
-  };
+  }, []);
 
-  const navigateToAgenda = () => {
+  const navigateToAgenda = useCallback(() => {
     setHistory(prev => [...prev, 'agenda']);
-  };
+  }, []);
 
-  const navigateToAgendaDay = (date: string) => {
+  const navigateToAgendaDay = useCallback((date: string) => {
     setSelectedAgendaDate(date);
     setHistory(prev => [...prev, 'agenda-day']);
-  };
+  }, []);
 
-  const navigateToAgendaForm = (event?: SelectedAgendaEvent | null) => {
+  const navigateToAgendaForm = useCallback((event?: SelectedAgendaEvent | null) => {
     setSelectedAgendaEvent(event ?? null);
     setHistory(prev => [...prev, 'agenda-form']);
-  };
+  }, []);
+
+  const navigateToCarnetAudition = useCallback(() => {
+    setHistory(prev => [...prev, 'carnet-audition']);
+  }, []);
 
   const navigateToHealth = () => {
     setHistory(prev => [...prev, 'health']);

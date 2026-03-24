@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -33,6 +33,7 @@ const MONTHS_FR = [
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ];
 const DAYS_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const DAYS_FR_KEYS = ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'];
 
 const EVENT_COLORS = [
   '#3ABFBF', '#E8622A', '#42A5F5', '#66BB6A',
@@ -41,8 +42,8 @@ const EVENT_COLORS = [
 
 function formatDateDisplay(dateISO: string): string {
   const y = dateISO.slice(0, 4);
-  const m = parseInt(dateISO.slice(5, 7)) - 1;
-  const d = parseInt(dateISO.slice(8, 10));
+  const m = Number.parseInt(dateISO.slice(5, 7), 10) - 1;
+  const d = Number.parseInt(dateISO.slice(8, 10), 10);
   return `${d} ${MONTHS_FR[m]} ${y}`;
 }
 
@@ -82,8 +83,8 @@ const HOURS   = Array.from({ length: 17 }, (_, i) => i + 6); // 6..22
 const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
 const TimePicker: React.FC<TimePickerProps> = ({ visible, title, value, onConfirm, onCancel }) => {
-  const initH = parseInt(value.slice(0, 2));
-  const initM = parseInt(value.slice(3, 5));
+  const initH = Number.parseInt(value.slice(0, 2), 10);
+  const initM = Number.parseInt(value.slice(3, 5), 10);
   const [selHour,   setSelHour]   = useState(HOURS.includes(initH) ? initH : 9);
   const [selMinute, setSelMinute] = useState(MINUTES.includes(initM) ? initM : 0);
 
@@ -174,11 +175,11 @@ interface DatePickerProps {
 }
 
 const DatePickerModal: React.FC<DatePickerProps> = ({ visible, value, onConfirm, onCancel }) => {
-  const initYear  = parseInt(value.slice(0, 4));
-  const initMonth = parseInt(value.slice(5, 7)) - 1;
+  const initYear  = Number.parseInt(value.slice(0, 4), 10);
+  const initMonth = Number.parseInt(value.slice(5, 7), 10) - 1;
   const [pickerYear,  setPickerYear]  = useState(initYear);
   const [pickerMonth, setPickerMonth] = useState(initMonth);
-  const [pickerDay,   setPickerDay]   = useState(parseInt(value.slice(8, 10)));
+  const [pickerDay,   setPickerDay]   = useState(Number.parseInt(value.slice(8, 10), 10));
 
   const grid = buildCalendarGrid(pickerYear, pickerMonth);
 
@@ -214,21 +215,18 @@ const DatePickerModal: React.FC<DatePickerProps> = ({ visible, value, onConfirm,
             {/* Jours de la semaine */}
             <View style={styles.weekRow}>
               {DAYS_FR.map((d, i) => (
-                <Text key={i} style={styles.weekDayLabel}>{d}</Text>
+                <Text key={DAYS_FR_KEYS[i]} style={styles.weekDayLabel}>{d}</Text>
               ))}
             </View>
 
             {/* Grille */}
             <View style={styles.daysGrid}>
-              {grid.map((cell, idx) => {
-                const isSelected = !cell.otherMonth && cell.day === pickerDay
-                  && pickerMonth === parseInt(value.slice(5, 7)) - 1
-                  && pickerYear === parseInt(value.slice(0, 4))
-                  ? false : !cell.otherMonth && cell.day === pickerDay;
+              {grid.map(cell => {
                 const actuallySelected = !cell.otherMonth && cell.day === pickerDay;
+                const cellKey = `${cell.otherMonth ? 'other' : 'main'}-${cell.day}`;
                 return (
                   <TouchableOpacity
-                    key={idx}
+                    key={cellKey}
                     style={[styles.dayCell, { width: DAY_CELL_SIZE, height: DAY_CELL_SIZE }]}
                     onPress={() => { if (!cell.otherMonth) { setPickerDay(cell.day); } }}
                     activeOpacity={cell.otherMonth ? 1 : 0.7}
@@ -323,25 +321,23 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
         const newId = await createEvent(params);
         const newEvent: AgendaEvent = { ...params, id: newId, backgroundColor: bgColor };
         addMockEvent(newEvent); // même en mode API on met à jour le store local
+      } else if (isEdit && event?.id != null) {
+        const updated: AgendaEvent = {
+          id: event.id,
+          ...params,
+          backgroundColor: bgColor,
+        };
+        updateMockEvent(updated);
       } else {
-        if (isEdit && event?.id != null) {
-          const updated: AgendaEvent = {
-            id: event.id,
-            ...params,
-            backgroundColor: bgColor,
-          };
-          updateMockEvent(updated);
-        } else {
-          const newEvent: AgendaEvent = {
-            id: Date.now(),
-            ...params,
-            backgroundColor: bgColor,
-          };
-          addMockEvent(newEvent);
-        }
+        const newEvent: AgendaEvent = {
+          id: Date.now(),
+          ...params,
+          backgroundColor: bgColor,
+        };
+        addMockEvent(newEvent);
       }
       goBack();
-    } catch (err) {
+    } catch {
       Alert.alert('Erreur', "Impossible de sauvegarder le rendez-vous.");
     } finally {
       setIsSaving(false);
@@ -349,6 +345,20 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
   };
 
   // ── Suppression ───────────────────────────────────────────────────────
+  const doDelete = async () => {
+    if (event?.id == null) { return; }
+    try {
+      if (USE_AGENDA_API) {
+        await deleteEvent(event.id);
+      } else {
+        removeMockEvent(event.id);
+      }
+      goBack();
+    } catch {
+      Alert.alert('Erreur', "Impossible de supprimer le rendez-vous.");
+    }
+  };
+
   const handleDelete = () => {
     Alert.alert(
       'Supprimer ce rendez-vous',
@@ -358,25 +368,17 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
         {
           text: 'Supprimer',
           style: 'destructive',
-          onPress: async () => {
-            if (event?.id == null) { return; }
-            try {
-              if (USE_AGENDA_API) {
-                await deleteEvent(event.id);
-              } else {
-                removeMockEvent(event.id);
-              }
-              goBack();
-            } catch (err) {
-              Alert.alert('Erreur', "Impossible de supprimer le rendez-vous.");
-            }
-          },
+          onPress: () => { void doDelete(); },
         },
       ],
     );
   };
 
   // ── Render ────────────────────────────────────────────────────────────
+  let saveButtonLabel = 'Ajouter le rendez-vous';
+  if (isEdit) { saveButtonLabel = 'Mettre à jour'; }
+  if (isSaving) { saveButtonLabel = 'Enregistrement…'; }
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <StatusBar barStyle="dark-content" />
@@ -538,13 +540,11 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
           {/* ── Boutons d'action ── */}
           <TouchableOpacity
             style={[styles.saveButton, isSaving && { opacity: 0.6 }]}
-            onPress={handleSave}
+            onPress={() => { void handleSave(); }}
             disabled={isSaving}
             testID="saveBtn"
           >
-            <Text style={styles.saveButtonText}>
-              {isSaving ? 'Enregistrement…' : isEdit ? 'Mettre à jour' : 'Ajouter le rendez-vous'}
-            </Text>
+            <Text style={styles.saveButtonText}>{saveButtonLabel}</Text>
           </TouchableOpacity>
 
           {isEdit && (

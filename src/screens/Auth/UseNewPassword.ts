@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {validatePassword} from '../../utils/validators';
 
 export type NewPasswordErrors = {
   password?: string;
@@ -9,8 +10,8 @@ export type NewPasswordErrors = {
 
 /** Hook de gestion du formulaire "Nouveau mot de passe". */
 export const useNewPassword = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState(''); // NOSONAR
+  const [confirmPassword, setConfirmPassword] = useState(''); // NOSONAR
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptCGV, setAcceptCGV] = useState(false);
@@ -22,8 +23,8 @@ export const useNewPassword = () => {
 
   const validate = (): boolean => {
     const e: NewPasswordErrors = {};
-    if (!password) e.password = 'Le mot de passe est requis';
-    else if (password.length < 8) e.password = 'Minimum 8 caractères';
+    const pwdError = validatePassword(password);
+    if (pwdError) e.password = pwdError;
     if (!confirmPassword) e.confirmPassword = 'Veuillez confirmer votre mot de passe';
     else if (password !== confirmPassword) e.confirmPassword = 'Les mots de passe ne correspondent pas';
     if (!acceptCGV) e.cgv = 'Vous devez accepter les CGV - CGU';

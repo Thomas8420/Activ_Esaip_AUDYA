@@ -4,7 +4,8 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import { Professional } from '../../services/professionalsService';
 
 interface ProfessionalCardProps {
@@ -12,6 +13,7 @@ interface ProfessionalCardProps {
   onToggleFavorite: () => void;
   onResendInvitation: () => void;
   onViewProfile: () => void;
+  onMessage: () => void;
 }
 
 /**
@@ -23,6 +25,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   onToggleFavorite,
   onResendInvitation,
   onViewProfile,
+  onMessage,
 }) => {
   const initials = (professional.firstName[0] + professional.lastName[0]).toUpperCase();
 
@@ -47,9 +50,11 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
           accessibilityLabel={professional.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
           accessibilityRole="button"
         >
-          <Text style={styles.favoriteText}>
-            {professional.isFavorite ? '⭐' : '☆'}
-          </Text>
+          <Icon
+            name={professional.isFavorite ? 'star' : 'star-outline'}
+            size={20}
+            color={professional.isFavorite ? COLORS.orange : COLORS.textLight}
+          />
         </TouchableOpacity>
       </View>
 
@@ -62,14 +67,14 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
       {/* Informations de contact */}
       <View style={styles.contactInfo}>
         <View style={styles.contactIcon}>
-          <Text style={{ fontSize: 16 }}>📱</Text>
+          <Icon name="call-outline" size={16} color={COLORS.textLight} />
         </View>
         <Text style={styles.contactText}>{professional.phone}</Text>
       </View>
 
       <View style={styles.contactInfo}>
         <View style={styles.contactIcon}>
-          <Text style={{ fontSize: 16 }}>✉️</Text>
+          <Icon name="mail-outline" size={16} color={COLORS.textLight} />
         </View>
         <Text style={styles.contactText}>{professional.email}</Text>
       </View>
@@ -78,6 +83,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
       <View style={styles.cardActions}>
         <TouchableOpacity
           style={styles.actionButton}
+          onPress={onMessage}
           accessibilityLabel={`Envoyer un message à ${professional.firstName} ${professional.lastName}`}
           accessibilityRole="button"
         >
@@ -107,7 +113,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             </Text>
           </View>
 
-          <TouchableOpacity style={styles.resendInvitationButton} onPress={onResendInvitation}>
+          <TouchableOpacity
+            style={styles.resendInvitationButton}
+            onPress={onResendInvitation}
+            accessibilityLabel="Renvoyer l'invitation"
+            accessibilityRole="button"
+          >
             <Text style={styles.resendInvitationButtonText}>Renvoyer l'invitation</Text>
           </TouchableOpacity>
         </View>
@@ -116,4 +127,10 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   );
 };
 
-export default React.memo(ProfessionalCard);
+export default React.memo(ProfessionalCard, (prev, next) =>
+  prev.professional === next.professional &&
+  prev.onToggleFavorite === next.onToggleFavorite &&
+  prev.onResendInvitation === next.onResendInvitation &&
+  prev.onViewProfile === next.onViewProfile &&
+  prev.onMessage === next.onMessage,
+);

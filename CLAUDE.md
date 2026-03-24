@@ -2,181 +2,348 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+## Posture attendue — Développeur Senior
+
+Tu interviens sur ce projet comme un **développeur mobile senior avec 10+ ans d'expérience React Native / TypeScript**. Avant d'écrire la moindre ligne de code, tu :
+
+1. **Lis le code existant** — jamais d'hypothèse sur ce qui est en place ; tu vérifies.
+2. **Respectes les patterns établis** — Screen → Page → Component, mock/API toggle, service mapping. Si tu t'en écartes, tu l'expliques.
+3. **Penses sécurité d'abord** — toute donnée entrante est hostile. Validation en entrée, pas d'exposition de tokens/credentials dans les logs, pas de `eval`, pas de `dangerouslySetInnerHTML` équivalent côté RN.
+4. **Développes de manière défensive** — tu traites les cas d'erreur (réseau down, réponse malformée, état null/undefined) sans laisser crasher l'app silencieusement.
+5. **Tu ne sur-ingénierises pas** — la solution la plus simple qui satisfait le besoin est la bonne. Pas d'abstraction prématurée, pas de helpers pour un seul usage.
+6. **Tu gardes la cohérence stylistique** — nommage, indentation, organisation des imports, séparation styles/.tsx, tout doit être indiscernable du code existant.
+7. **Tu signales les dettes techniques** — si tu vois un problème dans du code adjacent à ta tâche, tu le notes en commentaire `// TODO` ou dans ta réponse, sans le corriger sauf si demandé.
+8. **Tu ne supprimes jamais de code sans confirmation** — tu proposes, tu expliques, tu attends le feu vert.
+
+---
+
 ## Project Overview
 
-**Activ_Esaip_AUDYA** is a React Native mobile application built with TypeScript. It's a health/audiology management platform for patient monitoring and coordination. The app uses a modern tech stack with Expo/Metro development environment, comprehensive tooling for code quality, and a modular component architecture.
+**Activ_Esaip_AUDYA** est une application mobile React Native / TypeScript. C'est une plateforme de gestion audiologique pour le suivi patient : coordination avec des professionnels de santé, messagerie sécurisée, agenda médical, et assistant IA intégré.
+
+**Stack décisionnelle** : Metro + React Native 0.84 / React 19.2 / TypeScript 5.8. Pas d'Expo managed, pas de React Navigation — routeur maison stack-based.
+
+---
 
 ## Quick Commands
 
 ### Development
-- **Start Metro dev server**: `npm start` (run in one terminal)
-- **Run on Android** (in another terminal): `npm run android`
-- **Run on iOS** (in another terminal): `npm run ios`
-  - First time iOS setup: `bundle install && bundle exec pod install`
-  - Subsequent pod updates: `bundle exec pod install`
+- **Start Metro**: `npm start`
+- **Android**: `npm run android` (second terminal)
+- **iOS**: `npm run ios` (second terminal)
+  - Premier setup iOS : `bundle install && bundle exec pod install`
+  - Mise à jour pods : `bundle exec pod install`
 
 ### Code Quality
-- **Lint**: `npm run lint` (ESLint with React Native rules)
-- **Format**: `npx prettier --write .` (uses 2-space indent, single quotes, trailing commas)
+- **Lint**: `npm run lint`
+- **Format**: `npx prettier --write .` (2 espaces, single quotes, trailing commas)
+- **TypeScript check**: `npx tsc --noEmit`
 
 ### Testing
-- **Run tests**: `npm test` (Jest with React Native preset)
-- **Run single test**: `npm test -- App.test.tsx`
-- **Watch mode**: `npm test -- --watch`
+- **All tests**: `npm test`
+- **Single file**: `npm test -- App.test.tsx`
+- **Watch**: `npm test -- --watch`
+
+---
+
+## Charte graphique — Couleurs imposées par le client
+
+> ⚠️ **Ne jamais modifier les valeurs hexadécimales de la palette.** Les couleurs sont imposées par le client et font partie de la charte graphique AUDYA. Toute modification de valeur de couleur (même pour conformité WCAG) est interdite sans validation explicite du client.
+
+### Palette principale (`src/screens/Home/HomeScreen.styles.tsx`)
+| Token | Valeur | Usage |
+|-------|--------|-------|
+| `orange` | `#E8622A` | Couleur primaire (boutons, accents, bottom nav) |
+| `orangeLight` | `#F0936B` | Variante claire orange (hover/pressed) |
+| `teal` | `#3ABFBF` | FAB chatbot |
+| `white` | `#FFFFFF` | Fonds, textes sur fond coloré |
+| `text` | `#2D2D2D` | Texte principal |
+| `textLight` | `#6B6B6B` | Texte secondaire, placeholders |
+| `border` | `#E0E0E0` | Séparateurs |
+| `background` | `#f5f3ef` | Fond général |
+
+### Palette auth (`src/styles/auth/colors.ts`)
+Palette distincte pour les écrans d'authentification. Clé notable : `textPlaceholder: '#999999'`.
+
+---
 
 ## Architecture & File Structure
 
 ### Directory Layout
+
 ```
 src/
-  screens/                     # Page containers (Screen-level components)
+  screens/                           # Containers légers (SafeAreaView + NavBar + BottomNav)
     Home/
-      HomeScreen.tsx            # Container for home page
-      HomeScreen.styles.tsx     # COLORS, FONT_*, styles for home
+      HomeScreen.tsx
+      HomeScreen.styles.tsx          # Palette COLORS + FONT_* partagés dans toute l'app
     Professionals/
-      ProfessionalsScreen.tsx   # Container for professionals list
-      ProfessionalsScreen.styles.tsx  # Extensive styles (filters, cards, rows, profile, forms)
-      AddProfessionalScreen.tsx       # Container for add-professional flow
-      InviteProfessionalScreen.tsx    # Container for invite-professional flow
-      ProfessionalProfileScreen.tsx   # Container for professional detail view
+      ProfessionalsScreen.tsx
+      ProfessionalsScreen.styles.tsx
+      AddProfessionalScreen.tsx
+      InviteProfessionalScreen.tsx
+      ProfessionalProfileScreen.tsx
     Settings/
-      SettingsScreen.tsx        # Container for settings page
-      SettingsScreen.styles.tsx # Styles (prefs bar, section cards, inputs, modal)
-  components/                  # UI components (business logic lives here)
+      SettingsScreen.tsx
+      SettingsScreen.styles.tsx
+    Profile/
+      ProfileScreen.tsx
+      ProfileScreen.styles.tsx
+    Messaging/
+      MessagingScreen.tsx
+      MessagingScreen.styles.tsx
+      MessagingChatScreen.tsx
+      MessagingChatScreen.styles.tsx
+    Agenda/
+      AgendaScreen.tsx
+      AgendaScreen.styles.tsx
+      AgendaDayViewScreen.tsx
+      AgendaFormScreen.tsx
+    Auth/                            # Flux d'authentification (hors NavigationContext)
+      LoginScreen.tsx + .styles.ts
+      VerifyCodeScreen.tsx + .styles.ts
+      ForgotPasswordScreen.tsx + .styles.ts
+      EmailVerificationScreen.tsx + .styles.ts
+      NewPasswordScreen.tsx + .styles.ts
+      PasswordChangedScreen.tsx + .styles.ts
+      UseNewPassword.ts              # Custom hook reset password
+    Register/                        # Flux d'inscription (hors NavigationContext principal)
+      Register.styles.ts             # Styles partagés toutes les étapes (card, inputs, boutons)
+      RegisterStep1Screen.tsx        # Étape 1 : création de compte (identité, MDP, CGV)
+      RegisterStep1BisScreen.tsx     # Étape 1bis : vérification e-mail
+      RegisterStep2Screen.tsx        # Étape 2 : informations personnelles
+      RegisterStep3Screen.tsx        # Étape 3 : questionnaire auditif
+      RegisterStep4Screen.tsx        # Étape 4 : informations médicales
+      RegisterStep5Screen.tsx        # Étape 5 : ajout professionnel de santé
+      RegisterSuccessScreen.tsx      # Écran de félicitations
+
+  components/                        # Logique métier + UI
     MainPage/
-      MainPage.tsx              # Home grid + banner + navigation
+      MainPage.tsx                   # Grille d'accueil, bannière, navigation menu
     Professionals/
-      ProfessionalsPage.tsx     # List orchestrator (data, filters, pagination, view toggle)
-      ProfessionalsFilters.tsx  # Filter controls (search, specialty, zip, city, view mode)
-      ProfessionalCard.tsx      # Card view for one professional
-      ProfessionalListRow.tsx   # Table row view for one professional
-      ProfessionalProfilePage.tsx  # Detailed profile view for one professional
-      AddProfessionalPage.tsx   # Search & add existing professionals form
-      InviteProfessionalPage.tsx   # Invite new professional form
+      ProfessionalsPage.tsx          # Orchestrateur : liste, filtres, pagination, toggle vue
+      ProfessionalsFilters.tsx       # UI filtres (recherche, spécialité, CP, ville, toggle)
+      ProfessionalCard.tsx           # Vue carte — props: professional, onToggleFavorite,
+                                     #   onResendInvitation, onViewProfile, onMessage
+      ProfessionalListRow.tsx        # Vue ligne tableau
+      ProfessionalProfilePage.tsx    # Détail professionnel
+      AddProfessionalPage.tsx        # Formulaire ajout
+      InviteProfessionalPage.tsx     # Formulaire invitation + consentement
     Settings/
-      SettingsPage.tsx          # Settings logic + UI (notifications toggles, password change, delete account)
-    common/                    # Shared across all features
+      SettingsPage.tsx               # Onglets préférences, notifications, MDP, suppression compte
+    Profile/
+      ProfilePage.tsx                # Gestion profil utilisateur + upload photo
+    Messaging/
+      MessagingPage.tsx              # Liste conversations
+      MessagingChatPage.tsx          # Vue conversation + envoi fichiers
+    Agenda/
+      AgendaPage.tsx                 # Calendrier (mois/semaine/jour)
+      AgendaDayViewPage.tsx          # Liste événements du jour
+      AgendaFormPage.tsx             # Formulaire création/édition événement
+    Chatbot/
+      ChatbotModal.tsx               # Modal popup assistant AUDYA (slide from bottom)
+    Register/                        # Flux d'inscription (pages + routeur)
+      RegisterFlow.tsx               # Routeur : NavigationProvider(register-step1) + RegisterProvider
+      RegisterStep1Page.tsx          # Identité, MDP, CGV — validation complète
+      RegisterStep1BisPage.tsx       # Attente vérification e-mail
+      RegisterStep2Page.tsx          # Infos personnelles (genre, adresse, pays, photo via image-picker)
+      RegisterStep3Page.tsx          # Questionnaire auditif (Dropdown + CheckboxGroup au niveau module)
+      RegisterStep4Page.tsx          # Infos médicales (taille, poids, antécédents)
+      RegisterStep5Page.tsx          # Recherche professionnel de santé (mock enrichi)
+      RegisterSuccessPage.tsx        # Félicitations → goHome() → retour login
+    common/
       NavBar/
-        NavBar.tsx              # Top bar: logo, notifications, settings, profile dropdown
+        NavBar.tsx                   # Logo, cloche notifs, engrenage settings, dropdown profil
       BottomNav/
-        BottomNav.tsx           # Bottom bar: home, section menu, chat button
+        BottomNav.tsx                # Accueil | menu pill (modal 8 items) | FAB chatbot
       Button/
-        Fab.tsx                 # Floating Action Button (chat icon, teal)
+        Fab.tsx                      # Floating Action Button (icône chat, teal)
+    Bubbles.tsx                      # Bulles décoratives partagées (auth + register)
+    auth/                            # Composants partagés du flux auth
+      AuthFlow.tsx                   # Contrôleur de flux : login → 2FA → register → app
+      AuthContainer.tsx              # Layout wrapper avec bulles décoratives
+      Button.tsx                     # Bouton auth
+      Input.tsx                      # Input auth
+      Bubbles.tsx                    # Bulles décoratives (auth uniquement — alias de ../Bubbles.tsx)
+      styles/
+        AuthContainerStyles.ts
+        ButtonStyles.ts
+        InputStyles.ts
+
   context/
-    NavigationContext.tsx       # Custom stack-based router (no React Navigation)
-  services/
-    api.ts                     # Base fetch wrapper (apiFetch, ApiError)
-    professionalsService.ts    # Professional API calls + snake_case↔camelCase mapping
-    settingsService.ts         # Settings API calls (fetchSettings, saveSettings, changePassword, deleteAccount)
+    NavigationContext.tsx            # Routeur stack maison — toutes les fonctions useCallback
+    AuthContext.tsx                  # État auth global (isAuthenticated, login, logout)
+    RegisterContext.tsx              # Données inter-étapes d'inscription (Steps 1–5 complets)
+
+  services/                          # Couche API — jamais d'appels directs depuis les composants
+    api.ts                           # Wrapper fetch de base (apiFetch<T>, ApiError, timeout 10s)
+    professionalsService.ts          # CRUD professionnels + mapping snake_case↔camelCase
+    settingsService.ts               # Settings API
+    authService.ts                   # Login, 2FA, reset password
+    messagingService.ts              # Conversations, messages, upload fichier
+    agendaService.ts                 # Événements CRUD + mock store module-level
+    profileService.ts                # Profil patient + upload photo (react-native-image-picker)
+    chatbotService.ts                # Messages assistant AUDYA
+
   constants/
-    index.ts                   # MENU_ITEMS (8 items with SVG icons), SPECIALTIES
+    index.ts                         # MENU_ITEMS (8 items + SVG icons), SPECIALTIES
+
+  utils/
+    validators.ts                    # Validation email, messages d'erreur
+    agendaHelpers.ts                 # getTodayISO, formatDateISO, buildCalendarGrid (testables)
+
+  styles/
+    auth/
+      colors.ts                      # Palette couleurs auth (textPlaceholder: #999999)
+      spacing.ts                     # Système d'espacement auth
+      typography.ts                  # Typographie auth
+
   assets/
-    images/                    # SVG icon files (React components)
-__tests__/                     # Test files (mirror src structure)
+    images/                          # Composants SVG (logo, icônes métier)
+    fonts/                           # Montserrat (Regular, SemiBold, Bold)
+
+__tests__/                           # Tests Jest (miroir structure src/)
+  App.test.tsx
+  AuthContext.test.tsx
+  NavigationContext.test.tsx
+  Professionals.test.tsx
+  Filters.test.tsx
+  Settings.test.tsx
+  Profile.test.tsx
+  Messaging.test.tsx
+  Agenda.test.tsx
+  Register.test.tsx
+  services/
+    api.test.ts
+    authService.test.ts
+    professionalsService.test.ts
+  utils/
+    agendaHelpers.test.ts
 ```
 
-### Architecture Pattern
+---
 
-The app follows a **Screen → Page → Component** hierarchy:
+## Architecture Pattern — Screen → Page → Component
 
-1. **Screens** (`src/screens/`) — thin containers:
-   - Wrap `SafeAreaView`, `StatusBar`
-   - Render `NavBar` at top, `BottomNav` at bottom
-   - Read from `NavigationContext` (goBack, selectedProfessional, etc.)
-   - Pass navigation callbacks as props to the Page component
+**Règle absolue** : aucun appel API dans un Screen ou un Component pur. Toute la logique de données vit dans la couche Page.
 
-2. **Pages** (`src/components/<Feature>/`) — business logic layer:
-   - Hold data state (list, loading, error)
-   - Apply filters and pagination logic
-   - Compose sub-components (Card, Row, Filters, etc.)
-   - **Data loading in `useEffect`** with mock/API toggle (see Data Layer section)
+```
+Screen (src/screens/<Feature>/)
+  └── SafeAreaView + StatusBar
+  └── NavBar (top)
+  └── <FeaturePage> ← props: callbacks navigation uniquement
+  └── BottomNav (bottom)
 
-3. **Components** (`src/components/<Feature>/`) — pure UI:
-   - Receive data via props; emit events via callbacks
-   - No direct API calls or context usage (exception: BottomNav uses NavigationContext)
+Page (src/components/<Feature>/)
+  └── State: data[], isLoading, error
+  └── useEffect → service call (mock ou API selon USE_API)
+  └── Filtres, pagination, tri (logique locale)
+  └── Compose: <FeatureCard>, <FeatureListRow>, <FeatureFilters>, ...
 
-4. **Common** (`src/components/common/`) — shared widgets:
-   - `NavBar`, `BottomNav`, `Fab` — used by every screen
+Component pur (src/components/<Feature>/)
+  └── Props uniquement (data + callbacks)
+  └── Zéro appel service, zéro useContext (sauf BottomNav)
+  └── StyleSheet.create() dans le même fichier ou .styles.tsx séparé
 
-5. **Services** (`src/services/`) — API communication:
-   - `api.ts`: base `apiFetch<T>()` wrapper
-   - `<feature>Service.ts`: feature-specific API functions + type mapping
+Service (src/services/<feature>Service.ts)
+  └── Types ApiResponse (snake_case) + types App (camelCase)
+  └── Fonction map: ApiResponse → AppType
+  └── Fonction fetch: apiFetch<ApiResponse[]> → AppType[]
+```
+
+**Exception documentée** : `BottomNav` utilise `NavigationContext` directement (composant transversal).
+
+**Exception documentée** : Les pages Register (`RegisterStep*Page`) n'ont pas de NavBar/BottomNav. Elles utilisent `useNavigation` et `useRegister` directement car elles sont enveloppées par `RegisterFlow` qui monte son propre `NavigationProvider` (initialisé à `register-step1`) et `RegisterProvider`. Ce `NavigationProvider` est distinct de celui de l'app authentifiée.
+
+**Anti-pattern critique — perte de focus clavier** : Ne jamais définir un sous-composant React (ex. `const Field = () => ...`) à l'intérieur du corps d'un composant parent. À chaque re-render du parent, React crée un nouveau type de composant → démonte/remonte le `TextInput` → le clavier perd le focus après chaque frappe. Toujours déclarer les sous-composants **au niveau module** (hors de la fonction parente) et leur passer les valeurs en props. Exemple appliqué : `Dropdown` et `CheckboxGroup` dans `RegisterStep3Page.tsx`.
+
+---
 
 ## Component Inventory
 
-Use this table to decide which existing components to reuse for new pages.
+### Common (réutiliser systématiquement)
+| Composant | Fichier | Usage |
+|-----------|---------|-------|
+| `NavBar` | `src/components/common/NavBar/NavBar.tsx` | Top bar toutes les screens authentifiées |
+| `BottomNav` | `src/components/common/BottomNav/BottomNav.tsx` | Bottom bar toutes les screens authentifiées |
+| `Fab` | `src/components/common/Button/Fab.tsx` | Intégré dans BottomNav |
+| `ChatbotModal` | `src/components/Chatbot/ChatbotModal.tsx` | Intégré dans BottomNav |
 
-### Common Components (always reuse)
-| Component | File | Use for |
-|-----------|------|---------|
-| `NavBar` | `src/components/common/NavBar/NavBar.tsx` | Top bar on every screen |
-| `BottomNav` | `src/components/common/BottomNav/BottomNav.tsx` | Bottom bar on every screen |
-| `Fab` | `src/components/common/Button/Fab.tsx` | Chat FAB button (embedded in BottomNav) |
+### Auth (flux hors NavigationContext)
+| Composant | Fichier | Usage |
+|-----------|---------|-------|
+| `AuthFlow` | `src/components/auth/AuthFlow.tsx` | Contrôleur Login→2FA→Register→App |
+| `AuthContainer` | `src/components/auth/AuthContainer.tsx` | Layout wrapper auth |
+| `Button` (auth) | `src/components/auth/Button.tsx` | Bouton dans le flux auth |
+| `Input` (auth) | `src/components/auth/Input.tsx` | Input dans le flux auth |
+| `Bubbles` | `src/components/Bubbles.tsx` | Bulles décoratives partagées (auth + register) |
 
-### Professionals Feature Components
-| Component | File | Use for |
-|-----------|------|---------|
-| `ProfessionalsPage` | `src/components/Professionals/ProfessionalsPage.tsx` | Orchestrates list, filters, pagination, view toggle |
-| `ProfessionalsFilters` | `src/components/Professionals/ProfessionalsFilters.tsx` | Search/filter UI (search input, dropdowns, view toggle) — **reuse pattern for any filterable list** |
-| `ProfessionalCard` | `src/components/Professionals/ProfessionalCard.tsx` | Card view for one item — **reuse pattern for card grids** |
-| `ProfessionalListRow` | `src/components/Professionals/ProfessionalListRow.tsx` | Table row — **reuse pattern for list tables** |
-| `ProfessionalProfilePage` | `src/components/Professionals/ProfessionalProfilePage.tsx` | Detail view with structured fields |
-| `AddProfessionalPage` | `src/components/Professionals/AddProfessionalPage.tsx` | Search + add form |
-| `InviteProfessionalPage` | `src/components/Professionals/InviteProfessionalPage.tsx` | Full invite form with validation + consent |
+### Register (flux hors NavigationContext principal)
+| Composant | Fichier | Usage |
+|-----------|---------|-------|
+| `RegisterFlow` | `src/components/Register/RegisterFlow.tsx` | Routeur inscription : NavigationProvider(register-step1) + RegisterProvider |
+| `RegisterStep1Page` | `src/components/Register/RegisterStep1Page.tsx` | Identité, MDP, CGV |
+| `RegisterStep1BisPage` | `src/components/Register/RegisterStep1BisPage.tsx` | Vérification e-mail |
+| `RegisterStep2Page` | `src/components/Register/RegisterStep2Page.tsx` | Informations personnelles + upload photo (image-picker) |
+| `RegisterStep3Page` | `src/components/Register/RegisterStep3Page.tsx` | Questionnaire auditif |
+| `RegisterStep4Page` | `src/components/Register/RegisterStep4Page.tsx` | Informations médicales |
+| `RegisterStep5Page` | `src/components/Register/RegisterStep5Page.tsx` | Recherche professionnel (mock + sélection) |
+| `RegisterSuccessPage` | `src/components/Register/RegisterSuccessPage.tsx` | Félicitations → retour login |
 
-### Settings Feature Components
-| Component | File | Use for |
-|-----------|------|---------|
-| `SettingsPage` | `src/components/Settings/SettingsPage.tsx` | Preferences tabs, notification toggles (Switch), password change with eye icon + mismatch validation, account deletion with confirmation modal |
+### Professionals
+| Composant | Fichier | Pattern réutilisable pour |
+|-----------|---------|--------------------------|
+| `ProfessionalsPage` | `.../ProfessionalsPage.tsx` | Orchestrateur liste filtrée |
+| `ProfessionalsFilters` | `.../ProfessionalsFilters.tsx` | Toute liste avec filtres |
+| `ProfessionalCard` | `.../ProfessionalCard.tsx` | Grille de cartes |
+| `ProfessionalListRow` | `.../ProfessionalListRow.tsx` | Tableau/liste |
+| `ProfessionalProfilePage` | `.../ProfessionalProfilePage.tsx` | Vue détail |
+| `InviteProfessionalPage` | `.../InviteProfessionalPage.tsx` | Formulaire avec validation + consentement |
 
-### Decision Guide for New Pages
+### Décision rapide pour une nouvelle page
+| Situation | Pattern à suivre |
+|-----------|-----------------|
+| Nouvelle liste filtrée | `ProfessionalsFilters` + `ProfessionalsPage` |
+| Nouvelle grille de cartes | `ProfessionalCard` |
+| Nouveau tableau | `ProfessionalListRow` |
+| Vue détail | `ProfessionalProfilePage` |
+| Formulaire avec validation | `InviteProfessionalPage` |
+| Nouvelle feature | `<Feature>Screen.tsx` (container) + `<Feature>Page.tsx` (logique) |
 
-| Situation | Reuse / Adapt |
-|-----------|---------------|
-| New list with filters | Copy `ProfessionalsFilters` pattern; adapt filter fields |
-| New card grid | Copy `ProfessionalCard` pattern; change fields |
-| New table/list | Copy `ProfessionalListRow` pattern; change columns |
-| New detail view | Copy `ProfessionalProfilePage` pattern; change fields |
-| New form with validation | Copy `InviteProfessionalPage` pattern; change fields & schema |
-| New feature screen | Create `<Feature>Screen.tsx` (thin container) + `<Feature>Page.tsx` (logic) |
+---
 
-## Data Layer: Fake Data → API Pattern
+## Data Layer — Pattern Mock → API
 
-Every feature page must follow this **single-flag toggle** pattern to switch between mock data and real API calls. This is established in `ProfessionalsPage.tsx` and must be applied consistently to all new pages.
+**Pattern obligatoire** pour toutes les pages de données. Référence : `ProfessionalsPage.tsx`.
 
-### 1. Mock Data Constant
-Define static mock data at the top of the Page component file, typed with the app's interface:
+### Structure type
 
 ```typescript
-// ─── Mock Data (remove once API is ready) ──────────────────────────────────
+// ─── Mock Data (supprimer quand l'API est prête) ────────────────────────────
 const MOCK_ITEMS: MyItem[] = [
-  { id: '1', name: 'Sample', ... },
+  { id: '1', name: 'Exemple', ... },
 ];
-```
 
-### 2. Toggle Flag
-Immediately after the mock data constant, add a single boolean flag:
+// ─── Toggle API ──────────────────────────────────────────────────────────────
+const USE_API = false; // Passer à true quand l'endpoint backend est confirmé
 
-```typescript
-const USE_API = false; // Set to true when the API endpoint is ready
-```
-
-### 3. useEffect with Branch
-In the Page component's `useEffect`, branch on `USE_API`:
-
-```typescript
+// ─── Dans le composant Page ──────────────────────────────────────────────────
 useEffect(() => {
   const load = async () => {
     setIsLoading(true);
     try {
       if (USE_API) {
-        const data = await fetchMyItems(); // from src/services/<feature>Service.ts
+        const data = await fetchMyItems();
         setItems(data);
       } else {
         setItems(MOCK_ITEMS);
       }
     } catch (err) {
-      console.error('Failed to load items:', err);
+      // Ne pas exposer les détails d'erreur à l'utilisateur final
+      console.error('[MyPage] Failed to load items:', err);
+      setError('Impossible de charger les données.');
     } finally {
       setIsLoading(false);
     }
@@ -185,157 +352,342 @@ useEffect(() => {
 }, []);
 ```
 
-### 4. Service Function
-In `src/services/<feature>Service.ts`, declare the typed API response and the fetch function:
+### Service pattern complet
 
 ```typescript
-// Types matching the backend JSON (snake_case)
-export interface MyItemApiResponse {
+// src/services/myFeatureService.ts
+
+// Type backend (snake_case — ne jamais l'exposer hors du service)
+interface MyItemApiResponse {
   id: string;
   first_name: string;
-  // ...
+  created_at: string;
 }
 
-// App-level type (camelCase)
+// Type applicatif (camelCase)
 export interface MyItem {
   id: string;
   firstName: string;
-  // ...
+  createdAt: string;
 }
 
-// Mapping function
-export function mapApiToMyItem(raw: MyItemApiResponse): MyItem {
-  return { id: raw.id, firstName: raw.first_name, ... };
+// Mapping strict — si un champ change côté backend, une seule ligne à changer
+function mapApiToMyItem(raw: MyItemApiResponse): MyItem {
+  return {
+    id: raw.id,
+    firstName: raw.first_name,
+    createdAt: raw.created_at,
+  };
 }
 
-// API call
 export async function fetchMyItems(): Promise<MyItem[]> {
-  const raw = await apiFetch<MyItemApiResponse[]>('/api/patient/items');
+  const raw = await apiFetch<MyItemApiResponse[]>('/api/patient/my-items');
   return raw.map(mapApiToMyItem);
 }
 ```
 
-### 5. Switching to Real API
-When the backend endpoint is confirmed and ready:
-1. Verify the JSON shape matches `MyItemApiResponse`
-2. Update `mapApiToMyItem` if fields differ
-3. Set `USE_API = true` in the Page component
-4. Delete the `MOCK_ITEMS` constant once confirmed working
+### Basculer vers la vraie API
+1. Vérifier que le shape JSON correspond à `MyItemApiResponse`
+2. Ajuster `mapApiToMyItem` si des champs diffèrent
+3. Mettre `USE_API = true`
+4. Supprimer `MOCK_ITEMS` après validation en intégration
 
-### Current API Status
-| Endpoint | Status | Flag location |
-|----------|--------|---------------|
-| `GET /api/patient/professionals` | Pending (JSON format not ready) | `ProfessionalsPage.tsx:USE_API` |
-| `POST /api/professionals/search` | Not implemented | `AddProfessionalPage.tsx` (TODO) |
-| `POST /api/patient/invite-professional` | Not implemented | `InviteProfessionalPage.tsx` (TODO) |
-| `POST /patient/professionals/select-id/:id` | Implemented | `professionalsService.ts:addProfessional` |
-| `POST /patient/delete-professional` | Implemented | `professionalsService.ts:removeProfessional` |
-| `GET /api/patient/settings` | Not implemented | `SettingsPage.tsx:USE_API` |
-| `PATCH /api/patient/settings` | Not implemented | `SettingsPage.tsx:USE_API` |
-| `POST /api/patient/change-password` | Not implemented | `SettingsPage.tsx:USE_API` |
-| `DELETE /api/patient/account` | Not implemented | `SettingsPage.tsx:USE_API` |
+### État des endpoints
+| Endpoint | Status | Flag |
+|----------|--------|------|
+| `GET /api/patient/professionals` | En attente (format JSON non arrêté) | `ProfessionalsPage.tsx:USE_API` |
+| `POST /api/professionals/search` | Non implémenté | `RegisterStep5Page.tsx:handleSearch` |
+| `POST /api/patient/invite-professional` | Non implémenté | `InviteProfessionalPage.tsx` |
+| `POST /patient/professionals/select-id/:id` | Implémenté | `professionalsService.ts` |
+| `POST /patient/delete-professional` | Implémenté | `professionalsService.ts` |
+| `GET /api/patient/settings` | Non implémenté | `SettingsPage.tsx:USE_API` |
+| `PATCH /api/patient/settings` | Non implémenté | `SettingsPage.tsx:USE_API` |
+| `POST /api/patient/change-password` | Non implémenté | `SettingsPage.tsx:USE_API` |
+| `DELETE /api/patient/account` | Non implémenté | `SettingsPage.tsx:USE_API` |
+| `GET /api/patient/profile` | Non implémenté | `ProfilePage.tsx:USE_PROFILE_API` |
+| `PATCH /api/patient/profile` | Non implémenté | `ProfilePage.tsx:USE_PROFILE_API` |
+| `POST /api/patient/profile/photo` | Non implémenté | `profileService.ts` |
+| `GET /ajaxchat/getconversations` | Non implémenté | `MessagingPage.tsx:USE_MESSAGING_API` |
+| `GET /ajaxchat/getmessages/:id` | Non implémenté | `MessagingChatPage.tsx` |
+| `POST /ajaxchat/sendmessage` | Non implémenté | `messagingService.ts` |
+| `POST /upload/document` | Non implémenté | `messagingService.ts` |
+| `GET /my-events` | Non implémenté | `AgendaPage.tsx:USE_AGENDA_API` |
+| `POST /events` | Non implémenté | `agendaService.ts` |
+| `POST /events/delete` | Non implémenté | `agendaService.ts` |
+| `POST /api/chatbot/message` | Non implémenté | `chatbotService.ts:USE_CHATBOT_API` |
+| `POST /api/register` | Non implémenté | `RegisterStep1Page.tsx:handleSubmit` |
+| `POST /api/register/verify-email` | Non implémenté | `RegisterStep1BisPage.tsx:handleResend` |
+| `POST /api/register/patient-info` | Non implémenté | `RegisterStep2Page.tsx:handleSubmit` |
+| `POST /api/register/hearing-survey` | Non implémenté | `RegisterStep3Page.tsx` |
+| `POST /api/register/medical-info` | Non implémenté | `RegisterStep4Page.tsx` |
+| `POST /api/register/professional` | Non implémenté | `RegisterStep5Page.tsx:handleSearch` |
 
-### API Base Configuration (`src/services/api.ts`)
-- **Dev**: `http://localhost:8000`
-- **Prod**: `https://api.audya.com`
-- Auth: HTTP session + cookies (`credentials: 'include'`)
-- Default headers: `Accept: application/json`, `Accept-Language: fr`, `X-Requested-With: XMLHttpRequest`
+### API Base (`src/services/api.ts`)
+- **Dev** : `http://localhost:8000`
+- **Prod** : `https://api.audya.com`
+- Auth : session HTTP + cookies (`credentials: 'include'`)
+- Headers par défaut : `Accept: application/json`, `Accept-Language: fr`, `X-Requested-With: XMLHttpRequest`
+- Timeout : 10 secondes
+- Erreurs : classe `ApiError` (status + message)
+
+---
+
+## Sécurité — Règles non négociables
+
+Ces règles s'appliquent à chaque modification, même mineure.
+
+### Données utilisateur
+- **Valider en entrée** toutes les données venant de l'utilisateur (formulaires) ET du backend (réponses API potentiellement malformées).
+- **Ne jamais logger** d'informations sensibles (tokens, mots de passe, données de santé) dans `console.log`. Utiliser des messages génériques.
+- **Ne jamais stocker** de credentials en clair dans AsyncStorage ou le state React. Les tokens de session vivent dans les cookies HTTP (géré par `api.ts`).
+
+### Authentification
+- Le flux auth est géré par `AuthContext` + `AuthFlow`. Ne pas court-circuiter ce mécanisme.
+- Mode dev : `DEV_SKIP_2FA` existe dans `authService.ts` — ce flag ne doit **jamais** être `true` en production. Si tu touches l'auth, vérifie ce flag.
+- Code 2FA valide en mock : `"123456"` — ne jamais hardcoder de vrai code.
+
+### Réseau
+- Toutes les requêtes passent par `apiFetch` dans `api.ts`. Ne pas utiliser `fetch` directement dans les composants ou services.
+- Les erreurs réseau sont catchées et transformées en `ApiError` — ne pas laisser de promesses non catchées.
+
+### Fichiers et uploads
+- Upload photo profil : via `react-native-image-picker` (`profileService.ts`, `RegisterStep2Page.tsx`). Valider le type MIME et la taille (3 Mo max) côté client avant envoi.
+- Upload documents (messagerie) : via `react-native-document-picker`. Limiter les types acceptés.
+
+---
 
 ## Navigation System (`src/context/NavigationContext.tsx`)
 
-Custom stack-based router — **no React Navigation library**.
+Routeur stack maison — **pas de React Navigation**. Toutes les fonctions de navigation sont wrappées avec `useCallback` (dépendances stables → pas de re-render inutile des consommateurs).
 
-### Screen Names
+### Type Screen (union complète)
 ```typescript
-type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings';
+type Screen =
+  | 'home'
+  | 'professionals'
+  | 'professional-profile'
+  | 'add-professional'
+  | 'invite-professional'
+  | 'settings'
+  | 'my-profile'
+  | 'messaging'
+  | 'messaging-chat'
+  | 'agenda'
+  | 'agenda-day'
+  | 'agenda-form'
+  | 'register-step1'
+  | 'register-step1bis'
+  | 'register-step2'
+  | 'register-step3'
+  | 'register-step4'
+  | 'register-step5'
+  | 'register-success';
 ```
 
-### Adding a New Screen
-1. Add the new name to the `Screen` union type in `NavigationContext.tsx`
-2. Add a `navigateTo<NewScreen>()` helper function in the context (or use `navigateTo('new-screen')`)
-3. Add the screen label to `SCREEN_LABELS` in `BottomNav.tsx`
-4. Add the screen rendering in `App.tsx` (or wherever the router switch lives)
-5. Add a handler in `MainPage.tsx` if it's accessible from the home menu
+### NavigationProvider — prop `initialScreen`
+`NavigationProvider` accepte une prop optionnelle `initialScreen?: Screen` (défaut : `'home'`).
+Utilisé par `RegisterFlow` qui l'instancie avec `initialScreen="register-step1"`.
+
+```tsx
+// Utilisation standard (app authentifiée)
+<NavigationProvider>…</NavigationProvider>
+
+// Flux d'inscription
+<NavigationProvider initialScreen="register-step1">…</NavigationProvider>
+```
 
 ### Context API
-| Method | Description |
-|--------|-------------|
-| `navigateTo(screen)` | Push screen onto history stack |
-| `goBack()` | Pop history stack (go to previous screen) |
-| `goHome()` | Reset stack to home |
-| `navigateToProfile(professional)` | Navigate to profile with selected professional |
-| `navigateToAdd()` | Navigate to add-professional form |
-| `navigateToInvite()` | Navigate to invite-professional form |
-| `navigateToSettings()` | Navigate to settings screen |
+| Méthode | Description |
+|---------|-------------|
+| `navigateTo(screen)` | Push sur la pile |
+| `goBack()` | Pop de la pile |
+| `goHome()` | Reset pile → home |
+| `navigateToProfile(professional)` | Profil professionnel avec données |
+| `navigateToAdd()` | Formulaire ajout professionnel |
+| `navigateToInvite()` | Formulaire invitation professionnel |
+| `navigateToSettings()` | Paramètres |
+| `navigateToMyProfile()` | Profil utilisateur |
+| `navigateToMessaging()` | Liste conversations |
+| `navigateToMessagingChat(conversation)` | Vue conversation |
+| `navigateToAgenda()` | Calendrier |
+| `navigateToAgendaDay(date)` | Vue jour |
+| `navigateToAgendaForm(event?)` | Formulaire événement (création ou édition) |
+
+### Ajouter un nouvel écran (app authentifiée)
+1. Ajouter le nom à l'union `Screen` dans `NavigationContext.tsx`
+2. Ajouter le helper `navigateTo<NewScreen>()` dans le context (avec `useCallback`)
+3. Ajouter le label dans `SCREEN_LABELS` de `BottomNav.tsx`
+4. Ajouter le rendu conditionnel dans `App.tsx`
+5. Ajouter le handler dans `MainPage.tsx` si accessible depuis le menu
+
+### Auth Context (`src/context/AuthContext.tsx`)
+Géré séparément de la navigation. Expose :
+- `isAuthenticated: boolean`
+- `pendingEmail: string` (entre step 1 et 2FA)
+- `loginFirstFactor(email, password)` → déclenche 2FA
+- `loginSuccess()` → marque l'utilisateur comme authentifié
+- `logout()` → reset et retour au flux auth
+
+### Register Context (`src/context/RegisterContext.tsx`)
+Partage **toutes** les données du wizard d'inscription entre les étapes. Expose :
+- `registerData: RegisterData` — modèle complet couvrant les 5 étapes :
+  - **Step 1** : `email`, `nom`, `prenom`, `password`, `cgvAccepted`
+  - **Step 2** : `genre`, `dateNaissance`, `numeroSecu`, `adresse`, `complement`, `codePostal`, `ville`, `pays`, `telephoneFixe`, `telephoneMobile`, `profession`, `photoUri`
+  - **Step 3** : `dureeGene`, `ouiNon[]`, `evolutionSurdite`, `situationsDifficiles[]`, `situationsDifficilesBis[]`
+  - **Step 4** : `taille`, `poids`, `groupeSanguin`, `antecedents`, `traitements`, `allergies`
+  - **Step 5** : `specialite`, `professionnelNom`, `professionnelPrenom`, `professionnelCodePostal`, `professionnelVille`
+- `setRegisterData(partial)` → merge partiel dans le state
+
+Monté par `RegisterFlow` via `<RegisterProvider>`. Ne pas utiliser hors du flux d'inscription.
+
+### Flux d'inscription (`AuthFlow` → `RegisterFlow`)
+```
+AuthFlow (screen === 'register')
+  └── RegisterFlow
+        └── NavigationProvider (initialScreen="register-step1")
+              └── RegisterProvider
+                    └── RegisterScreenRouter
+                          ├── register-step1    → RegisterStep1Screen
+                          ├── register-step1bis → RegisterStep1BisScreen
+                          ├── register-step2    → RegisterStep2Screen
+                          ├── register-step3    → RegisterStep3Screen
+                          ├── register-step4    → RegisterStep4Screen
+                          ├── register-step5    → RegisterStep5Screen
+                          └── register-success  → RegisterSuccessScreen
+                                (goHome() → currentScreen='home' → onComplete() → AuthFlow retourne à 'login')
+```
+
+---
 
 ## Tech Stack
 
-- **React Native 0.84.0** + **React 19.2.3** with TypeScript 5.8
-- **Metro** bundler for development (started with `npm start`)
-- **React Native SVG** for vector graphics and icons
-- **React Native Safe Area Context** for handling device notches
-- **Jest** for unit testing
-- **ESLint** with `@react-native/eslint-config` preset
-- **Prettier** for code formatting (2-space indent, single quotes)
-- **Babel** with React Native preset for transpilation
-- **iOS**: CocoaPods for dependency management (Podfile in `ios/`)
-- **Android**: Gradle for build system (Android Studio compatible)
+| Dépendance | Version | Rôle |
+|------------|---------|------|
+| React Native | 0.84.0 | Framework mobile |
+| React | 19.2.3 | UI library |
+| TypeScript | 5.8 | Typage statique |
+| Metro | latest | Bundler dev |
+| React Native SVG | latest | Icônes vectorielles |
+| React Native Vector Icons | latest | Ionicons (Agenda, UI) |
+| React Native Safe Area Context | latest | Gestion notches |
+| React Native Image Picker | latest | Upload photo (profil + inscription étape 2) |
+| React Native Document Picker | latest | Pièces jointes messagerie |
+| Jest | latest | Tests unitaires |
+| ESLint | `@react-native` preset | Qualité code |
+| Prettier | 2 espaces / single quotes | Formatage |
+| CocoaPods | latest | Gestion deps iOS |
+| Gradle | latest | Build Android |
+
+---
 
 ## Code Standards
 
-### Naming Conventions
-- **Components**: PascalCase (e.g., `MainPage`, `NavBar`)
-- **Functions**: camelCase
-- **Constants**: UPPER_SNAKE_CASE (e.g., `MENU_ITEMS`, `TILE_GAP`, `USE_API`)
-- **Files**: Match component name (e.g., `MainPage.tsx`, `HomeScreen.styles.tsx`)
-- **Services**: `<feature>Service.ts` (e.g., `professionalsService.ts`)
+### Nommage
+| Catégorie | Convention | Exemple |
+|-----------|-----------|---------|
+| Composants | PascalCase | `MessagingChatPage` |
+| Fonctions / hooks | camelCase | `fetchConversations`, `useNewPassword` |
+| Constantes module | UPPER_SNAKE_CASE | `USE_API`, `MOCK_CONVERSATIONS` |
+| Fichiers composant | = nom composant | `MessagingChatPage.tsx` |
+| Services | `<feature>Service.ts` | `messagingService.ts` |
+| Types API | `<Name>ApiResponse` | `ConversationApiResponse` |
+| Types app | PascalCase camelCase | `Conversation` |
 
-### Component Organization
-- Include JSDoc comments explaining component purpose
-- Separate static data (MENU_ITEMS, MOCK_*) from component logic
-- Keep styles in separate `.styles.tsx` files for screens
-- API types use snake_case suffix (`ApiResponse`); app types use camelCase
+### Organisation d'un fichier composant Page
+```
+1. Imports React + RN
+2. Imports composants locaux
+3. Imports services
+4. Imports types + constantes
+5. ─── Sous-composants module-level (si besoin) ──
+6. const SubComp = (props) => ...  // JAMAIS à l'intérieur du composant parent
+7. ─── Mock Data ────────────────
+8. MOCK_ITEMS: MyItem[] = [...]
+9. ─── Toggle ───────────────────
+10. const USE_API = false;
+11. ─── Component ─────────────────
+12. JSDoc /** ... */
+13. export function MyPage(props) { ... }
+14. ─── Styles ────────────────────
+15. const styles = StyleSheet.create({ ... })
+```
 
-### Styling Guidelines
-- Use `StyleSheet.create()` for performance optimization
-- Define colors in centralized `COLORS` object (per screen styles file)
-- Font constants: `FONT_REGULAR`, `FONT_SEMIBOLD`, `FONT_BOLD` (Montserrat)
-- Use flexbox for layout (no absolute positioning unless necessary)
-- Use `Dimensions.get('window')` for responsive calculations
-- Include shadow/elevation for depth (shadowColor for iOS, elevation for Android)
+### Styles
+- `StyleSheet.create()` obligatoire (performance)
+- `COLORS` importé depuis `HomeScreen.styles.tsx` (via `Register.styles.ts` pour le flux Register)
+- Polices : `FONT_REGULAR`, `FONT_SEMIBOLD`, `FONT_BOLD` (Montserrat)
+- Layout : flexbox en priorité, `position: absolute` seulement si inévitable
+- Responsive : `Dimensions.get('window')` pour les calculs dépendant de l'écran
+- Ombres : `shadowColor/shadowOffset/shadowOpacity/shadowRadius` (iOS) + `elevation` (Android)
+- Auth screens : palette dans `src/styles/auth/colors.ts`, spacing dans `src/styles/auth/spacing.ts`
+- **Ne jamais introduire de nouvelle valeur hexadécimale** sans utiliser un token `COLORS.*` existant
+
+### Accessibilité
+- Tout élément interactif (`TouchableOpacity`, `Pressable`) doit avoir `accessibilityLabel` et `accessibilityRole="button"`.
+- Les listes d'items doivent avoir des labels parlants (ex. `accessibilityLabel={item.label}` sur les tuiles).
+
+### JSDoc minimal requis
+```typescript
+/**
+ * MessagingChatPage — Affiche la conversation avec un professionnel.
+ * Gère l'envoi de messages texte et de fichiers.
+ * Dépend de NavigationContext pour selectedConversation.
+ */
+export function MessagingChatPage({ onBack }: Props) { ... }
+```
+
+---
 
 ## Debugging & Development
 
-### Common Tasks
-- **Check TypeScript errors**: Run `npx tsc --noEmit` (uses tsconfig.json)
-- **Force reload app**: Press 'R' twice on Android, or 'R' on iOS simulator
-- **Access Metro dev menu**: Cmd+M (iOS) or Ctrl+M (Android)
-- **View network requests**: Use React Native debugging tools in the Metro dev menu
+### Outils
+- **TypeScript** : `npx tsc --noEmit`
+- **Reload forcé** : `RR` (Android) / `R` (iOS simulateur)
+- **Dev menu** : `Cmd+M` (iOS) / `Ctrl+M` (Android)
+- **Réseau** : React Native Debugger ou Flipper
 
-### File Paths to Know
-- App entry point: `index.js` → `App.tsx`
-- Router switch: `App.tsx` (renders screen based on NavigationContext)
-- Navigation context: `src/context/NavigationContext.tsx`
-- Base API wrapper: `src/services/api.ts`
-- App-wide constants: `src/constants/index.ts`
-- Configuration: `app.json`, `babel.config.js`, `jest.config.js`, `tsconfig.json`
-- ESLint config: `.eslintrc.js` (extends `@react-native`)
-- Prettier config: `.prettierrc.js`
+### Fichiers clés
+| Fichier | Rôle |
+|---------|------|
+| `index.js` | Point d'entrée boot |
+| `App.tsx` | Router top-level (Auth vs App) |
+| `src/context/NavigationContext.tsx` | Routeur |
+| `src/context/AuthContext.tsx` | État auth |
+| `src/context/RegisterContext.tsx` | Données wizard inscription (Steps 1–5) |
+| `src/services/api.ts` | Wrapper HTTP |
+| `src/utils/agendaHelpers.ts` | Utilitaires agenda (calendrier, dates) |
+| `src/constants/index.ts` | MENU_ITEMS, SPECIALTIES |
+| `app.json` | Manifest app |
+| `tsconfig.json` | Config TypeScript |
+
+---
 
 ## Git & Branching
 
-- Main branch: `main`
-- Use feature branches per developer (e.g., `BaptisteM`)
-- Use descriptive commit messages following conventional format when possible
+- Branche principale : `main`
+- Branches feature par développeur (ex. `BaptisteM`)
+- Messages de commit en format conventionnel : `feat:`, `fix:`, `refactor:`, `chore:`
+
+---
 
 ## Known TODOs
 
-- Navigation for menu items beyond "professionals" (MainPage.tsx, BottomNav.tsx)
-- Implement `GET /api/patient/professionals` JSON endpoint (backend pending)
-- Implement `GET /api/professionals/search` (AddProfessionalPage.tsx)
-- Implement `POST /api/patient/invite-professional` (InviteProfessionalPage.tsx)
-- Backend fields to confirm: `isFavorite`, `invitation_status`, `zipCode`, `city`
-- Resend invitation API call (ProfessionalsPage.tsx)
-- Message button functionality (ProfessionalCard.tsx)
-- Notification and settings handlers (NavBar.tsx)
-- Profile / Preferences / Logout handlers (NavBar.tsx dropdown)
+### Backend (en attente)
+- Endpoint `GET /api/patient/professionals` — format JSON à confirmer
+- Endpoint `POST /api/professionals/search` — non implémenté (stub mock dans `RegisterStep5Page`)
+- Endpoint `POST /api/patient/invite-professional` — non implémenté
+- Champs à confirmer : `isFavorite`, `invitation_status`, `zipCode`, `city` (Professionals)
+- Ensemble des endpoints Messaging, Agenda, Profile, Chatbot (voir tableau API Status)
+
+### Frontend
+- Navigation depuis le menu home vers les items au-delà de "Professionnels", "Messagerie", "Agenda" (`MainPage.tsx`)
+- Bouton "Renvoyer l'invitation" (`ProfessionalsPage.tsx`) — appel API manquant
+- Handlers notification dans `NavBar.tsx`
+- Déconnexion effective (clear cookies session) dans `NavBar.tsx` dropdown
+
+### Register (frontend)
+- Brancher les vrais appels API dans chaque étape (tous les `TODO: appel API`)
+- Étape 1bis : vérifier le clic sur le lien e-mail avant de progresser (actuellement : bouton "Renvoyer" navigue directement à l'étape 2)
+- Étape 5 : remplacer le mock `MOCK_SEARCH_RESULTS` par l'appel `POST /api/professionals/search`
+- Upload photo profil étape 2 : la photo est sélectionnée localement (`photoUri`) mais pas encore envoyée à l'API à la soumission
+- Après inscription réussie : décider si l'utilisateur est auto-connecté ou redirigé vers login
