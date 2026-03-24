@@ -39,6 +39,8 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'agenda': 'Mon agenda',
   'agenda-day': 'Mon agenda',
   'agenda-form': 'Mon agenda',
+  'carnet-audition': 'Mon carnet audition',
+  'appareillage': 'Mon appareillage',
 };
 
 /**
@@ -65,6 +67,10 @@ const BottomNav = () => {
       navigateToMessaging();
     } else if (itemId === 'agenda') {
       navigateToAgenda();
+    } else if (itemId === 'notebook') {
+        navigateTo('carnet-audition');
+    } else if (itemId === 'hearing') {
+        navigateTo('appareillage');
     }
   };
 
@@ -82,6 +88,30 @@ const BottomNav = () => {
       >
         <Pressable style={styles.menuOverlay} onPress={() => setMenuOpen(false)}>
           <View style={styles.menuPopup}>
+            {MENU_ITEMS.map((item, index) => {
+                          const isActive = item.label === sectionLabel; // 👈 1. On vérifie si c'est la page actuelle
+                          return (
+                            <React.Fragment key={item.id}>
+                              {index > 0 && <View style={styles.menuSeparator} />}
+                              <TouchableOpacity
+                                style={styles.menuItem}
+                                onPress={() => handleMenuItemPress(item.id)}
+                                activeOpacity={0.7}
+                              >
+                                {/* 👈 2. L'icône passe en gris si non active, orange si active */}
+                                <item.icon width={22} height={22} fill={isActive ? COLORS.orange : COLORS.text} color={isActive ? COLORS.orange : COLORS.text} />
+
+                                {/* 👈 3. Le texte passe en orange et gras si actif */}
+                                <Text style={[
+                                  styles.menuItemLabel,
+                                  isActive && { color: COLORS.orange, fontFamily: FONT_SEMIBOLD }
+                                ]}>
+                                  {item.label}
+                                </Text>
+                              </TouchableOpacity>
+                            </React.Fragment>
+                          );
+                        })}
             {MENU_ITEMS.map((item, index) => (
               <React.Fragment key={item.id}>
                 {index > 0 && <View style={styles.menuSeparator} />}
@@ -190,12 +220,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   menuPopup: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingVertical: 8,
-    paddingBottom: 24,
-  },
+      backgroundColor: COLORS.white,
+      borderRadius: 20, // 👈 Arrondi partout pour faire une bulle
+      marginHorizontal: 76, // 👈 Règle la largeur pile sur celle du bouton central
+      marginBottom: 10, // 👈 La fait flotter juste au-dessus de ta barre
+      paddingVertical: 8,
+      paddingBottom: 8, // 👈 On réduit un peu l'espace vide en bas
+      elevation: 5, // 👈 Petite ombre (optionnel mais plus joli)
+    },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -3,6 +3,7 @@ import React, { createContext, useState, useMemo, useCallback, ReactNode } from 
 /**
  * Types d'écran disponibles dans l'application
  */
+export type Screen = 'home' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form' | 'carnet-audition' | 'appareillage';
 export type Screen =
   | 'home'
   | 'professionals'
@@ -96,6 +97,7 @@ interface NavigationContextType {
   navigateToAgenda: () => void;
   navigateToAgendaDay: (date: string) => void;
   navigateToAgendaForm: (event?: SelectedAgendaEvent | null) => void;
+  navigateToCarnetAudition: () => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -175,6 +177,10 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     setHistory(prev => [...prev, 'agenda-form']);
   }, []);
 
+  const navigateToCarnetAudition = () => {
+      setHistory(prev => [...prev, 'carnet-audition']);
+    };
+
   const value = useMemo(() => ({
     currentScreen,
     previousScreen,
@@ -195,6 +201,9 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     navigateToAgenda,
     navigateToAgendaDay,
     navigateToAgendaForm,
+    navigateToCarnetAudition,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [currentScreen, previousScreen, selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate]);
   }), [
     currentScreen, previousScreen,
     selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate,

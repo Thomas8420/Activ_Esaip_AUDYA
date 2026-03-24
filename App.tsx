@@ -13,6 +13,8 @@ import MessagingChatScreen from './src/screens/Messaging/MessagingChatScreen';
 import AgendaScreen from './src/screens/Agenda/AgendaScreen';
 import AgendaDayViewScreen from './src/screens/Agenda/AgendaDayViewScreen';
 import AgendaFormScreen from './src/screens/Agenda/AgendaFormScreen';
+import CarnetAuditionScreen from './src/screens/Carnet_Audition/CarnetAuditionScreen';
+import AppareillageScreen from './src/screens/Appareillage/AppareillageScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import AuthFlow from './src/components/auth/AuthFlow';
@@ -23,6 +25,8 @@ import AuthFlow from './src/components/auth/AuthFlow';
 function AppContent() {
   const isDarkMode = useColorScheme() === 'dark';
   const { currentScreen } = useNavigation();
+
+    console.log("L'écran actuel selon le système est :", currentScreen);
 
   return (
     <>
@@ -39,6 +43,8 @@ function AppContent() {
       {currentScreen === 'agenda' && <AgendaScreen />}
       {currentScreen === 'agenda-day' && <AgendaDayViewScreen />}
       {currentScreen === 'agenda-form' && <AgendaFormScreen />}
+      {currentScreen === 'carnet-audition' && <CarnetAuditionScreen />}
+      {currentScreen === 'appareillage' && <AppareillageScreen />}
     </>
   );
 }

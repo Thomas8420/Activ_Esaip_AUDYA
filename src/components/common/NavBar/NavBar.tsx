@@ -51,7 +51,7 @@ const NavBar = () => {
             accessibilityRole="button"
             onPress={navigateToSettings}
           >
-            <SettingsIcon width={30} height={30} fill={COLORS.white} />
+            <SettingsIcon width={30} height={30} color="white" />
           </TouchableOpacity>
 
           {/* Bouton pour ouvrir/fermer le menu déroulant */}
@@ -61,8 +61,8 @@ const NavBar = () => {
             accessibilityLabel="Menu profil"
             accessibilityRole="button"
           >
-            <ProfileIcon width={30} height={30} fill={COLORS.white} />
-            <DropdownIcon width={18} height={18} fill={COLORS.white} />
+            <ProfileIcon width={30} height={30} color="white" />
+            <DropdownIcon width={18} height={18} color="white" />
           </TouchableOpacity>
         </View>
       </View>
@@ -82,7 +82,7 @@ const NavBar = () => {
               accessibilityLabel="Mon profil"
               accessibilityRole="button"
             >
-                <ProfileIcon width={18} height={18} fill={COLORS.white} />
+                <ProfileIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Profil</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
@@ -92,7 +92,7 @@ const NavBar = () => {
               accessibilityLabel="Préférences"
               accessibilityRole="button"
             >
-                <SettingsIcon width={18} height={18} fill={COLORS.white} />
+                <SettingsIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Préférences</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
@@ -102,7 +102,7 @@ const NavBar = () => {
               accessibilityLabel="Déconnexion"
               accessibilityRole="button"
             >
-                <LogoutIcon width={18} height={18} fill={COLORS.white} />
+                <LogoutIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Déconnexion</Text>
             </TouchableOpacity>
           </View>

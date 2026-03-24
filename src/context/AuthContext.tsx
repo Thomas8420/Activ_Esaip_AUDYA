@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [pendingEmail, setPendingEmail] = useState('');
 
   const loginFirstFactor = async (
