@@ -17,6 +17,7 @@ import {
   AppNotification,
 } from '../../../services/notificationService';
 import NotificationPanel from './NotificationPanel';
+import { useLanguage } from '../../../context/LanguageContext';
 
 // --- Imports des icônes SVG ---
 // Chaque icône est un composant React à part entière.
@@ -35,6 +36,7 @@ import LogoutIcon from '../../../assets/images/on-off.svg';
 const NavBar = () => {
   const { navigateToSettings, navigateToMyProfile } = useNavigation();
   const { logout } = useAuth();
+  const { t } = useLanguage();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -80,7 +82,7 @@ const NavBar = () => {
           {/* Cloche notifications + badge */}
           <TouchableOpacity
             style={styles.headerIconBtn}
-            accessibilityLabel={`Notifications${unreadCount > 0 ? `, ${unreadCount} non lue${unreadCount > 1 ? 's' : ''}` : ''}`}
+            accessibilityLabel={`${t('navbar.notifications')}${unreadCount > 0 ? `, ${unreadCount}` : ''}`}
             accessibilityRole="button"
             onPress={handleBellPress}
           >
@@ -96,7 +98,7 @@ const NavBar = () => {
 
           <TouchableOpacity
             style={styles.headerIconBtn}
-            accessibilityLabel="Paramètres"
+            accessibilityLabel={t('navbar.settings')}
             accessibilityRole="button"
             onPress={navigateToSettings}
           >
@@ -107,7 +109,7 @@ const NavBar = () => {
           <TouchableOpacity
             style={styles.headerIconBtnWide}
             onPress={() => { setProfileOpen(prev => !prev); setNotifOpen(false); }}
-            accessibilityLabel="Menu profil"
+            accessibilityLabel={t('navbar.profileMenu')}
             accessibilityRole="button"
           >
             <ProfileIcon width={30} height={30} color="white" />
@@ -142,7 +144,7 @@ const NavBar = () => {
               accessibilityRole="button"
             >
                 <ProfileIcon width={18} height={18} color="#F15A24" />
-                <Text style={styles.dropdownLabel}>Profil</Text>
+                <Text style={styles.dropdownLabel}>{t('navbar.profile')}</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
             <TouchableOpacity
@@ -152,7 +154,7 @@ const NavBar = () => {
               accessibilityRole="button"
             >
                 <SettingsIcon width={18} height={18} color="#F15A24" />
-                <Text style={styles.dropdownLabel}>Préférences</Text>
+                <Text style={styles.dropdownLabel}>{t('navbar.preferences')}</Text>
             </TouchableOpacity>
             <View style={styles.dropdownSeparator} />
             <TouchableOpacity
@@ -162,7 +164,7 @@ const NavBar = () => {
               accessibilityRole="button"
             >
                 <LogoutIcon width={18} height={18} color="#F15A24" />
-                <Text style={styles.dropdownLabel}>Déconnexion</Text>
+                <Text style={styles.dropdownLabel}>{t('navbar.logout')}</Text>
             </TouchableOpacity>
           </View>
         </>

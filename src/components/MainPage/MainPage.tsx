@@ -13,6 +13,7 @@ import { styles } from '../../screens/Home/HomeScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { useNavigation } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { MENU_ITEMS } from '../../constants';
 
 /**
@@ -21,6 +22,7 @@ import { MENU_ITEMS } from '../../constants';
  */
 const MainPage = () => {
   const { navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire, navigateToNews } = useNavigation();
+  const { t } = useLanguage();
 
   /**
    * Gère le clic sur un élément du menu
@@ -67,7 +69,7 @@ const MainPage = () => {
               accessibilityRole="button"
             >
               <item.icon width={48} height={48} />
-              <Text style={styles.tileLabel}>{item.label}</Text>
+              <Text style={styles.tileLabel}>{t(`menu.${item.id}`)}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -79,22 +81,20 @@ const MainPage = () => {
             style={styles.bannerImage}
           />
           <View style={styles.bannerOverlay}>
-            <Text style={styles.bannerText}>
-              Audya simplifie le suivi patient et renforce la coordination pluridisciplinaire
-            </Text>
+            <Text style={styles.bannerText}>{t('main.banner')}</Text>
           </View>
         </View>
 
         {/* Pied de page légal */}
         <View style={styles.footer}>
-          <Text style={styles.footerCopyright}>© {new Date().getFullYear()} AUDYA — Tous droits réservés</Text>
+          <Text style={styles.footerCopyright}>{t('main.footer.copyright').replace('{year}', String(new Date().getFullYear()))}</Text>
           <View style={styles.footerLinks}>
             <TouchableOpacity
               onPress={() => Linking.openURL('https://audya.com/mentions-legales')}
               accessibilityLabel="Mentions légales"
               accessibilityRole="link"
             >
-              <Text style={styles.footerLink}>Mentions légales</Text>
+              <Text style={styles.footerLink}>{t('main.footer.legal')}</Text>
             </TouchableOpacity>
             <Text style={styles.footerDot}>·</Text>
             <TouchableOpacity
@@ -102,7 +102,7 @@ const MainPage = () => {
               accessibilityLabel="Politique de confidentialité RGPD"
               accessibilityRole="link"
             >
-              <Text style={styles.footerLink}>RGPD</Text>
+              <Text style={styles.footerLink}>{t('main.footer.rgpd')}</Text>
             </TouchableOpacity>
             <Text style={styles.footerDot}>·</Text>
             <TouchableOpacity
@@ -110,7 +110,7 @@ const MainPage = () => {
               accessibilityLabel="Gestion des cookies"
               accessibilityRole="link"
             >
-              <Text style={styles.footerLink}>Cookies</Text>
+              <Text style={styles.footerLink}>{t('main.footer.cookies')}</Text>
             </TouchableOpacity>
             <Text style={styles.footerDot}>·</Text>
             <TouchableOpacity
@@ -118,7 +118,7 @@ const MainPage = () => {
               accessibilityLabel="Nous contacter"
               accessibilityRole="link"
             >
-              <Text style={styles.footerLink}>Nous contacter</Text>
+              <Text style={styles.footerLink}>{t('main.footer.contact')}</Text>
             </TouchableOpacity>
           </View>
         </View>

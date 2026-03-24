@@ -26,6 +26,7 @@ import {
   USE_SETTINGS_API,
 } from '../../services/settingsService';
 import { useNavigation } from '../../context/NavigationContext';
+import { useLanguage, Language } from '../../context/LanguageContext';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 /**
@@ -42,7 +43,7 @@ const MOCK_SETTINGS: UserSettings = {
 };
 
 // ─── Preference options ────────────────────────────────────────────────────────
-const LANGUAGE_OPTIONS = ['FR', 'EN'];
+const LANGUAGE_OPTIONS: Language[] = ['FR', 'EN', 'ES'];
 const DATE_FORMAT_OPTIONS = ['JJ/MM/AAAA', 'MM/JJ/AAAA', 'AAAA/MM/JJ'];
 const TIME_FORMAT_OPTIONS = ['24h', '12h'];
 
@@ -67,6 +68,7 @@ const EyeIcon = ({ visible }: { visible: boolean }) => (
  */
 const SettingsPage = () => {
   const { goHome } = useNavigation();
+  const { t, setLanguage } = useLanguage();
 
   // ── Data state ──────────────────────────────────────────────────────────────
   const [settings, setSettings] = useState<UserSettings | null>(null);
@@ -100,7 +102,7 @@ const SettingsPage = () => {
           setSettings({ ...MOCK_SETTINGS });
         }
       } catch {
-        Alert.alert('Erreur', 'Impossible de charger les paramètres.');
+        Alert.alert('Erreur', t('error.load'));
       } finally {
         setIsLoading(false);
       }
@@ -137,7 +139,7 @@ const SettingsPage = () => {
       }
       // TODO: afficher un toast de confirmation
     } catch {
-      Alert.alert('Erreur', 'Impossible de sauvegarder les paramètres.');
+      Alert.alert('Erreur', t('error.save'));
     } finally {
       setIsSaving(false);
     }
@@ -156,7 +158,7 @@ const SettingsPage = () => {
       setConfirmPassword('');
       // TODO: afficher un toast de confirmation
     } catch {
-      Alert.alert('Erreur', 'Impossible de changer le mot de passe.');
+      Alert.alert('Erreur', t('error.password'));
     } finally {
       setIsChangingPassword(false);
     }
@@ -170,7 +172,7 @@ const SettingsPage = () => {
       }
       goHome();
     } catch {
-      Alert.alert('Erreur', 'Impossible de supprimer le compte.');
+      Alert.alert('Erreur', t('error.delete'));
     }
   };
 
@@ -186,7 +188,7 @@ const SettingsPage = () => {
       >
         {/* ── Titre ── */}
         <View style={styles.titleSection}>
-          <Text style={styles.title}>MES PARAMÈTRES</Text>
+          <Text style={styles.title}>{t('settings.title')}</Text>
         </View>
 
         {isLoading || !settings ? (
@@ -199,13 +201,13 @@ const SettingsPage = () => {
           <>
             {/* ── Préférences : langue / format date / format heure ── */}
             <View style={[styles.sectionCard, { zIndex: 10 }]}>
-              <Text style={styles.sectionTitle}>Préférences</Text>
+              <Text style={styles.sectionTitle}>{t('settings.preferences')}</Text>
               {/* Ligne 1 : Langue + Date */}
               <View style={styles.prefsRow}>
 
                 {/* Dropdown Langue */}
                 <View style={styles.prefDropdownWrapper}>
-                  <Text style={styles.prefDropdownLabel}>Langue</Text>
+                  <Text style={styles.prefDropdownLabel}>{t('settings.language')}</Text>
                   <TouchableOpacity
                     style={[
                       styles.prefDropdownButton,
@@ -233,6 +235,7 @@ const SettingsPage = () => {
                           ]}
                           onPress={() => {
                             updateSetting('language', opt);
+                            setLanguage(opt);
                             setLangOpen(false);
                           }}
                           activeOpacity={0.7}
@@ -253,7 +256,7 @@ const SettingsPage = () => {
 
                 {/* Dropdown Format date */}
                 <View style={styles.prefDropdownWrapper}>
-                  <Text style={styles.prefDropdownLabel}>Date</Text>
+                  <Text style={styles.prefDropdownLabel}>{t('settings.date')}</Text>
                   <TouchableOpacity
                     style={[
                       styles.prefDropdownButton,
@@ -306,7 +309,7 @@ const SettingsPage = () => {
 
                 {/* Dropdown Format heure */}
                 <View style={styles.prefDropdownWrapper}>
-                  <Text style={styles.prefDropdownLabel}>Heure</Text>
+                  <Text style={styles.prefDropdownLabel}>{t('settings.time')}</Text>
                   <TouchableOpacity
                     style={[
                       styles.prefDropdownButton,
@@ -360,10 +363,10 @@ const SettingsPage = () => {
 
             {/* ── NOTIFICATIONS ── */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>Notifications</Text>
+              <Text style={styles.sectionTitle}>{t('settings.notifications')}</Text>
 
               <View style={styles.notifRow}>
-                <Text style={styles.notifLabel}>Notifications de messages</Text>
+                <Text style={styles.notifLabel}>{t('settings.notif.messages')}</Text>
                 <Switch
                   value={settings.notificationsMessages}
                   onValueChange={v => updateSetting('notificationsMessages', v)}
@@ -376,7 +379,7 @@ const SettingsPage = () => {
               </View>
 
               <View style={styles.notifRow}>
-                <Text style={styles.notifLabel}>Notifications d'alertes</Text>
+                <Text style={styles.notifLabel}>{t('settings.notif.alerts')}</Text>
                 <Switch
                   value={settings.notificationsAlerts}
                   onValueChange={v => updateSetting('notificationsAlerts', v)}
@@ -389,7 +392,7 @@ const SettingsPage = () => {
               </View>
 
               <View style={[styles.notifRow, styles.notifRowLast]}>
-                <Text style={styles.notifLabel}>Notifications de tâches</Text>
+                <Text style={styles.notifLabel}>{t('settings.notif.tasks')}</Text>
                 <Switch
                   value={settings.notificationsTasks}
                   onValueChange={v => updateSetting('notificationsTasks', v)}
@@ -404,12 +407,12 @@ const SettingsPage = () => {
 
             {/* ── MON MOT DE PASSE ── */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>Mon mot de passe</Text>
+              <Text style={styles.sectionTitle}>{t('settings.password')}</Text>
 
               <View style={styles.passwordInputWrapper}>
                 <TextInput
                   style={styles.passwordInput}
-                  placeholder="Nouveau mot de passe"
+                  placeholder={t('settings.password.new')}
                   placeholderTextColor={COLORS.textLighter}
                   secureTextEntry={!showNewPassword}
                   value={newPassword}
@@ -423,8 +426,8 @@ const SettingsPage = () => {
                   onPress={() => setShowNewPassword(v => !v)}
                   accessibilityLabel={
                     showNewPassword
-                      ? 'Masquer le mot de passe'
-                      : 'Afficher le mot de passe'
+                      ? t('settings.password.hide')
+                      : t('settings.password.show')
                   }
                 >
                   <EyeIcon visible={showNewPassword} />
@@ -434,7 +437,7 @@ const SettingsPage = () => {
               <View style={styles.passwordInputWrapper}>
                 <TextInput
                   style={styles.passwordInput}
-                  placeholder="Confirmation du mot de passe"
+                  placeholder={t('settings.password.confirm')}
                   placeholderTextColor={COLORS.textLighter}
                   secureTextEntry={!showConfirmPassword}
                   value={confirmPassword}
@@ -448,8 +451,8 @@ const SettingsPage = () => {
                   onPress={() => setShowConfirmPassword(v => !v)}
                   accessibilityLabel={
                     showConfirmPassword
-                      ? 'Masquer la confirmation'
-                      : 'Afficher la confirmation'
+                      ? t('settings.password.hideConfirm')
+                      : t('settings.password.showConfirm')
                   }
                 >
                   <EyeIcon visible={showConfirmPassword} />
@@ -458,7 +461,7 @@ const SettingsPage = () => {
 
               {showPasswordMismatch && (
                 <Text style={styles.passwordMismatch} testID="passwordMismatchError">
-                  Les mots de passe ne correspondent pas.
+                  {t('settings.password.mismatch')}
                 </Text>
               )}
 
@@ -480,14 +483,14 @@ const SettingsPage = () => {
                       styles.outlineButtonTextDisabled,
                   ]}
                 >
-                  {isChangingPassword ? 'Modification…' : 'Modifier le mot de passe'}
+                  {isChangingPassword ? t('settings.password.changing') : t('settings.password.change')}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* ── MON COMPTE ── */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>Mon compte</Text>
+              <Text style={styles.sectionTitle}>{t('settings.account')}</Text>
 
               <TouchableOpacity
                 style={styles.dangerButton}
@@ -495,7 +498,7 @@ const SettingsPage = () => {
                 activeOpacity={0.7}
                 testID="deleteAccountButton"
               >
-                <Text style={styles.dangerButtonText}>Supprimer mon compte</Text>
+                <Text style={styles.dangerButtonText}>{t('settings.account.delete')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -508,7 +511,7 @@ const SettingsPage = () => {
               testID="saveSettingsButton"
             >
               <Text style={styles.saveButtonText}>
-                {isSaving ? 'Enregistrement…' : 'Enregistrer les modifications'}
+                {isSaving ? t('settings.saving') : t('settings.save')}
               </Text>
             </TouchableOpacity>
           </>
@@ -532,7 +535,7 @@ const SettingsPage = () => {
           {/* Carte interne : stoppe la propagation du tap vers l'overlay */}
           <Pressable style={styles.modalCard} onPress={() => {}}>
             <Text style={styles.modalText}>
-              Voulez-vous vraiment supprimer votre compte ?
+              {t('modal.delete.text')}
             </Text>
 
             <View style={styles.modalButtons}>
@@ -542,7 +545,7 @@ const SettingsPage = () => {
                 activeOpacity={0.7}
                 testID="cancelDeleteButton"
               >
-                <Text style={styles.modalCancelText}>Annuler</Text>
+                <Text style={styles.modalCancelText}>{t('modal.delete.cancel')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -551,7 +554,7 @@ const SettingsPage = () => {
                 activeOpacity={0.7}
                 testID="confirmDeleteButton"
               >
-                <Text style={styles.modalConfirmText}>Oui</Text>
+                <Text style={styles.modalConfirmText}>{t('modal.delete.confirm')}</Text>
               </TouchableOpacity>
             </View>
           </Pressable>

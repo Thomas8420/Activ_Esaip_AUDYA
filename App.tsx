@@ -20,6 +20,7 @@ import QuestionnaireDetailScreen from './src/screens/Questionnaire/Questionnaire
 import NewsScreen from './src/screens/News/NewsScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { LanguageProvider } from './src/context/LanguageContext';
 import AuthFlow from './src/components/auth/AuthFlow';
 
 /**
@@ -77,9 +78,11 @@ function AppRouter() {
 function App() {
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <AppRouter />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <AppRouter />
+        </AuthProvider>
+      </LanguageProvider>
     </SafeAreaProvider>
   );
 }

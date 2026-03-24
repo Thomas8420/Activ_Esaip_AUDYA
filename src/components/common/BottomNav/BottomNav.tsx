@@ -14,6 +14,7 @@ import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeS
 import { Screen, useNavigation } from '../../../context/NavigationContext';
 import { MENU_ITEMS } from '../../../constants';
 import ChatbotModal from '../../Chatbot/ChatbotModal';
+import { useLanguage } from '../../../context/LanguageContext';
 
 /** Icône maison */
 const HomeIcon = ({ color }: { color: string }) => (
@@ -25,26 +26,45 @@ const MenuIcon = ({ color }: { color: string }) => (
   <Icon name="menu" size={24} color={color} />
 );
 
-/** Correspondance écran → libellé affiché dans le bouton central */
-const SCREEN_LABELS: Partial<Record<Screen, string>> = {
-  home: 'Accueil',
-  health: 'Ma santé',
-  professionals: 'Mes professionnels',
-  'professional-profile': 'Mes professionnels',
-  'add-professional': 'Mes professionnels',
-  'invite-professional': 'Mes professionnels',
-  settings: 'Mes paramètres',
-  'my-profile': 'Mon profil',
-  'messaging': 'Ma messagerie',
-  'messaging-chat': 'Ma messagerie',
-  'agenda': 'Mon agenda',
-  'agenda-day': 'Mon agenda',
-  'agenda-form': 'Mon agenda',
-  'carnet-audition': 'Mon carnet audition',
-  'appareillage': 'Mon appareillage',
-  'questionnaire': 'Mes questionnaires',
-  'questionnaire-detail': 'Mes questionnaires',
-  'news': 'Mes actualités',
+/** Correspondance écran → clé de traduction pour le bouton central */
+const SCREEN_TRANSLATION_KEYS: Partial<Record<Screen, string>> = {
+  home:                  'screen.home',
+  health:                'screen.health',
+  professionals:         'screen.professionals',
+  'professional-profile':'screen.professionals',
+  'add-professional':    'screen.professionals',
+  'invite-professional': 'screen.professionals',
+  settings:              'screen.settings',
+  'my-profile':          'screen.profile',
+  messaging:             'screen.messaging',
+  'messaging-chat':      'screen.messaging',
+  agenda:                'screen.agenda',
+  'agenda-day':          'screen.agenda',
+  'agenda-form':         'screen.agenda',
+  'carnet-audition':     'screen.notebook',
+  appareillage:          'screen.hearing',
+  questionnaire:         'screen.questionnaire',
+  'questionnaire-detail':'screen.questionnaire',
+  news:                  'screen.news',
+};
+
+/** Correspondance écran → id du menu item actif (indépendant de la langue) */
+const SCREEN_TO_MENU_ID: Partial<Record<Screen, string>> = {
+  health:                'health',
+  professionals:         'professionals',
+  'professional-profile':'professionals',
+  'add-professional':    'professionals',
+  'invite-professional': 'professionals',
+  messaging:             'message',
+  'messaging-chat':      'message',
+  agenda:                'agenda',
+  'agenda-day':          'agenda',
+  'agenda-form':         'agenda',
+  'carnet-audition':     'notebook',
+  appareillage:          'hearing',
+  questionnaire:         'questionnaire',
+  'questionnaire-detail':'questionnaire',
+  news:                  'news',
 };
 
 /**
@@ -55,11 +75,13 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
  */
 const BottomNav = () => {
   const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire, navigateToNews } = useNavigation();
+  const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const { bottom: bottomInset } = useSafeAreaInsets();
 
-  const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
+  const sectionLabel = t(SCREEN_TRANSLATION_KEYS[currentScreen] ?? 'screen.menu');
+  const activeMenuId = SCREEN_TO_MENU_ID[currentScreen];
 
   const handleMenuItemPress = (itemId: string) => {
     setMenuOpen(false);
@@ -104,7 +126,8 @@ const BottomNav = () => {
         <TouchableOpacity style={styles.menuOverlay} onPress={() => setMenuOpen(false)} activeOpacity={1}>
           <View style={styles.menuPopup}>
             {MENU_ITEMS.map((item, index) => {
-              const isActive = item.label === sectionLabel;
+              const isActive = item.id === activeMenuId;
+              const label = t(`menu.${item.id}`);
               return (
                 <React.Fragment key={item.id}>
                   {index > 0 && <View style={styles.menuSeparator} />}
@@ -112,7 +135,7 @@ const BottomNav = () => {
                     style={styles.menuItem}
                     onPress={() => handleMenuItemPress(item.id)}
                     activeOpacity={0.7}
-                    accessibilityLabel={item.label}
+                    accessibilityLabel={label}
                     accessibilityRole="button"
                   >
                     <item.icon width={22} height={22} fill={isActive ? COLORS.orange : COLORS.text} />
@@ -120,7 +143,7 @@ const BottomNav = () => {
                       styles.menuItemLabel,
                       isActive && { color: COLORS.orange, fontFamily: FONT_SEMIBOLD },
                     ]}>
-                      {item.label}
+                      {label}
                     </Text>
                   </TouchableOpacity>
                 </React.Fragment>
@@ -138,7 +161,7 @@ const BottomNav = () => {
           style={styles.sideButton}
           onPress={goHome}
           activeOpacity={0.7}
-          accessibilityLabel="Accueil"
+          accessibilityLabel={t('bottomnav.home')}
           accessibilityRole="button"
         >
           <HomeIcon color={COLORS.white} />
@@ -149,7 +172,7 @@ const BottomNav = () => {
           style={styles.centerButton}
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
-          accessibilityLabel="Ouvrir le menu"
+          accessibilityLabel={t('bottomnav.openMenu')}
           accessibilityRole="button"
         >
           <MenuIcon color={COLORS.orange} />
@@ -163,7 +186,7 @@ const BottomNav = () => {
           style={styles.fabButton}
           onPress={() => setChatbotOpen(true)}
           activeOpacity={0.7}
-          accessibilityLabel="Assistant AUDYA"
+          accessibilityLabel={t('bottomnav.assistant')}
           accessibilityRole="button"
         >
           <ChatIcon width={26} height={26} fill={COLORS.white} />
