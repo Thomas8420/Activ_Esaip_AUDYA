@@ -17,6 +17,7 @@ import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import CTA1 from '../common/Button/CTA1';
 import { COLORS } from '../../screens/Home/HomeScreen.styles';
+import { useLanguage } from '../../context/LanguageContext';
 import CTA4 from '../common/Button/CTA4';
 
 // Vues déportées
@@ -41,6 +42,7 @@ import ListIcon from '../../assets/images/list-icon.svg';
 import DropdownIcon from '../../assets/images/dropdown.svg';
 
 const CarnetAuditionPage = () => {
+  const { t } = useLanguage();
   const [documents, setDocuments] = useState<AuditionDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'timeline' | 'grid' | 'list'>('timeline');
@@ -75,7 +77,7 @@ const CarnetAuditionPage = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-          <Text style={styles.title}>MON CARNET AUDITION</Text>
+          <Text style={styles.title}>{t('screen.notebook')}</Text>
 
           {/* --- ZONE FILTRES --- */}
           <View style={styles.controlsContainer}>

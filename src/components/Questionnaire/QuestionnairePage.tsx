@@ -21,6 +21,7 @@ import {
   QuestionnaireSubmission,
 } from '../../services/questionnaireService';
 import { useNavigation } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 // ─── Sous-composant carte questionnaire (module-level — pas de perte de focus) ─
 
@@ -102,6 +103,7 @@ const QuestionnaireCard = ({
  */
 const QuestionnairePage = () => {
   const { navigateToQuestionnaireDetail } = useNavigation();
+  const { t } = useLanguage();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [submissionsMap, setSubmissionsMap] = useState<Record<string, QuestionnaireSubmission[]>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -144,7 +146,7 @@ const QuestionnairePage = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.pageTitle}>MES QUESTIONNAIRES</Text>
+        <Text style={styles.pageTitle}>{t('screen.questionnaire')}</Text>
         <Text style={styles.pageSubtitle}>
           Complétez régulièrement vos questionnaires pour suivre l'évolution de votre santé auditive.
         </Text>

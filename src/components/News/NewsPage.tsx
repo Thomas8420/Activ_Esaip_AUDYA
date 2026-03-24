@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   COLORS,
   FONT_BOLD,
@@ -118,6 +119,7 @@ const ArticleCard = ({ article, onPress }: ArticleCardProps) => {
  * Lecture en modal plein-écran, partage via Share natif.
  */
 const NewsPage = () => {
+  const { t } = useLanguage();
   const articles = getNews();
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
@@ -154,7 +156,7 @@ const NewsPage = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.pageTitle}>MES ACTUALITÉS</Text>
+        <Text style={styles.pageTitle}>{t('screen.news')}</Text>
         <Text style={styles.pageSubtitle}>
           Conseils, nouveautés et informations pour votre santé auditive.
         </Text>

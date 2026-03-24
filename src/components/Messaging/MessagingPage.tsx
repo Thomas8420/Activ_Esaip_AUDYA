@@ -23,6 +23,7 @@ import {
   USE_MESSAGING_API,
 } from '../../services/messagingService';
 import { useNavigation, SelectedConversation } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 /** Icône silhouette personne (état vide) */
 const PersonIcon = () => (
@@ -47,6 +48,7 @@ function initials(name: string): string {
  */
 const MessagingPage = () => {
   const { navigateToMessagingChat } = useNavigation();
+  const { t } = useLanguage();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -168,7 +170,7 @@ const MessagingPage = () => {
 
       {/* Titre */}
       <View style={styles.titleSection}>
-        <Text style={styles.title}>MA MESSAGERIE</Text>
+        <Text style={styles.title}>{t('screen.messaging')}</Text>
       </View>
 
       {/* Filtre */}

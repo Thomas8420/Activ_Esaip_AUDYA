@@ -18,6 +18,7 @@ import {
   ImagePickerResponse,
 } from 'react-native-image-picker';
 import { styles, COLORS } from '../../screens/Profile/ProfileScreen.styles';
+import { useLanguage } from '../../context/LanguageContext';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import {
@@ -115,6 +116,7 @@ const EditIcon = () => (
  * Suit le pattern USE_API défini dans CLAUDE.md.
  */
 const ProfilePage = () => {
+  const { t } = useLanguage();
   // ── Data state ──────────────────────────────────────────────────────────────
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +251,7 @@ const ProfilePage = () => {
       >
         {/* ── Titre ── */}
         <View style={styles.titleSection}>
-          <Text style={styles.title}>MON PROFIL</Text>
+          <Text style={styles.title}>{t('screen.profile')}</Text>
         </View>
 
         {isLoading || !profile ? (

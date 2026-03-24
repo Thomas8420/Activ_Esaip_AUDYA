@@ -7,6 +7,7 @@ import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Ho
 // Importe tes SVGs ici quand tu les auras !
 import OreilleDroiteIcon from '../../assets/images/oreille-droite.svg';
 import OreilleGaucheIcon from '../../assets/images/oreille-gauche.svg';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface DeviceCardProps {
   readonly side: 'DROITE' | 'GAUCHE';
@@ -15,9 +16,10 @@ interface DeviceCardProps {
 }
 
 const DeviceCard: React.FC<DeviceCardProps> = ({ side, data, dotColor }) => {
+  const { t } = useLanguage();
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>OREILLE {side}</Text>
+      <Text style={styles.title}>{t(side === 'DROITE' ? 'device.ear.right' : 'device.ear.left')}</Text>
 
       {/* --- ZONE POUR TON ICÔNE SVG --- */}
       <View style={styles.iconContainer}>

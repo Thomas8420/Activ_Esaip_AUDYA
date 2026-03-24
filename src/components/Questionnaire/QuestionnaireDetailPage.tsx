@@ -30,6 +30,7 @@ import {
   submitQuestionnaire,
 } from '../../services/questionnaireService';
 import { useNavigation } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 // ─── Contrôles de réponse (module-level) ──────────────────────────────────────
 
@@ -277,6 +278,7 @@ const HistoryCard = ({
  */
 const QuestionnaireDetailPage = () => {
   const { selectedQuestionnaireId, goBack } = useNavigation();
+  const { t } = useLanguage();
   const [questionnaire, setQuestionnaire] = useState<Questionnaire | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -441,7 +443,7 @@ const QuestionnaireDetailPage = () => {
 
         {/* Questions */}
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>NOUVEAU QUESTIONNAIRE</Text>
+          <Text style={styles.sectionTitle}>{t('questionnaire.section.new')}</Text>
           {questionnaire.questions.map((q, idx) => (
             <QuestionBlock
               key={q.id}
@@ -475,7 +477,7 @@ const QuestionnaireDetailPage = () => {
         {/* Historique */}
         {submissions.length > 0 && (
           <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>HISTORIQUE ({submissions.length})</Text>
+            <Text style={styles.sectionTitle}>{t('questionnaire.section.history').replace('{count}', String(submissions.length))}</Text>
             {submissions.map((sub, idx) => (
               <HistoryCard
                 key={sub.id}

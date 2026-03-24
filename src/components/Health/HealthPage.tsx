@@ -15,6 +15,7 @@ import BottomNav from '../common/BottomNav/BottomNav';
 import { styles, COLORS } from '../../screens/Health/HealthScreen.styles';
 import { fetchPatientHealth, PatientHealth, USE_HEALTH_API } from '../../services/healthService';
 import QrCode from '../../assets/images/qr-code.svg';
+import { useLanguage } from '../../context/LanguageContext';
 
 // ─── Mock Data (remove once API is ready) ────────────────────────────────────
 const MOCK_HEALTH: PatientHealth = {
@@ -41,6 +42,7 @@ const MOCK_HEALTH: PatientHealth = {
  * Page Ma sante : resume de l'etat de sante + informations generales.
  */
 const HealthPage = () => {
+  const { t } = useLanguage();
   const [health, setHealth] = useState<PatientHealth | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -121,7 +123,7 @@ const HealthPage = () => {
         ) : (
           <>
             <View style={styles.summaryCard}>
-              <Text style={styles.summaryTopTitle}>MA SANTE</Text>
+              <Text style={styles.summaryTopTitle}>{t('screen.health')}</Text>
 
               <View style={styles.summaryRow}>
                 <View style={styles.summaryIdentity}>
@@ -152,7 +154,7 @@ const HealthPage = () => {
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>INFORMATIONS GENERALES</Text>
+              <Text style={styles.sectionTitle}>{t('health.section.general')}</Text>
 
               <View style={styles.twoColumnRow}>
                 <View style={styles.fieldColumn}>

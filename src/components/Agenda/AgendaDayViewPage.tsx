@@ -16,6 +16,7 @@ import {
   USE_AGENDA_API,
 } from '../../services/agendaService';
 import { useNavigation, SelectedAgendaEvent } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import {
@@ -81,6 +82,7 @@ interface AgendaDayViewPageProps {
  */
 const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate }) => {
   const { navigateToAgendaForm } = useNavigation();
+  const { t } = useLanguage();
   const scrollRef = useRef<ScrollView>(null);
 
   const [currentDate, setCurrentDate] = useState(initialDate);
@@ -174,7 +176,7 @@ const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate
 
       {/* Titre */}
       <View style={styles.titleSection}>
-        <Text style={styles.pageTitle}>MON AGENDA</Text>
+        <Text style={styles.pageTitle}>{t('screen.agenda')}</Text>
       </View>
 
       {/* Header navigation jour */}

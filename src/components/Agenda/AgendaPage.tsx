@@ -16,6 +16,7 @@ import {
   USE_AGENDA_API,
 } from '../../services/agendaService';
 import { useNavigation, SelectedAgendaEvent } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { styles, COLORS, DAY_CELL_SIZE } from '../../screens/Agenda/AgendaScreen.styles';
@@ -48,6 +49,7 @@ function formatTime(datetime: string): string {
  */
 const AgendaPage = () => {
   const { navigateToAgendaDay, navigateToAgendaForm } = useNavigation();
+  const { t } = useLanguage();
 
   const today = new Date();
   const todayISO = getTodayISO();
@@ -197,7 +199,7 @@ const AgendaPage = () => {
 
       {/* Titre */}
       <View style={styles.titleSection}>
-        <Text style={styles.pageTitle}>MON AGENDA</Text>
+        <Text style={styles.pageTitle}>{t('screen.agenda')}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>

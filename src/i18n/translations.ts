@@ -83,6 +83,13 @@ const FR: TranslationMap = {
   'modal.delete.cancel':  'Annuler',
   'modal.delete.confirm': 'Oui',
 
+  // ── Titres sections pages ──────────────────────────────────────────────
+  'health.section.general':        'Informations générales',
+  'questionnaire.section.new':     'Nouveau questionnaire',
+  'questionnaire.section.history': 'Historique ({count})',
+  'device.ear.right':              'Oreille droite',
+  'device.ear.left':               'Oreille gauche',
+
   // ── Erreurs ────────────────────────────────────────────────────────────
   'error.load':     'Impossible de charger les paramètres.',
   'error.save':     'Impossible de sauvegarder les paramètres.',
@@ -165,6 +172,13 @@ const EN: TranslationMap = {
   'modal.delete.text':    'Are you sure you want to delete your account?',
   'modal.delete.cancel':  'Cancel',
   'modal.delete.confirm': 'Yes',
+
+  // ── Page section titles ────────────────────────────────────────────────
+  'health.section.general':        'General information',
+  'questionnaire.section.new':     'New questionnaire',
+  'questionnaire.section.history': 'History ({count})',
+  'device.ear.right':              'Right ear',
+  'device.ear.left':               'Left ear',
 
   // ── Errors ─────────────────────────────────────────────────────────────
   'error.load':     'Unable to load settings.',
@@ -249,6 +263,13 @@ const ES: TranslationMap = {
   'modal.delete.cancel':  'Cancelar',
   'modal.delete.confirm': 'Sí',
 
+  // ── Títulos secciones ──────────────────────────────────────────────────
+  'health.section.general':        'Información general',
+  'questionnaire.section.new':     'Nuevo cuestionario',
+  'questionnaire.section.history': 'Historial ({count})',
+  'device.ear.right':              'Oído derecho',
+  'device.ear.left':               'Oído izquierdo',
+
   // ── Errores ────────────────────────────────────────────────────────────
   'error.load':     'Imposible cargar los ajustes.',
   'error.save':     'Imposible guardar los ajustes.',
@@ -331,6 +352,13 @@ const TH: TranslationMap = {
   'modal.delete.text':    'คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของคุณ?',
   'modal.delete.cancel':  'ยกเลิก',
   'modal.delete.confirm': 'ใช่',
+
+  // ── ชื่อหัวข้อส่วน ─────────────────────────────────────────────────────
+  'health.section.general':        'ข้อมูลทั่วไป',
+  'questionnaire.section.new':     'แบบสอบถามใหม่',
+  'questionnaire.section.history': 'ประวัติ ({count})',
+  'device.ear.right':              'หูข้างขวา',
+  'device.ear.left':               'หูข้างซ้าย',
 
   // ── ข้อผิดพลาด ─────────────────────────────────────────────────────────
   'error.load':     'ไม่สามารถโหลดการตั้งค่าได้',
@@ -415,6 +443,13 @@ const AR: TranslationMap = {
   'modal.delete.cancel':  'إلغاء',
   'modal.delete.confirm': 'نعم',
 
+  // ── عناوين الأقسام ─────────────────────────────────────────────────────
+  'health.section.general':        'معلومات عامة',
+  'questionnaire.section.new':     'استبيان جديد',
+  'questionnaire.section.history': 'السجل ({count})',
+  'device.ear.right':              'الأذن اليمنى',
+  'device.ear.left':               'الأذن اليسرى',
+
   // ── الأخطاء ────────────────────────────────────────────────────────────
   'error.load':     'تعذّر تحميل الإعدادات.',
   'error.save':     'تعذّر حفظ الإعدادات.',
@@ -497,6 +532,13 @@ const HY: TranslationMap = {
   'modal.delete.text':    'Դուք իսկապե՞ս ուզում եք ջնջել ձեր հաշիվը։',
   'modal.delete.cancel':  'Չեղարկել',
   'modal.delete.confirm': 'Այո',
+
+  // ── Բաժնի վերնագրեր ───────────────────────────────────────────────────
+  'health.section.general':        'Ընդհանուր տեղեկություններ',
+  'questionnaire.section.new':     'Նոր հարցաթերթ',
+  'questionnaire.section.history': 'Պատմություն ({count})',
+  'device.ear.right':              'Աջ ականջ',
+  'device.ear.left':               'Ձախ ականջ',
 
   // ── Սխալներ ───────────────────────────────────────────────────────────
   'error.load':     'Հնարավոր չէ բեռնել կարգավորումները։',
@@ -581,6 +623,13 @@ const RU: TranslationMap = {
   'modal.delete.cancel':  'Отмена',
   'modal.delete.confirm': 'Да',
 
+  // ── Заголовки разделов ────────────────────────────────────────────────
+  'health.section.general':        'Общая информация',
+  'questionnaire.section.new':     'Новая анкета',
+  'questionnaire.section.history': 'История ({count})',
+  'device.ear.right':              'Правое ухо',
+  'device.ear.left':               'Левое ухо',
+
   // ── Ошибки ────────────────────────────────────────────────────────────
   'error.load':     'Не удалось загрузить настройки.',
   'error.save':     'Не удалось сохранить настройки.',
@@ -663,6 +712,13 @@ const TR: TranslationMap = {
   'modal.delete.text':    'Hesabınızı gerçekten silmek istiyor musunuz?',
   'modal.delete.cancel':  'İptal',
   'modal.delete.confirm': 'Evet',
+
+  // ── Bölüm başlıkları ──────────────────────────────────────────────────
+  'health.section.general':        'Genel bilgiler',
+  'questionnaire.section.new':     'Yeni anket',
+  'questionnaire.section.history': 'Geçmiş ({count})',
+  'device.ear.right':              'Sağ kulak',
+  'device.ear.left':               'Sol kulak',
 
   // ── Hatalar ────────────────────────────────────────────────────────────
   'error.load':     'Ayarlar yüklenemedi.',

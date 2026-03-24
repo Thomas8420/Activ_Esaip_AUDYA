@@ -9,6 +9,7 @@ import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Ho
 import EyeIcon from '../../assets/images/eye.svg';
 import DownloadIcon from '../../assets/images/download.svg';
 import TrashIcon from '../../assets/images/trash.svg';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface AppareilDetails {
   id: number;
@@ -29,6 +30,7 @@ const appareilsMock: AppareilDetails[] = [
 ];
 
 const AppareillagePage = () => {
+  const { t } = useLanguage();
   // --- ÉTATS POUR LA MODALE DE DÉTAILS ---
   const [selectedAppareil, setSelectedAppareil] = useState<AppareilDetails | null>(null);
   const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
@@ -52,7 +54,7 @@ const AppareillagePage = () => {
 
         {/* --- LE GRAND BLOC BLANC CENTRAL --- */}
         <View style={styles.mainContainer}>
-          <Text style={styles.pageTitle}>MON APPAREILLAGE</Text>
+          <Text style={styles.pageTitle}>{t('screen.hearing')}</Text>
 
           {/* --- CARTES OREILLES --- */}
           <DeviceCard

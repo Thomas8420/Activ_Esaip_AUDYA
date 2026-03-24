@@ -19,6 +19,7 @@ import {
   USE_PROFESSIONALS_API,
 } from '../../services/professionalsService';
 import { useNavigation } from '../../context/NavigationContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { SPECIALTIES } from '../../constants';
 
 /**
@@ -77,6 +78,7 @@ const MOCK_PROFESSIONALS: Professional[] = [
  */
 const ProfessionalsPage = () => {
   const { navigateToProfile, navigateToMessagingChat, navigateToAdd } = useNavigation();
+  const { t } = useLanguage();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
@@ -155,7 +157,7 @@ const ProfessionalsPage = () => {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Titre */}
         <View style={styles.titleSection}>
-          <Text style={styles.title}>MES PROFESSIONNELS</Text>
+          <Text style={styles.title}>{t('screen.professionals')}</Text>
         </View>
 
         {/* Filtres et recherche */}
