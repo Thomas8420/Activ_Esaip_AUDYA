@@ -119,9 +119,10 @@ const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate
   // ── Scroll vers l'heure actuelle à l'ouverture ─────────────────────────
   useEffect(() => {
     if (!isLoading && showCurrentLine) {
-      setTimeout(() => {
+      const id = setTimeout(() => {
         scrollRef.current?.scrollTo({ y: Math.max(0, nowTop - 80), animated: true });
       }, 300);
+      return () => clearTimeout(id);
     }
   }, [isLoading]);
 

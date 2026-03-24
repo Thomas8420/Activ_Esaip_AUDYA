@@ -175,9 +175,9 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     setHistory(prev => [...prev, 'appareillage']);
   }, []);
 
-  const navigateToHealth = () => {
+  const navigateToHealth = useCallback(() => {
     setHistory(prev => [...prev, 'health']);
-  };
+  }, []);
 
   const navigateToQuestionnaire = useCallback(() => {
     setHistory(prev => [...prev, 'questionnaire']);
