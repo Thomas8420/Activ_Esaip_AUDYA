@@ -17,6 +17,7 @@ import CarnetAuditionScreen from './src/screens/Carnet_Audition/CarnetAuditionSc
 import AppareillageScreen from './src/screens/Appareillage/AppareillageScreen';
 import QuestionnaireScreen from './src/screens/Questionnaire/QuestionnaireScreen';
 import QuestionnaireDetailScreen from './src/screens/Questionnaire/QuestionnaireDetailScreen';
+import NewsScreen from './src/screens/News/NewsScreen';
 import { NavigationProvider, useNavigation } from './src/context/NavigationContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import AuthFlow from './src/components/auth/AuthFlow';
@@ -48,6 +49,7 @@ function AppContent() {
       {currentScreen === 'appareillage' && <AppareillageScreen />}
       {currentScreen === 'questionnaire' && <QuestionnaireScreen />}
       {currentScreen === 'questionnaire-detail' && <QuestionnaireDetailScreen />}
+      {currentScreen === 'news' && <NewsScreen />}
     </>
   );
 }

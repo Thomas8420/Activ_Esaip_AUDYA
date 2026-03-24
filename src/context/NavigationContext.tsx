@@ -3,7 +3,7 @@ import React, { createContext, useState, useMemo, useCallback, ReactNode } from 
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form' | 'questionnaire' | 'questionnaire-detail';
+export type Screen = 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form' | 'questionnaire' | 'questionnaire-detail' | 'news';
 
 /**
  * Données transmises à l'écran de conversation
@@ -81,6 +81,7 @@ interface NavigationContextType {
   selectedQuestionnaireId: string | null;
   navigateToQuestionnaire: () => void;
   navigateToQuestionnaireDetail: (questionnaireId: string) => void;
+  navigateToNews: () => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -178,6 +179,10 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     setHistory(prev => [...prev, 'questionnaire-detail']);
   }, []);
 
+  const navigateToNews = useCallback(() => {
+    setHistory(prev => [...prev, 'news']);
+  }, []);
+
   const value = useMemo(() => ({
     currentScreen,
     previousScreen,
@@ -202,6 +207,7 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     selectedQuestionnaireId,
     navigateToQuestionnaire,
     navigateToQuestionnaireDetail,
+    navigateToNews,
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [currentScreen, previousScreen, selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate, selectedQuestionnaireId]);
 

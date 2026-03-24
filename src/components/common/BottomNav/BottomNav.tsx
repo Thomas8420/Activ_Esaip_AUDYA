@@ -44,6 +44,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'appareillage': 'Mon appareillage',
   'questionnaire': 'Mes questionnaires',
   'questionnaire-detail': 'Mes questionnaires',
+  'news': 'Mes actualités',
 };
 
 /**
@@ -53,7 +54,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
  * - Droite : bouton chat (Fab intégré)
  */
 const BottomNav = () => {
-  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire } = useNavigation();
+  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire, navigateToNews } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -78,6 +79,8 @@ const BottomNav = () => {
         navigateTo('appareillage');
     } else if (itemId === 'questionnaire') {
       navigateToQuestionnaire();
+    } else if (itemId === 'news') {
+      navigateToNews();
     }
   };
 

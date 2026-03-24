@@ -19,7 +19,7 @@ import { MENU_ITEMS } from '../../constants';
  * Il intègre la barre de navigation, le corps de la page (scrollable) et le bouton d'action flottant.
  */
 const MainPage = () => {
-  const { navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire } = useNavigation();
+  const { navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire, navigateToNews } = useNavigation();
 
   /**
    * Gère le clic sur un élément du menu
@@ -39,7 +39,9 @@ const MainPage = () => {
         navigateTo('appareillage');
     } else if (itemId === 'questionnaire') {
       navigateToQuestionnaire();
-    } // TODO: Implémenter la navigation pour les autres éléments du menu (news)
+    } else if (itemId === 'news') {
+      navigateToNews();
+    }
   };
 
   return (
