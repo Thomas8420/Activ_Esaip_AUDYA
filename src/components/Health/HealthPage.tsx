@@ -161,10 +161,12 @@ const HealthPage = () => {
                     style={styles.fieldValuePill}
                     onPress={toggleSex}
                     activeOpacity={0.7}
+                    accessibilityLabel="Sexe"
+                    accessibilityRole="button"
                   >
                     <Text style={styles.fieldValueText}>{health.sex}</Text>
                     <View style={styles.chevronBubble}>
-                      <Icon name="chevron-down" size={14} color="#FFFFFF" />
+                      <Icon name="chevron-down" size={14} color={COLORS.white} />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -175,10 +177,12 @@ const HealthPage = () => {
                     style={styles.fieldValuePill}
                     onPress={toggleSmoker}
                     activeOpacity={0.7}
+                    accessibilityLabel="Fumeur"
+                    accessibilityRole="button"
                   >
                     <Text style={styles.fieldValueText}>{health.smoker}</Text>
                     <View style={styles.chevronBubble}>
-                      <Icon name="chevron-down" size={14} color="#FFFFFF" />
+                      <Icon name="chevron-down" size={14} color={COLORS.white} />
                     </View>
                   </TouchableOpacity>
                 </View>

@@ -101,6 +101,16 @@ src/
       AgendaScreen.styles.tsx
       AgendaDayViewScreen.tsx
       AgendaFormScreen.tsx
+    Health/
+      HealthScreen.tsx
+      HealthScreen.styles.tsx          # Styles page Ma Santé (partagés avec HealthPage)
+    Appareillage/
+      AppareillageScreen.tsx
+    Questionnaire/
+      QuestionnaireScreen.tsx
+      QuestionnaireDetailScreen.tsx
+    News/
+      NewsScreen.tsx
     Auth/                            # Flux d'authentification (hors NavigationContext)
       LoginScreen.tsx + .styles.ts
       VerifyCodeScreen.tsx + .styles.ts
@@ -142,6 +152,17 @@ src/
       AgendaPage.tsx                 # Calendrier (mois/semaine/jour)
       AgendaDayViewPage.tsx          # Liste événements du jour
       AgendaFormPage.tsx             # Formulaire création/édition événement
+    Health/
+      HealthPage.tsx                 # Résumé santé : IMC, QR Code, antécédents, documents
+    Appareillage/
+      AppareillagePage.tsx           # Liste appareils auditifs + historique + modal détail
+      DeviceCard.tsx                 # Carte appareil (droite/gauche, marque, modèle)
+    Questionnaire/
+      QuestionnairePage.tsx          # Liste ERSA + EQ-5D-5L avec statut (complétion, date)
+      QuestionnaireDetailPage.tsx    # Formulaire (binary/scale10/vas/choice5) + historique
+                                     #   dépliable + export Share natif
+    News/
+      NewsPage.tsx                   # Liste 6 articles + modal lecture plein-écran + partage
     Chatbot/
       ChatbotModal.tsx               # Modal popup assistant AUDYA (slide from bottom)
     Register/                        # Flux d'inscription (pages + routeur)
@@ -186,6 +207,10 @@ src/
     agendaService.ts                 # Événements CRUD + mock store module-level
     profileService.ts                # Profil patient + upload photo (react-native-image-picker)
     chatbotService.ts                # Messages assistant AUDYA
+    healthService.ts                 # Profil santé patient (IMC, antécédents, documents)
+    questionnaireService.ts          # ERSA + EQ-5D-5L : types binary/scale10/vas/choice5,
+                                     #   soumissions session module-level, export texte formaté
+    newsService.ts                   # Articles santé auditive (6 mock, lecture seule)
 
   constants/
     index.ts                         # MENU_ITEMS (8 items + SVG icons), SPECIALTIES
@@ -415,6 +440,11 @@ export async function fetchMyItems(): Promise<MyItem[]> {
 | `POST /events` | Non implémenté | `agendaService.ts` |
 | `POST /events/delete` | Non implémenté | `agendaService.ts` |
 | `POST /api/chatbot/message` | Non implémenté | `chatbotService.ts:USE_CHATBOT_API` |
+| `GET /api/patient/health` | Non implémenté | `healthService.ts:USE_HEALTH_API` |
+| `PATCH /api/patient/health` | Non implémenté | `healthService.ts:USE_HEALTH_API` |
+| `GET /api/questionnaire/submissions` | Non implémenté | `questionnaireService.ts:USE_QUESTIONNAIRE_API` |
+| `POST /api/questionnaire/submit` | Non implémenté | `questionnaireService.ts:USE_QUESTIONNAIRE_API` |
+| `GET /api/news` | Non implémenté | `newsService.ts:USE_NEWS_API` |
 | `POST /api/register` | Non implémenté | `RegisterStep1Page.tsx:handleSubmit` |
 | `POST /api/register/verify-email` | Non implémenté | `RegisterStep1BisPage.tsx:handleResend` |
 | `POST /api/register/patient-info` | Non implémenté | `RegisterStep2Page.tsx:handleSubmit` |
@@ -462,8 +492,10 @@ Routeur stack maison — **pas de React Navigation**. Toutes les fonctions de na
 
 ### Type Screen (union complète)
 ```typescript
+// État actuel dans NavigationContext.tsx (app authentifiée)
 type Screen =
   | 'home'
+  | 'health'
   | 'professionals'
   | 'professional-profile'
   | 'add-professional'
@@ -475,13 +507,14 @@ type Screen =
   | 'agenda'
   | 'agenda-day'
   | 'agenda-form'
-  | 'register-step1'
-  | 'register-step1bis'
-  | 'register-step2'
-  | 'register-step3'
-  | 'register-step4'
-  | 'register-step5'
-  | 'register-success';
+  | 'questionnaire'
+  | 'questionnaire-detail'
+  | 'news';
+
+// ⚠️ DETTE TECHNIQUE : les Screen suivants sont utilisés dans le code
+// mais pas encore dans l'union (erreurs TS pré-existantes non bloquantes) :
+// 'carnet-audition', 'appareillage'
+// 'register-step1' à 'register-success' (contexte NavigationProvider séparé dans RegisterFlow)
 ```
 
 ### NavigationProvider — prop `initialScreen`
@@ -512,6 +545,10 @@ Utilisé par `RegisterFlow` qui l'instancie avec `initialScreen="register-step1"
 | `navigateToAgenda()` | Calendrier |
 | `navigateToAgendaDay(date)` | Vue jour |
 | `navigateToAgendaForm(event?)` | Formulaire événement (création ou édition) |
+| `navigateToHealth()` | Page Ma Santé |
+| `navigateToQuestionnaire()` | Liste des questionnaires |
+| `navigateToQuestionnaireDetail(id)` | Formulaire + historique questionnaire (stocke `selectedQuestionnaireId`) |
+| `navigateToNews()` | Liste des actualités |
 
 ### Ajouter un nouvel écran (app authentifiée)
 1. Ajouter le nom à l'union `Screen` dans `NavigationContext.tsx`
@@ -670,24 +707,43 @@ export function MessagingChatPage({ onBack }: Props) { ... }
 
 ---
 
-## Known TODOs
+## État fonctionnel — Checklist livraison client
 
-### Backend (en attente)
-- Endpoint `GET /api/patient/professionals` — format JSON à confirmer
-- Endpoint `POST /api/professionals/search` — non implémenté (stub mock dans `RegisterStep5Page`)
-- Endpoint `POST /api/patient/invite-professional` — non implémenté
-- Champs à confirmer : `isFavorite`, `invitation_status`, `zipCode`, `city` (Professionals)
-- Ensemble des endpoints Messaging, Agenda, Profile, Chatbot (voir tableau API Status)
+### Écrans 100% front complétés (mock → brancher API)
+| Écran | Composant | Flag API à passer à `true` |
+|-------|-----------|--------------------------|
+| Accueil | `MainPage.tsx` | — (navigation pure) |
+| Ma Santé | `HealthPage.tsx` | `USE_HEALTH_API` |
+| Mon Appareillage | `AppareillagePage.tsx` | — (mock static) |
+| Mon Carnet Audition | `CarnetAuditionPage.tsx` | — (mock static) |
+| Mes Professionnels | `ProfessionalsPage.tsx` | `USE_API` |
+| Mon Agenda | `AgendaPage.tsx` | `USE_AGENDA_API` |
+| Ma Messagerie | `MessagingPage.tsx` | `USE_MESSAGING_API` |
+| Mes Questionnaires | `QuestionnairePage.tsx` | `USE_QUESTIONNAIRE_API` |
+| Mes Actualités | `NewsPage.tsx` | `USE_NEWS_API` |
+| Chatbot AUDYA | `ChatbotModal.tsx` | `USE_CHATBOT_API` |
+| Mon Profil | `ProfilePage.tsx` | `USE_PROFILE_API` |
+| Mes Paramètres | `SettingsPage.tsx` | `USE_API` |
+| Inscription (5 étapes) | `RegisterStep*Page.tsx` | tous les `handleSubmit` |
+| Connexion + 2FA | `AuthFlow.tsx` | `authService.ts` — partiellement |
 
-### Frontend
-- Navigation depuis le menu home vers les items au-delà de "Professionnels", "Messagerie", "Agenda" (`MainPage.tsx`)
+### Known TODOs
+
+#### Backend (endpoints à implémenter)
+- Voir tableau "État des endpoints" ci-dessus — tous les endpoints `Non implémenté`
+- Format JSON de `GET /api/patient/professionals` à confirmer avec le backend
+
+#### Frontend — dettes techniques
+- `'carnet-audition'` et `'appareillage'` absents de l'union `Screen` → erreurs TS pré-existantes
+- `register-step1` à `register-success` absents de `Screen` (contexte RegisterFlow séparé) → idem
 - Bouton "Renvoyer l'invitation" (`ProfessionalsPage.tsx`) — appel API manquant
-- Handlers notification dans `NavBar.tsx`
+- Handlers notification dans `NavBar.tsx` (cloche)
 - Déconnexion effective (clear cookies session) dans `NavBar.tsx` dropdown
+- `questionnaireService.ts` : persistence session module-level → remplacer par `@react-native-async-storage/async-storage` pour persistance inter-sessions
 
-### Register (frontend)
+#### Register (frontend)
 - Brancher les vrais appels API dans chaque étape (tous les `TODO: appel API`)
-- Étape 1bis : vérifier le clic sur le lien e-mail avant de progresser (actuellement : bouton "Renvoyer" navigue directement à l'étape 2)
-- Étape 5 : remplacer le mock `MOCK_SEARCH_RESULTS` par l'appel `POST /api/professionals/search`
-- Upload photo profil étape 2 : la photo est sélectionnée localement (`photoUri`) mais pas encore envoyée à l'API à la soumission
-- Après inscription réussie : décider si l'utilisateur est auto-connecté ou redirigé vers login
+- Étape 1bis : vérifier le clic sur le lien e-mail avant de progresser
+- Étape 5 : remplacer `MOCK_SEARCH_RESULTS` par `POST /api/professionals/search`
+- Upload photo (étape 2) : `photoUri` sélectionné localement, pas encore envoyé à l'API
+- Décider si l'utilisateur est auto-connecté ou redirigé vers login après inscription

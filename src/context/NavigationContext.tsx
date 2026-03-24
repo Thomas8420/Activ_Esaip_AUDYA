@@ -3,7 +3,15 @@ import React, { createContext, useState, useMemo, useCallback, ReactNode } from 
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form' | 'questionnaire' | 'questionnaire-detail' | 'news';
+export type Screen =
+  | 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional'
+  | 'settings' | 'my-profile'
+  | 'messaging' | 'messaging-chat'
+  | 'agenda' | 'agenda-day' | 'agenda-form'
+  | 'carnet-audition' | 'appareillage'
+  | 'questionnaire' | 'questionnaire-detail'
+  | 'news'
+  | 'register-step1' | 'register-step1bis' | 'register-step2' | 'register-step3' | 'register-step4' | 'register-step5' | 'register-success';
 
 /**
  * Données transmises à l'écran de conversation
@@ -78,6 +86,7 @@ interface NavigationContextType {
   navigateToAgendaDay: (date: string) => void;
   navigateToAgendaForm: (event?: SelectedAgendaEvent | null) => void;
   navigateToHealth: () => void;
+  navigateToAppareillage: () => void;
   selectedQuestionnaireId: string | null;
   navigateToQuestionnaire: () => void;
   navigateToQuestionnaireDetail: (questionnaireId: string) => void;
@@ -162,8 +171,8 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     setHistory(prev => [...prev, 'agenda-form']);
   }, []);
 
-  const navigateToCarnetAudition = useCallback(() => {
-    setHistory(prev => [...prev, 'carnet-audition']);
+  const navigateToAppareillage = useCallback(() => {
+    setHistory(prev => [...prev, 'appareillage']);
   }, []);
 
   const navigateToHealth = () => {
@@ -204,6 +213,7 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     navigateToAgendaDay,
     navigateToAgendaForm,
     navigateToHealth,
+    navigateToAppareillage,
     selectedQuestionnaireId,
     navigateToQuestionnaire,
     navigateToQuestionnaireDetail,

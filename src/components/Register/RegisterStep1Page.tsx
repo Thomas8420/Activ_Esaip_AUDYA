@@ -6,7 +6,7 @@ import { registerStyles as s, COLORS } from '../../screens/Register/Register.sty
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
-import { validatePassword } from '../../utils/validators';
+import { validatePassword, isValidEmail, ERROR_MESSAGES } from '../../utils/validators';
 
 type Errors = {
   nom?: string; prenom?: string; email?: string;
@@ -95,6 +95,7 @@ const RegisterStep1Page = () => {
     if (!form.nom.trim())            e.nom          = 'Veuillez remplir ce champ !';
     if (!form.prenom.trim())         e.prenom       = 'Veuillez remplir ce champ !';
     if (!form.email.trim())          e.email        = 'Veuillez remplir ce champ !';
+    else if (!isValidEmail(form.email.trim())) e.email = ERROR_MESSAGES.EMAIL_INVALID;
     const pwdError = validatePassword(form.motDePasse);
     if (pwdError)                    e.motDePasse   = pwdError;
     if (!form.confirmation.trim())   e.confirmation = 'Veuillez remplir ce champ !';

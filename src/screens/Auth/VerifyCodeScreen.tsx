@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -32,6 +32,13 @@ const VerifyCodeScreen: React.FC<Props> = ({visible, onClose, onSuccess}) => {
   const [codeError, setCodeError] = useState('');
   const [resendSuccess, setResendSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Auto-masque le message de succès avec cleanup (évite la fuite mémoire si composant démonté)
+  useEffect(() => {
+    if (!resendSuccess) {return;}
+    const id = setTimeout(() => setResendSuccess(false), 3000);
+    return () => clearTimeout(id);
+  }, [resendSuccess]);
 
   const validateCode = (): boolean => {
     if (!code.trim()) {
@@ -69,7 +76,6 @@ const VerifyCodeScreen: React.FC<Props> = ({visible, onClose, onSuccess}) => {
     try {
       await resend2FACode();
       setResendSuccess(true);
-      setTimeout(() => setResendSuccess(false), 3000);
     } catch {
       // Silencieux — l'utilisateur peut réessayer
     }

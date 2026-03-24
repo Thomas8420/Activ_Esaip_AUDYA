@@ -5,12 +5,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import DeviceCard from './DeviceCard';
-import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
+import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
 import EyeIcon from '../../assets/images/eye.svg';
 import DownloadIcon from '../../assets/images/download.svg';
 import TrashIcon from '../../assets/images/trash.svg';
-
-const FONT_BOLD = 'Montserrat-Bold';
 
 export interface AppareilDetails {
   id: number;
@@ -222,7 +220,7 @@ const styles = StyleSheet.create({
   rowText: { fontSize: 12, fontFamily: FONT_REGULAR, color: COLORS.text, textAlign: 'center' },
   nameText: { fontSize: 12, fontFamily: FONT_SEMIBOLD, color: COLORS.text, textAlign: 'center' },
   dateText: { fontSize: 11, fontFamily: FONT_REGULAR, color: COLORS.textLight, textAlign: 'center' },
-  eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#EAEAEA', justifyContent: 'center', alignItems: 'center' },
+  eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#F0F0F0', justifyContent: 'center', alignItems: 'center' },
 
   // --- COLONNES DU TABLEAU ---
   flex3: { flex: 3 }, flex25: { flex: 2.5 }, flex15Left: { flex: 1.5 }, flex15Center: { flex: 1.5 },
@@ -321,7 +319,7 @@ const styles = StyleSheet.create({
   bigActionButton: {
     width: 65,
     height: 65,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F0F0F0',
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',

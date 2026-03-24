@@ -138,8 +138,8 @@ const NewsPage = () => {
         message: `${selectedArticle.title}\n\n${selectedArticle.content}\n\nVia AUDYA`,
         title: selectedArticle.title,
       });
-    } catch (err) {
-      console.error('[NewsPage] Erreur partage:', err);
+    } catch {
+      // Share annulé ou non disponible — aucune action requise
     }
   }, [selectedArticle]);
 

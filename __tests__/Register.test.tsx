@@ -64,7 +64,7 @@ describe('RegisterContext', () => {
     spy.mockRestore();
 
     expect(caughtError).not.toBeNull();
-    expect((caughtError as Error).message).toContain('RegisterProvider');
+    expect((caughtError as unknown as Error).message).toContain('RegisterProvider');
   });
 
   test('registerData initializes with empty strings', async () => {

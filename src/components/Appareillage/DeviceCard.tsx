@@ -2,8 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AppareilDetails } from './AppareillagePage';
-import { FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
-const FONT_BOLD = 'Montserrat-Bold';
+import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
 
 // Importe tes SVGs ici quand tu les auras !
 import OreilleDroiteIcon from '../../assets/images/oreille-droite.svg';
@@ -53,7 +52,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({ side, data, dotColor }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#EBF2FB', // Bleu très clair fidèle au mockup
+    backgroundColor: '#E8F8F8',
     borderRadius: 16,
     paddingVertical: 20,
     paddingHorizontal: 25,
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontFamily: FONT_BOLD, // Si tu as cette police, sinon fontWeight fera le travail
-    color: '#1E3A5F', // Bleu marine
+    color: COLORS.text,
     marginBottom: 15,
   },
   iconContainer: {
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
     height: 55,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#999',
+    borderColor: COLORS.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -97,10 +96,10 @@ const styles = StyleSheet.create({
   detailsBox: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#1E3A5F', // Bordure Bleu marine
+    borderColor: COLORS.teal,
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#F4F8FC', // Fond très légèrement plus clair que la carte
+    backgroundColor: COLORS.white,
   },
   detailText: {
     fontSize: 12,
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 14,
     fontFamily: FONT_BOLD,
-    color: '#1E3A5F', // Bleu marine
+    color: COLORS.text,
   }
 });
 

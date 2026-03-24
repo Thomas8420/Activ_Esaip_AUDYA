@@ -1,5 +1,5 @@
 // src/components/Questionnaire/QuestionnaireDetailPage.tsx
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ScrollView,
   Share,
@@ -287,6 +287,13 @@ const QuestionnaireDetailPage = () => {
   );
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
+  // Ferme la bannière de succès automatiquement avec cleanup pour éviter les fuites mémoire
+  useEffect(() => {
+    if (!submitted) {return;}
+    const id = setTimeout(() => setSubmitted(false), 3000);
+    return () => clearTimeout(id);
+  }, [submitted]);
+
   const handleSelect = useCallback((questionId: string, value: number) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   }, []);
@@ -303,27 +310,26 @@ const QuestionnaireDetailPage = () => {
       try {
         const text = formatSubmissionForExport(questionnaire, submission);
         await Share.share({ message: text, title: `${questionnaire.title} — résultats` });
-      } catch (err) {
-        console.error('[QuestionnaireDetailPage] Erreur partage:', err);
+      } catch {
+        // Share annulé ou non disponible — aucune action requise
       }
     },
     [questionnaire]
   );
 
   const handleSubmit = useCallback(() => {
-    if (!questionnaire || !allAnswered) {
-      return;
-    }
+    if (!questionnaire) {return;}
+    const totalCount = questionnaire.questions.length;
+    const answeredCount = questionnaire.questions.filter(q => answers[q.id] !== undefined).length;
+    if (answeredCount < totalCount) {return;}
     try {
       submitQuestionnaire(questionnaire.id, answers);
       setSubmissions(getSubmissions(questionnaire.id));
       setAnswers({});
       setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
-    } catch (err) {
-      console.error('[QuestionnaireDetailPage] Erreur soumission:', err);
+    } catch {
+      // L'erreur est ignorée — l'état mock ne peut pas échouer en pratique
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionnaire, answers]);
 
   if (!questionnaire) {

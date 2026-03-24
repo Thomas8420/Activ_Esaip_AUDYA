@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, FONT_REGULAR } from '../../screens/Home/HomeScreen.styles';
+import { COLORS, FONT_BOLD, FONT_REGULAR } from '../../screens/Home/HomeScreen.styles';
 import {
   ChatbotMessage,
   MOCK_CHATBOT_MESSAGES,
@@ -24,8 +24,6 @@ import {
 // ─── Icônes ───────────────────────────────────────────────────────────────────
 
 const SendIcon = () => <Icon name="send" size={18} color={COLORS.white} />;
-
-const FONT_BOLD = 'Montserrat-Bold';
 
 // ─── Composant ───────────────────────────────────────────────────────────────
 
@@ -205,7 +203,7 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
             value={inputText}
             onChangeText={setInputText}
             placeholder="Posez votre question…"
-            placeholderTextColor="#999999"
+            placeholderTextColor={COLORS.textLight}
             multiline
             returnKeyType="default"
             onSubmitEditing={handleSend}
@@ -346,7 +344,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   bubbleMe: {
-    backgroundColor: '#66BB6A',
+    backgroundColor: COLORS.orange,
     borderBottomRightRadius: 4,
   },
   bubbleBot: {
@@ -376,7 +374,7 @@ const styles = StyleSheet.create({
   typingText: {
     fontFamily: FONT_REGULAR,
     fontSize: 12,
-    color: '#999999',
+    color: COLORS.textLight,
     fontStyle: 'italic',
   },
 
