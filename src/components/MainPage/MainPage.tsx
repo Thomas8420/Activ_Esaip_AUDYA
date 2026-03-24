@@ -19,7 +19,7 @@ import { MENU_ITEMS } from '../../constants';
  * Il intègre la barre de navigation, le corps de la page (scrollable) et le bouton d'action flottant.
  */
 const MainPage = () => {
-  const { navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth } = useNavigation();
+  const { navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire } = useNavigation();
 
   /**
    * Gère le clic sur un élément du menu
@@ -37,7 +37,9 @@ const MainPage = () => {
             navigateTo('carnet-audition');
     } else if (itemId === 'hearing') {
         navigateTo('appareillage');
-    } // TODO: Implémenter la navigation pour les autres éléments du menu
+    } else if (itemId === 'questionnaire') {
+      navigateToQuestionnaire();
+    } // TODO: Implémenter la navigation pour les autres éléments du menu (news)
   };
 
   return (

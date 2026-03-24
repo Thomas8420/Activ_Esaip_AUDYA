@@ -42,6 +42,8 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
   'agenda-form': 'Mon agenda',
   'carnet-audition': 'Mon carnet audition',
   'appareillage': 'Mon appareillage',
+  'questionnaire': 'Mes questionnaires',
+  'questionnaire-detail': 'Mes questionnaires',
 };
 
 /**
@@ -51,7 +53,7 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
  * - Droite : bouton chat (Fab intégré)
  */
 const BottomNav = () => {
-  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth } = useNavigation();
+  const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda, navigateToHealth, navigateToQuestionnaire } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -74,6 +76,8 @@ const BottomNav = () => {
         navigateTo('carnet-audition');
     } else if (itemId === 'hearing') {
         navigateTo('appareillage');
+    } else if (itemId === 'questionnaire') {
+      navigateToQuestionnaire();
     }
   };
 

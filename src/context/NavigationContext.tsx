@@ -3,7 +3,7 @@ import React, { createContext, useState, useMemo, useCallback, ReactNode } from 
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen = 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form';
+export type Screen = 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form' | 'questionnaire' | 'questionnaire-detail';
 
 /**
  * Données transmises à l'écran de conversation
@@ -78,6 +78,9 @@ interface NavigationContextType {
   navigateToAgendaDay: (date: string) => void;
   navigateToAgendaForm: (event?: SelectedAgendaEvent | null) => void;
   navigateToHealth: () => void;
+  selectedQuestionnaireId: string | null;
+  navigateToQuestionnaire: () => void;
+  navigateToQuestionnaireDetail: (questionnaireId: string) => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -96,6 +99,7 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
   const [selectedConversation, setSelectedConversation] = useState<SelectedConversation | null>(null);
   const [selectedAgendaEvent, setSelectedAgendaEvent] = useState<SelectedAgendaEvent | null>(null);
   const [selectedAgendaDate, setSelectedAgendaDate] = useState<string | null>(null);
+  const [selectedQuestionnaireId, setSelectedQuestionnaireId] = useState<string | null>(null);
 
   const currentScreen = history.at(-1)!;
   const previousScreen = history.length > 1 ? history.at(-2)! : 'home';
@@ -165,6 +169,15 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     setHistory(prev => [...prev, 'health']);
   };
 
+  const navigateToQuestionnaire = useCallback(() => {
+    setHistory(prev => [...prev, 'questionnaire']);
+  }, []);
+
+  const navigateToQuestionnaireDetail = useCallback((questionnaireId: string) => {
+    setSelectedQuestionnaireId(questionnaireId);
+    setHistory(prev => [...prev, 'questionnaire-detail']);
+  }, []);
+
   const value = useMemo(() => ({
     currentScreen,
     previousScreen,
@@ -186,8 +199,11 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     navigateToAgendaDay,
     navigateToAgendaForm,
     navigateToHealth,
+    selectedQuestionnaireId,
+    navigateToQuestionnaire,
+    navigateToQuestionnaireDetail,
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [currentScreen, previousScreen, selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate]);
+  }), [currentScreen, previousScreen, selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate, selectedQuestionnaireId]);
 
   return (
     <NavigationContext.Provider value={value}>
