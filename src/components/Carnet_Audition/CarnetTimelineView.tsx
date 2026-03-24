@@ -23,7 +23,7 @@ export const CarnetTimelineView = ({ documents }: Props) => (
         <View style={styles.itemContent}>
           <Text style={styles.author}>{doc.author}</Text>
           <Text style={styles.dateText}>le {doc.date} - 11:24</Text>
-          {doc.patientName && (
+          {!!doc.patientName && (
             <Text style={{fontSize: 11, marginBottom: 4}}>
               <Text style={{fontWeight: 'bold'}}>Patient : </Text>{doc.patientName}
             </Text>

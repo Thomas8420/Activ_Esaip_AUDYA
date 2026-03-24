@@ -132,7 +132,7 @@ export const styles = StyleSheet.create({
   docDesc: { fontSize: 11, color: '#444', marginTop: 3 },
   actionIcons: { flexDirection: 'row', gap: 15, marginTop: 15, alignItems: 'center' },
 
-// --- Styles pour la Modale d'Ajout ---
+  // --- Styles pour la Modale d'Ajout ---
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -184,8 +184,10 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 40,
+    gap: 20, // Écart corrigé pour tes nouveaux boutons
+    marginTop: 20,
   },
+  // Boutons originaux (au cas où tu en aurais encore besoin ailleurs, sinon tu peux les enlever)
   cancelButton: {
     flex: 1,
     padding: 15,
@@ -194,10 +196,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#EEE',
     marginRight: 10
   },
-  cancelButtonText: {
-    color: '#333',
-    fontWeight: 'bold'
-  },
+  cancelButtonText: { color: '#333', fontWeight: 'bold' },
   saveButton: {
     flex: 1,
     padding: 15,
@@ -206,29 +205,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F15A24',
     marginLeft: 10
   },
-  saveButtonText: {
-    color: 'white',
-    fontWeight: 'bold'
-  },
+  saveButtonText: { color: 'white', fontWeight: 'bold' },
 
-// Styles pour la Liste
-  tableContainer: { marginTop: 10, borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: '#EEE' },
-  tableHeader: { flexDirection: 'row', backgroundColor: '#F0F0F0', paddingVertical: 12, paddingHorizontal: 5 },
-  headerText: { fontSize: 10, fontFamily: 'Montserrat-Bold', color: '#888' },
-  tableRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#EEE', paddingHorizontal: 5 },
-  rowText: { fontSize: 11, fontFamily: 'Montserrat-Medium' },
-  eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' },
-  rowActions: { flexDirection: 'row', justifyContent: 'space-around' },
-
-  // Styles pour la Grille
-  gridContainer: { marginTop: 20 },
-  gridItem: { marginBottom: 25, backgroundColor: 'white', borderRadius: 15, elevation: 3, padding: 10 },
-  imagePlaceholder: { height: 200, backgroundColor: '#F9F9F9', borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#EEE' },
-  gridCaption: { flexDirection: 'row', backgroundColor: '#E0E0E0', padding: 10, marginTop: 10, borderRadius: 5 },
-  captionLabel: { flex: 1, fontSize: 12, fontWeight: 'bold' },
-  captionValue: { flex: 1, fontSize: 12 },
-
-  // TABLEAU (VUE LISTE)
+  // TABLEAU (VUE LISTE) - Unifié
   tableContainer: { marginTop: 20 },
   tableHeader: {
     flexDirection: 'row',
@@ -245,5 +224,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center'
   },
   rowText: { fontSize: 11, color: '#333' },
-  rowActions: { flexDirection: 'row', gap: 15 }
+  rowActions: { flexDirection: 'row', gap: 15 },
+  eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' },
+
+  // Styles pour la Grille
+  gridContainer: { marginTop: 20 },
+  gridItem: { marginBottom: 25, backgroundColor: 'white', borderRadius: 15, elevation: 3, padding: 10 },
+  imagePlaceholder: { height: 200, backgroundColor: '#F9F9F9', borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#EEE' },
+  gridCaption: { flexDirection: 'row', backgroundColor: '#E0E0E0', padding: 10, marginTop: 10, borderRadius: 5 },
+  captionLabel: { flex: 1, fontSize: 12, fontWeight: 'bold' },
+  captionValue: { flex: 1, fontSize: 12 },
 });
