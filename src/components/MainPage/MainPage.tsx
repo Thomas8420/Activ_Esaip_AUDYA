@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Image,
+  Linking,
   ScrollView,
   StatusBar,
   Text,
@@ -81,6 +82,44 @@ const MainPage = () => {
             <Text style={styles.bannerText}>
               Audya simplifie le suivi patient et renforce la coordination pluridisciplinaire
             </Text>
+          </View>
+        </View>
+
+        {/* Pied de page légal */}
+        <View style={styles.footer}>
+          <Text style={styles.footerCopyright}>© {new Date().getFullYear()} AUDYA — Tous droits réservés</Text>
+          <View style={styles.footerLinks}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('https://audya.com/mentions-legales')}
+              accessibilityLabel="Mentions légales"
+              accessibilityRole="link"
+            >
+              <Text style={styles.footerLink}>Mentions légales</Text>
+            </TouchableOpacity>
+            <Text style={styles.footerDot}>·</Text>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('https://audya.com/politique-de-confidentialite')}
+              accessibilityLabel="Politique de confidentialité RGPD"
+              accessibilityRole="link"
+            >
+              <Text style={styles.footerLink}>RGPD</Text>
+            </TouchableOpacity>
+            <Text style={styles.footerDot}>·</Text>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('https://audya.com/cookies')}
+              accessibilityLabel="Gestion des cookies"
+              accessibilityRole="link"
+            >
+              <Text style={styles.footerLink}>Cookies</Text>
+            </TouchableOpacity>
+            <Text style={styles.footerDot}>·</Text>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('mailto:contact@audya.com')}
+              accessibilityLabel="Nous contacter"
+              accessibilityRole="link"
+            >
+              <Text style={styles.footerLink}>Nous contacter</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

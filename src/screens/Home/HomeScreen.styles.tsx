@@ -172,5 +172,40 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5,
-  }
+  },
+
+  // ── Pied de page légal ──
+  footer: {
+    marginTop: 32,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    alignItems: 'center',
+    gap: 10,
+  },
+  footerCopyright: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 11,
+    color: COLORS.textLight,
+    textAlign: 'center',
+  },
+  footerLinks: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+  },
+  footerLink: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 11,
+    color: COLORS.orange,
+    textDecorationLine: 'underline',
+  },
+  footerDot: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 11,
+    color: COLORS.textLight,
+  },
 });
