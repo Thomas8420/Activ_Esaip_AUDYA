@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -139,14 +138,21 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      {/* Overlay semi-transparent qui ferme le modal */}
-      <Pressable style={styles.overlay} onPress={onClose} />
+      {/* Conteneur racine nécessaire pour Android — évite que le Pressable overlay
+          intercepte le touch-up provenant du bouton FAB qui a ouvert la modale */}
+      <View style={styles.modalRoot}>
+        {/* Overlay semi-transparent qui ferme le modal */}
+        <TouchableOpacity
+          style={styles.overlay}
+          onPress={onClose}
+          activeOpacity={1}
+        />
 
-      {/* Contenu du chatbot */}
-      <KeyboardAvoidingView
-        style={styles.sheet}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+        {/* Contenu du chatbot */}
+        <KeyboardAvoidingView
+          style={styles.sheet}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
         {/* En-tête teal */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
@@ -211,7 +217,8 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
             <SendIcon />
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };
@@ -219,6 +226,9 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  modalRoot: {
+    flex: 1,
+  },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.45)',

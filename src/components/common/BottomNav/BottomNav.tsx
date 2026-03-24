@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Modal,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -86,7 +85,7 @@ const BottomNav = () => {
         animationType="fade"
         onRequestClose={() => setMenuOpen(false)}
       >
-        <Pressable style={styles.menuOverlay} onPress={() => setMenuOpen(false)}>
+        <TouchableOpacity style={styles.menuOverlay} onPress={() => setMenuOpen(false)} activeOpacity={1}>
           <View style={styles.menuPopup}>
             {MENU_ITEMS.map((item, index) => {
               const isActive = item.label === sectionLabel;
@@ -112,11 +111,11 @@ const BottomNav = () => {
               );
             })}
           </View>
-        </Pressable>
+        </TouchableOpacity>
       </Modal>
 
       {/* ── Barre ── */}
-      <View style={[styles.container, { paddingBottom: 10 + bottomInset / 4 }]}>
+      <View style={[styles.container, { paddingBottom: Math.max(10, bottomInset) }]}>
         {/* Bouton Accueil */}
         <TouchableOpacity
           style={styles.sideButton}
