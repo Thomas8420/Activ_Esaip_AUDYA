@@ -98,7 +98,7 @@ const EN: TranslationMap = {
   'menu.professionals':  'My professionals',
   'menu.agenda':         'My agenda',
   'menu.message':        'My messages',
-  'menu.questionnaire':  'My questionnaires',
+  'menu.questionnaire':  'My Forms',
   'menu.news':           'News',
 
   // ── Labels section ─────────────────────────────────────────────────────
@@ -111,7 +111,7 @@ const EN: TranslationMap = {
   'screen.agenda':            'My agenda',
   'screen.notebook':          'My hearing log',
   'screen.hearing':           'My hearing aids',
-  'screen.questionnaire':     'My questionnaires',
+  'screen.questionnaire':     'My Forms',
   'screen.news':              'News',
   'screen.menu':              'Menu',
 
