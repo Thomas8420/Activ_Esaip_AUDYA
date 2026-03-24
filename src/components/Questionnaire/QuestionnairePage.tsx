@@ -1,6 +1,7 @@
 // src/components/Questionnaire/QuestionnairePage.tsx
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -14,9 +15,10 @@ import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD, FONT_BOLD } from '../../screens/Home/HomeScreen.styles';
 import {
-  getQuestionnaires,
-  getSubmissions,
+  fetchQuestionnaires,
+  fetchSubmissions,
   Questionnaire,
+  QuestionnaireSubmission,
 } from '../../services/questionnaireService';
 import { useNavigation } from '../../context/NavigationContext';
 
@@ -100,7 +102,31 @@ const QuestionnaireCard = ({
  */
 const QuestionnairePage = () => {
   const { navigateToQuestionnaireDetail } = useNavigation();
-  const questionnaires = getQuestionnaires();
+  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
+  const [submissionsMap, setSubmissionsMap] = useState<Record<string, QuestionnaireSubmission[]>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const qs = await fetchQuestionnaires();
+        setQuestionnaires(qs);
+        const map: Record<string, QuestionnaireSubmission[]> = {};
+        await Promise.all(
+          qs.map(async q => {
+            map[q.id] = await fetchSubmissions(q.id);
+          })
+        );
+        setSubmissionsMap(map);
+      } catch {
+        // silently fail — le mock ne peut pas échouer
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   const handlePress = useCallback(
     (id: string) => {
@@ -123,18 +149,22 @@ const QuestionnairePage = () => {
           Complétez régulièrement vos questionnaires pour suivre l'évolution de votre santé auditive.
         </Text>
 
-        {questionnaires.map(q => {
-          const subs = getSubmissions(q.id);
-          return (
-            <QuestionnaireCard
-              key={q.id}
-              questionnaire={q}
-              submissionsCount={subs.length}
-              lastSubmittedAt={subs[0]?.submittedAt ?? null}
-              onPress={() => handlePress(q.id)}
-            />
-          );
-        })}
+        {isLoading ? (
+          <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 40 }} />
+        ) : (
+          questionnaires.map(q => {
+            const subs = submissionsMap[q.id] ?? [];
+            return (
+              <QuestionnaireCard
+                key={q.id}
+                questionnaire={q}
+                submissionsCount={subs.length}
+                lastSubmittedAt={subs[0]?.submittedAt ?? null}
+                onPress={() => handlePress(q.id)}
+              />
+            );
+          })
+        )}
       </ScrollView>
 
       <BottomNav />

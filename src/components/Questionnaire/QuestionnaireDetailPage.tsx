@@ -1,6 +1,7 @@
 // src/components/Questionnaire/QuestionnaireDetailPage.tsx
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   Share,
   StatusBar,
@@ -20,9 +21,9 @@ import {
   FONT_BOLD,
 } from '../../screens/Home/HomeScreen.styles';
 import {
+  fetchQuestionnaire,
+  fetchSubmissions,
   formatSubmissionForExport,
-  getQuestionnaire,
-  getSubmissions,
   Questionnaire,
   QuestionnaireQuestion,
   QuestionnaireSubmission,
@@ -276,16 +277,35 @@ const HistoryCard = ({
  */
 const QuestionnaireDetailPage = () => {
   const { selectedQuestionnaireId, goBack } = useNavigation();
-  const questionnaire = selectedQuestionnaireId
-    ? getQuestionnaire(selectedQuestionnaireId)
-    : undefined;
-
+  const [questionnaire, setQuestionnaire] = useState<Questionnaire | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
-  const [submissions, setSubmissions] = useState<QuestionnaireSubmission[]>(
-    selectedQuestionnaireId ? getSubmissions(selectedQuestionnaireId) : []
-  );
+  const [submissions, setSubmissions] = useState<QuestionnaireSubmission[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!selectedQuestionnaireId) {
+      setIsLoading(false);
+      return;
+    }
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const [q, subs] = await Promise.all([
+          fetchQuestionnaire(selectedQuestionnaireId),
+          fetchSubmissions(selectedQuestionnaireId),
+        ]);
+        setQuestionnaire(q);
+        setSubmissions(subs);
+      } catch {
+        // silently fail — le mock ne peut pas échouer
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, [selectedQuestionnaireId]);
 
   // Ferme la bannière de succès automatiquement avec cleanup pour éviter les fuites mémoire
   useEffect(() => {
@@ -317,20 +337,31 @@ const QuestionnaireDetailPage = () => {
     [questionnaire]
   );
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (!questionnaire) {return;}
     const totalCount = questionnaire.questions.length;
     const answeredCount = questionnaire.questions.filter(q => answers[q.id] !== undefined).length;
     if (answeredCount < totalCount) {return;}
     try {
-      submitQuestionnaire(questionnaire.id, answers);
-      setSubmissions(getSubmissions(questionnaire.id));
+      await submitQuestionnaire(questionnaire.id, answers);
+      const updatedSubs = await fetchSubmissions(questionnaire.id);
+      setSubmissions(updatedSubs);
       setAnswers({});
       setSubmitted(true);
     } catch {
       // L'erreur est ignorée — l'état mock ne peut pas échouer en pratique
     }
   }, [questionnaire, answers]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <NavBar />
+        <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 40 }} />
+        <BottomNav />
+      </SafeAreaView>
+    );
+  }
 
   if (!questionnaire) {
     return (
