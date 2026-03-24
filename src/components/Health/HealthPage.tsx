@@ -28,8 +28,8 @@ const MOCK_HEALTH: PatientHealth = {
   smoker: 'Oui',
   heightCm: 182,
   weightKg: 77,
-  familyHistory: 'Antecedents familiaux',
-  medicalHistory: ['Accident vasculaire cerebral', 'Adenome de la prostate'],
+  familyHistory: 'bllblblblbllblb',
+  medicalHistory: ['Adenome de la prostate'],
   documents: [
     'IRM CEREBRALE1712072758.png',
     'IRM CEREBRALE1712072758.png',
@@ -219,7 +219,7 @@ const HealthPage = () => {
                 <View style={styles.inlineDivider} />
                 <TouchableOpacity style={styles.documentButton} activeOpacity={0.7}>
                   <Text style={styles.documentButtonText}>Document</Text>
-                  <Icon name="download-outline" size={18} color={COLORS.text} />
+                  <Icon name="download-outline" size={13} color={COLORS.text} />
                 </TouchableOpacity>
               </View>
 
@@ -244,7 +244,7 @@ const HealthPage = () => {
                 <View style={styles.inlineDivider} />
                 <TouchableOpacity style={styles.documentButton} activeOpacity={0.7}>
                   <Text style={styles.documentButtonText}>Document</Text>
-                  <Icon name="download-outline" size={18} color={COLORS.text} />
+                  <Icon name="download-outline" size={13} color={COLORS.text} />
                 </TouchableOpacity>
               </View>
 

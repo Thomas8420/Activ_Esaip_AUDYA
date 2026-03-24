@@ -19,6 +19,7 @@ export const COLORS = {
 // --- POLICES MONTSERRAT ---
 export const FONT_REGULAR = 'Montserrat-Regular';
 export const FONT_SEMIBOLD = 'Montserrat-SemiBold';
+export const FONT_BOLD = 'Montserrat-Bold';
 
 const TILE_GAP = 16;
 const TILE_PADDING = 20;

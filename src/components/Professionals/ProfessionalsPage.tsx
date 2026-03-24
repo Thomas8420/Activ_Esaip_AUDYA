@@ -76,7 +76,7 @@ const MOCK_PROFESSIONALS: Professional[] = [
  * Il intègre la barre de navigation, le filtre, la grille de professionnels et le bouton d'action flottant.
  */
 const ProfessionalsPage = () => {
-  const { navigateToProfile, navigateToMessagingChat } = useNavigation();
+  const { navigateToProfile, navigateToMessagingChat, navigateToAdd } = useNavigation();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
@@ -165,6 +165,7 @@ const ProfessionalsPage = () => {
           specialties={SPECIALTIES}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          onAddProfessional={navigateToAdd}
         />
 
         {/* Chargement */}

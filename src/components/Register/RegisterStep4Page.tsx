@@ -114,7 +114,7 @@ const RegisterStep4Page = () => {
       </ScrollView>
 
       {/* Modal sélection profession */}
-      <Modal visible={showModal} transparent animationType="slide" onRequestClose={() => setShowModal(false)}>
+      <Modal visible={showModal} transparent animationType="slide" onRequestClose={() => setShowModal(false)} accessibilityViewIsModal={true}>
         <TouchableOpacity style={s.modalOverlay} onPress={() => setShowModal(false)} activeOpacity={1}>
           <View style={s.modalSheet}>
             <View style={s.modalHandle} />

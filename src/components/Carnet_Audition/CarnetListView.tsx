@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { AuditionDocument } from '../../services/carnetauditionService';
 
+import { FONT_REGULAR, FONT_SEMIBOLD, FONT_BOLD } from '../../screens/Home/HomeScreen.styles';
+
 import EyeIcon from '../../assets/images/eye.svg';
 import DownloadIcon from '../../assets/images/download.svg';
 import TrashIcon from '../../assets/images/trash.svg';
@@ -155,11 +157,11 @@ const localStyles = StyleSheet.create({
   // ... Styles du tableau ...
   container: { marginTop: 15 },
   headerRow: { flexDirection: 'row', backgroundColor: '#F0F0F0', paddingVertical: 12, paddingHorizontal: 8, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
-  headerText: { fontSize: 9, fontFamily: 'Montserrat-Bold', color: '#888', fontWeight: 'bold' },
+  headerText: { fontSize: 9, fontFamily: FONT_BOLD, color: '#888' },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#EEE', backgroundColor: 'white' },
-  rowText: { fontSize: 11, fontFamily: 'Montserrat-Medium', color: '#333' },
-  nameText: { fontSize: 11, fontFamily: 'Montserrat-Medium', color: '#333' },
-  dateText: { fontSize: 10, fontFamily: 'Montserrat-Medium', color: '#333' },
+  rowText: { fontSize: 11, fontFamily: FONT_REGULAR, color: '#333' },
+  nameText: { fontSize: 11, fontFamily: FONT_REGULAR, color: '#333' },
+  dateText: { fontSize: 10, fontFamily: FONT_REGULAR, color: '#333' },
   eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#EAEAEA', justifyContent: 'center', alignItems: 'center' },
   actionsContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 6, paddingHorizontal: 8, backgroundColor: '#EAEAEA', borderRadius: 8, elevation: 2, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } },
   spacer: { width: 8 },
@@ -193,9 +195,8 @@ const localStyles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: FONT_BOLD,
     color: '#002C5B', // Bleu foncé style Audya
-    fontWeight: 'bold',
   },
   closeBtn: {
     width: 24, height: 24, borderRadius: 12, borderWidth: 1.5, borderColor: '#002C5B',
@@ -212,16 +213,16 @@ const localStyles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: '#EEE',
   },
   detailLabel: {
-    fontSize: 11, fontFamily: 'Montserrat-Medium', color: '#555', flex: 1,
+    fontSize: 11, fontFamily: FONT_REGULAR, color: '#555', flex: 1,
   },
   detailValue: {
-    fontSize: 12, fontFamily: 'Montserrat-Medium', color: '#000', flex: 1.5, textAlign: 'left',
+    fontSize: 12, fontFamily: FONT_REGULAR, color: '#000', flex: 1.5, textAlign: 'left',
   },
   actionsSection: {
     marginTop: 15, paddingVertical: 10,
   },
   actionsLabel: {
-    fontSize: 11, fontFamily: 'Montserrat-Medium', color: '#555', marginBottom: 15,
+    fontSize: 11, fontFamily: FONT_REGULAR, color: '#555', marginBottom: 15,
   },
   bigActionsRow: {
     flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center',

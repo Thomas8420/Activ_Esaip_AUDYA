@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, FONT_REGULAR } from '../../screens/Home/HomeScreen.styles';
 import {
@@ -44,6 +45,7 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const flatListRef = useRef<FlatList<ChatbotMessage>>(null);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   // ── Chargement initial de la conversation ─────────────────────────────────
   useEffect(() => {
@@ -197,7 +199,7 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
         )}
 
         {/* Zone de saisie */}
-        <View style={styles.inputArea}>
+        <View style={[styles.inputArea, Platform.OS === 'ios' && { paddingBottom: Math.max(10, bottomInset) }]}>
           <TextInput
             style={styles.textInput}
             value={inputText}
@@ -207,6 +209,7 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
             multiline
             returnKeyType="default"
             onSubmitEditing={handleSend}
+            accessibilityLabel="Saisir votre message"
           />
           <TouchableOpacity
             style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}

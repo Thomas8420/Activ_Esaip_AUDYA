@@ -5,11 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import DeviceCard from './DeviceCard';
-import { COLORS } from '../../screens/Home/HomeScreen.styles';
-
+import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
 import EyeIcon from '../../assets/images/eye.svg';
 import DownloadIcon from '../../assets/images/download.svg';
 import TrashIcon from '../../assets/images/trash.svg';
+
+const FONT_BOLD = 'Montserrat-Bold';
 
 export interface AppareilDetails {
   id: number;
@@ -49,7 +50,7 @@ const AppareillagePage = () => {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <NavBar />
 
-      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* --- LE GRAND BLOC BLANC CENTRAL --- */}
         <View style={styles.mainContainer}>
@@ -59,12 +60,12 @@ const AppareillagePage = () => {
           <DeviceCard
             side="DROITE"
             data={appareilsMock[0]}
-            dotColor="#FF0000"
+            dotColor={COLORS.orange}
           />
           <DeviceCard
             side="GAUCHE"
             data={appareilsMock[1]}
-            dotColor="#00AFA3"
+            dotColor={COLORS.teal}
           />
 
           <Text style={styles.historyTitle}>HISTORIQUE APPAREILLAGE</Text>
@@ -107,107 +108,120 @@ const AppareillagePage = () => {
           </View>
         </View>
 
-        </ScrollView>
+      </ScrollView>
 
-      {/* --- MODALE DE DÉTAILS DYNAMIQUE --- */}
-      <Modal visible={isDetailsModalVisible} animationType="fade" transparent={true} onRequestClose={closeDetailsModal}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+      {/* --- MODALE DE DÉTAILS DYNAMIQUE (rendu conditionnel — évite le bug Android) --- */}
+      {isDetailsModalVisible && (
+        <Modal visible animationType="fade" transparent={true} onRequestClose={closeDetailsModal}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
 
-            {/* En-tête de la modale */}
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>VOTRE APPAREIL</Text>
-              <TouchableOpacity onPress={closeDetailsModal} style={styles.closeBtn}>
-                <Text style={styles.closeBtnText}>X</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Détails du document */}
-            {selectedAppareil && (
-              <View style={styles.detailTable}>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>TYPE</Text>
-                  <Text style={styles.detailValue}>{selectedAppareil.type}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>MARQUE</Text>
-                  <Text style={styles.detailValue}>{selectedAppareil.marque}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>OREILLE</Text>
-                  {/* Simulation de l'oreille selon la donnée mockée (ici en dur pour l'exemple) */}
-                  <Text style={styles.detailValue}>{selectedAppareil.id === appareilsMock[0].id ? 'DROITE' : 'GAUCHE'}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>DATE</Text>
-                  <Text style={styles.detailValue}>{selectedAppareil.date}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>N° SÉRIE</Text>
-                  <Text style={styles.detailValue}>{selectedAppareil.serial}</Text>
-                </View>
-
-                {/* Actions */}
-                <View style={styles.actionsSection}>
-                  <Text style={styles.actionsLabel}>ACTIONS</Text>
-                  <View style={styles.bigActionsRow}>
-                    <TouchableOpacity style={styles.bigActionButton}>
-                      <EyeIcon width={28} height={28} color="#333" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.bigActionButton}>
-                      <DownloadIcon width={28} height={28} color="#333" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.bigActionButton}>
-                      <TrashIcon width={28} height={28} color="#333" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
+              {/* En-tête de la modale */}
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>VOTRE APPAREIL</Text>
+                <TouchableOpacity onPress={closeDetailsModal} style={styles.closeBtn} accessibilityLabel="Fermer" accessibilityRole="button">
+                  <Text style={styles.closeBtnText}>✕</Text>
+                </TouchableOpacity>
               </View>
-            )}
 
+              {/* Détails du document */}
+              {selectedAppareil && (
+                <View style={styles.detailTable}>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>TYPE</Text>
+                    <Text style={styles.detailValue}>{selectedAppareil.type}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>MARQUE</Text>
+                    <Text style={styles.detailValue}>{selectedAppareil.marque}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>OREILLE</Text>
+                    <Text style={styles.detailValue}>{selectedAppareil.id === appareilsMock[0].id ? 'DROITE' : 'GAUCHE'}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>DATE</Text>
+                    <Text style={styles.detailValue}>{selectedAppareil.date}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>N° SÉRIE</Text>
+                    <Text style={styles.detailValue}>{selectedAppareil.serial}</Text>
+                  </View>
+
+                  {/* Actions */}
+                  <View style={styles.actionsSection}>
+                    <Text style={styles.actionsLabel}>ACTIONS</Text>
+                    <View style={styles.bigActionsRow}>
+                      <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Voir" accessibilityRole="button">
+                        <EyeIcon width={28} height={28} color="#333" />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Télécharger" accessibilityRole="button">
+                        <DownloadIcon width={28} height={28} color="#333" />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Supprimer" accessibilityRole="button">
+                        <TrashIcon width={28} height={28} color="#333" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                </View>
+              )}
+
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
 
       <BottomNav />
     </SafeAreaView>
   );
 };
 
-// --- STYLES REPRIS DU CARNET AUDITION ---
 const styles = StyleSheet.create({
   // --- FOND PRINCIPAL ---
   safeArea: { flex: 1, backgroundColor: COLORS.background },
-  scrollContent: { flex: 1 },
+  scrollContent: { padding: 15, paddingBottom: 100 },
 
   // --- LE GRAND BLOC BLANC CENTRAL ---
   mainContainer: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 20,
-    marginHorizontal: '5%',
-    borderRadius: 20,
-    paddingTop: 20,
-    paddingBottom: 30,
-    // Ombre pour l'effet "carte flottante"
-    elevation: 4,
+    backgroundColor: COLORS.white,
+    borderRadius: 30,
+    padding: 20,
+    elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
   },
 
-  pageTitle: { fontSize: 18, fontFamily: 'Montserrat-Bold', fontWeight: 'bold', color: COLORS.orange, textAlign: 'center', marginBottom: 25 },
-  historyTitle: { fontSize: 14, fontFamily: 'Montserrat-Bold', fontWeight: 'bold', color: '#002C5B', textAlign: 'center', marginTop: 10, marginBottom: 15 },
+  pageTitle: {
+    fontSize: 20,
+    fontFamily: FONT_BOLD,
+    color: COLORS.orange,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 24,
+  },
+  historyTitle: {
+    fontSize: 14,
+    fontFamily: FONT_BOLD,
+    color: COLORS.textLight,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginTop: 20,
+    marginBottom: 15,
+  },
 
   // --- TABLEAU HISTORIQUE ---
   tableContainer: { width: '90%', alignSelf: 'center', marginTop: 5, marginBottom: 10 },
   headerRow: { flexDirection: 'row', backgroundColor: '#F0F0F0', paddingVertical: 12, paddingHorizontal: 8, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
-  headerText: { fontSize: 9, fontFamily: 'Montserrat-Bold', color: '#555', fontWeight: 'bold', textAlign: 'center' },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#EEE', backgroundColor: 'white' },
-  rowText: { fontSize: 11, fontFamily: 'Montserrat-Medium', color: '#333', textAlign: 'center' },
-  nameText: { fontSize: 11, fontFamily: 'Montserrat-Bold', color: '#333', fontWeight: 'bold', textAlign: 'center' },
-  dateText: { fontSize: 10, fontFamily: 'Montserrat-Medium', color: '#333', textAlign: 'center' },
+  headerText: { fontSize: 9, fontFamily: FONT_BOLD, color: COLORS.textLight, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: COLORS.border, backgroundColor: COLORS.white },
+  rowText: { fontSize: 12, fontFamily: FONT_REGULAR, color: COLORS.text, textAlign: 'center' },
+  nameText: { fontSize: 12, fontFamily: FONT_SEMIBOLD, color: COLORS.text, textAlign: 'center' },
+  dateText: { fontSize: 11, fontFamily: FONT_REGULAR, color: COLORS.textLight, textAlign: 'center' },
   eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#EAEAEA', justifyContent: 'center', alignItems: 'center' },
 
   // --- COLONNES DU TABLEAU ---
@@ -223,90 +237,87 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
+    padding: 20,
   },
   modalContent: {
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: 25,
     elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 }
+    shadowOffset: { width: 0, height: 4 },
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   modalTitle: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-Bold',
-    color: '#002C5B',
-    fontWeight: 'bold',
-    textTransform: 'uppercase'
+    fontSize: 16,
+    fontFamily: FONT_BOLD,
+    color: COLORS.orange,
+    textTransform: 'uppercase',
   },
   closeBtn: {
     width: 26,
     height: 26,
     borderRadius: 13,
     borderWidth: 1.5,
-    borderColor: '#002C5B',
+    borderColor: COLORS.text,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   closeBtnText: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Bold',
-    color: '#002C5B',
-    fontWeight: 'bold'
+    fontFamily: FONT_BOLD,
+    color: COLORS.text,
   },
   detailTable: {
     borderTopWidth: 1,
-    borderTopColor: '#EEE'
+    borderTopColor: COLORS.border,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEE'
+    borderBottomColor: COLORS.border,
   },
   detailLabel: {
-      flex: 1, // Prend exactement 50% de la largeur
-      fontSize: 11,
-      fontFamily: 'Montserrat-Medium',
-      color: '#666',
-      textTransform: 'uppercase'
-    },
-    detailValue: {
-      flex: 1, // Prend les autres 50% de la largeur
-      fontSize: 13,
-      fontFamily: 'Montserrat-Medium',
-      color: '#111',
-      textAlign: 'left', // Le texte commence donc pile au centre !
-      fontWeight: '500'
-    },
+    flex: 1,
+    fontSize: 13,
+    fontFamily: FONT_SEMIBOLD,
+    color: COLORS.textLight,
+  },
+  detailValue: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: FONT_SEMIBOLD,
+    color: COLORS.text,
+    textAlign: 'left',
+  },
   actionsSection: {
     marginTop: 20,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   actionsLabel: {
-    fontSize: 11,
-    fontFamily: 'Montserrat-Medium',
-    color: '#666',
+    fontSize: 13,
+    fontFamily: FONT_BOLD,
+    color: COLORS.textLight,
     marginBottom: 15,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   bigActionsRow: {
-      flexDirection: 'row',
-      justifyContent: 'center', // Centre les boutons horizontalement
-      alignItems: 'center',
-      gap: 20 // Espacement propre entre chaque bouton
-    },
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+  },
   bigActionButton: {
     width: 65,
     height: 65,
@@ -318,9 +329,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    shadowOffset: { width: 0, height: 1 }
+    shadowOffset: { width: 0, height: 1 },
   },
-
 });
 
 export default AppareillagePage;

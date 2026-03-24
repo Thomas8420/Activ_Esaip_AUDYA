@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '../Home/HomeScreen.styles';
+import { COLORS, FONT_BOLD } from '../Home/HomeScreen.styles';
 
 export const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: COLORS.background },
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   scrollContent: { padding: 15, paddingBottom: 100 },
   card: {
     backgroundColor: 'white',
-    borderRadius: 30,
+    borderRadius: 20,
     padding: 20,
     minHeight: 600,
     elevation: 5,
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: FONT_BOLD,
     color: COLORS.orange,
     textAlign: 'center',
     marginBottom: 30,
@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
   },
   controlsContainer: { marginBottom: 20, zIndex: 10 },
   rowTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  label: { fontFamily: 'Montserrat-Bold', color: '#1A3B5D', marginRight: 10 },
+  label: { fontFamily: FONT_BOLD, color: '#1A3B5D', marginRight: 10 },
   searchBox: {
     flex: 1,
     flexDirection: 'row',
@@ -79,6 +79,10 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
     elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   dropdownItem: { padding: 10, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
   dropdownItemText: { fontSize: 12, color: '#333' },
@@ -92,7 +96,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 2,
   },
-  addButtonText: { color: 'white', fontFamily: 'Montserrat-Bold', fontSize: 12 },
+  addButtonText: { color: 'white', fontFamily: FONT_BOLD, fontSize: 12 },
 
   // TIMELINE
   timelineContainer: { marginTop: 20 },
@@ -130,7 +134,7 @@ export const styles = StyleSheet.create({
   },
   author: { fontSize: 11, fontWeight: 'bold', color: '#666' },
   dateText: { fontSize: 10, color: '#999', marginBottom: 5 },
-  docTitle: { fontSize: 13, fontFamily: 'Montserrat-Bold', color: '#1A3B5D' },
+  docTitle: { fontSize: 13, fontFamily: FONT_BOLD, color: '#1A3B5D' },
   docDesc: { fontSize: 11, color: '#444', marginTop: 3 },
   actionIcons: { flexDirection: 'row', gap: 15, marginTop: 15, alignItems: 'center' },
 
@@ -173,7 +177,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#CCC',
     borderStyle: 'dashed',
-    borderRadius: 8,
+    borderRadius: 16,
     padding: 20,
     alignItems: 'center',
     marginBottom: 25
@@ -217,7 +221,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5
   },
-  headerText: { fontSize: 10, fontFamily: 'Montserrat-Bold', color: '#666' },
+  headerText: { fontSize: 10, fontFamily: FONT_BOLD, color: '#666' },
   tableRow: {
     flexDirection: 'row',
     padding: 12,

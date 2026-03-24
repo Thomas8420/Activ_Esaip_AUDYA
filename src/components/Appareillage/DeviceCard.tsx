@@ -2,6 +2,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AppareilDetails } from './AppareillagePage';
+import { FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
+const FONT_BOLD = 'Montserrat-Bold';
 
 // Importe tes SVGs ici quand tu les auras !
 import OreilleDroiteIcon from '../../assets/images/oreille-droite.svg';
@@ -67,8 +69,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Bold', // Si tu as cette police, sinon fontWeight fera le travail
-    fontWeight: 'bold',
+    fontFamily: FONT_BOLD, // Si tu as cette police, sinon fontWeight fera le travail
     color: '#1E3A5F', // Bleu marine
     marginBottom: 15,
   },
@@ -103,20 +104,18 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: FONT_REGULAR,
     color: '#1E3A5F', // Texte en Bleu marine
     marginBottom: 4,
     lineHeight: 18,
   },
   boldLabel: {
-    fontFamily: 'Montserrat-Bold',
-    fontWeight: 'bold',
+    fontFamily: FONT_BOLD,
   },
   classText: {
     marginTop: 15,
     fontSize: 14,
-    fontFamily: 'Montserrat-Bold',
-    fontWeight: 'bold',
+    fontFamily: FONT_BOLD,
     color: '#1E3A5F', // Bleu marine
   }
 });

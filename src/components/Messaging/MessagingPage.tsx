@@ -139,6 +139,8 @@ const MessagingPage = () => {
         onPress={() => openConversation(item)}
         activeOpacity={0.7}
         testID={`conv-${item.id}`}
+        accessibilityRole="button"
+        accessibilityLabel={`Conversation avec ${item.correspondentName}`}
       >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{initials(item.correspondentName)}</Text>

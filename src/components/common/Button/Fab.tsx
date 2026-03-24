@@ -11,7 +11,11 @@ import ChatIcon from '../../../assets/images/chat.svg';
 const Fab = () => {
   return (
     // Le bouton est rendu via un TouchableOpacity pour la rétroaction au toucher.
-    <TouchableOpacity style={styles.fab}>
+    <TouchableOpacity
+      style={styles.fab}
+      accessibilityLabel="Assistant AUDYA"
+      accessibilityRole="button"
+    >
       <ChatIcon width={26} height={26} fill={COLORS.white} />
     </TouchableOpacity>
   );

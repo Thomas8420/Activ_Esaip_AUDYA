@@ -220,6 +220,10 @@ const styles = StyleSheet.create({
       paddingVertical: 8,
       paddingBottom: 8,
       elevation: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
     },
   menuItem: {
     flexDirection: 'row',

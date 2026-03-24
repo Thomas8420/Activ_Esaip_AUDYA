@@ -201,7 +201,7 @@ const RegisterStep2Page = () => {
       </ScrollView>
 
       {/* Modal sélection pays */}
-      <Modal visible={paysModal} transparent animationType="slide" onRequestClose={() => setPaysModal(false)}>
+      <Modal visible={paysModal} transparent animationType="slide" onRequestClose={() => setPaysModal(false)} accessibilityViewIsModal={true}>
         <TouchableOpacity style={s.modalOverlay} onPress={() => setPaysModal(false)} activeOpacity={1}>
           <View style={s.modalSheet}>
             <View style={s.modalHandle} />
@@ -214,7 +214,7 @@ const RegisterStep2Page = () => {
       </Modal>
 
       {/* Modal source photo */}
-      <Modal visible={photoModal} transparent animationType="fade" onRequestClose={() => setPhotoModal(false)}>
+      <Modal visible={photoModal} transparent animationType="fade" onRequestClose={() => setPhotoModal(false)} accessibilityViewIsModal={true}>
         <TouchableOpacity style={s.modalOverlay} onPress={() => setPhotoModal(false)} activeOpacity={1}>
           <View style={s.photoModalSheet}>
             <Text style={s.modalTitle}>Ajouter une photo</Text>

@@ -8,8 +8,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
-import { useNavigation } from '../../context/NavigationContext';
-
 export interface Filters {
   searchQuery: string;
   itemsPerPage: number;
@@ -24,6 +22,7 @@ interface ProfessionalsFiltersProps {
   specialties: string[];
   viewMode: 'card' | 'list';
   onViewModeChange: (mode: 'card' | 'list') => void;
+  readonly onAddProfessional?: () => void;
 }
 
 /**
@@ -40,8 +39,8 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
   specialties,
   viewMode,
   onViewModeChange,
+  onAddProfessional,
 }) => {
-  const { navigateToAdd } = useNavigation();
   const [specialtyOpen, setSpecialtyOpen] = React.useState(false);
   const [itemsPerPageOpen, setItemsPerPageOpen] = React.useState(false);
 
@@ -194,7 +193,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
       </View>
 
       {/* Bouton Ajouter un professionnel */}
-      <TouchableOpacity style={styles.addProfessionalButton} onPress={navigateToAdd}>
+      <TouchableOpacity style={styles.addProfessionalButton} onPress={onAddProfessional}>
         <Text style={styles.addProfessionalButtonText}>
           Ajouter un{'\n'}professionnel de santé
         </Text>
