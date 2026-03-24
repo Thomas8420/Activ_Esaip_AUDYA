@@ -1,32 +1,27 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet, GestureResponderEvent, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
 import { FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 
 const CTA4_BACKGROUND = '#C8D6E1';
 const CTA4_TEXT = '#172A4F';
 
 interface CTA4Props {
-  label: string;
-  onPress?: (event: GestureResponderEvent) => void;
-  style?: ViewStyle; // Pour des ajustements de layout
-  textStyle?: TextStyle;
+  readonly label: string;
+  readonly onPress?: () => void;
+  readonly style?: ViewStyle;
 }
 
-const CTA4: React.FC<CTA4Props> = ({ label, onPress, style, textStyle }) => {
-  const buttonStyle: ViewStyle[] = style ? [styles.button, style] : [styles.button];
-  const textStyleComputed: TextStyle[] = textStyle ? [styles.text, textStyle] : [styles.text];
-
-  return (
-    <Pressable
-      onPress={onPress}
-      style={buttonStyle}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-    >
-      <Text style={textStyleComputed}>{label}</Text>
-    </Pressable>
-  );
-};
+const CTA4: React.FC<CTA4Props> = ({ label, onPress, style }) => (
+  <TouchableOpacity
+    style={[styles.button, style]}
+    onPress={onPress}
+    activeOpacity={0.7}
+    accessibilityRole="button"
+    accessibilityLabel={label}
+  >
+    <Text style={styles.text}>{label}</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   button: {

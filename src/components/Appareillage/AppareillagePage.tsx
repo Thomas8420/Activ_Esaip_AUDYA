@@ -107,9 +107,7 @@ const AppareillagePage = () => {
           </View>
         </View>
 
-        {/* Espace vide à la fin pour ne pas que le BottomNav cache le dernier élément */}
-        <View style={{ height: 100 }} />
-      </ScrollView>
+        </ScrollView>
 
       {/* --- MODALE DE DÉTAILS DYNAMIQUE --- */}
       <Modal visible={isDetailsModalVisible} animationType="fade" transparent={true} onRequestClose={closeDetailsModal}>
@@ -172,10 +170,7 @@ const AppareillagePage = () => {
         </View>
       </Modal>
 
-      {/* --- BOTTOM NAV FLOTTANT --- */}
-      <View style={styles.bottomNavContainer}>
-        <BottomNav />
-      </View>
+      <BottomNav />
     </SafeAreaView>
   );
 };
@@ -326,8 +321,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 }
   },
 
-  // --- POUR LA NAVIGATION ---
-  bottomNavContainer: { position: 'absolute', bottom: 0, left: 0, right: 0 },
 });
 
 export default AppareillagePage;

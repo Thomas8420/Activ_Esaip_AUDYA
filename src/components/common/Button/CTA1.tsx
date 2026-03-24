@@ -1,46 +1,24 @@
-import React, { useState } from 'react';
-import { Pressable, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
 import { COLORS, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 
 interface Cta1ButtonProps {
-  label: string;
-  onPress?: (event: GestureResponderEvent) => void;
-  style?: object; // Pour des ajustements de layout (marge, etc.)
+  readonly label: string;
+  readonly onPress?: () => void;
+  readonly style?: ViewStyle;
 }
 
-const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style }) => {
-  // 👉 État local pour savoir si le bouton est pressé
-  const [isPressed, setIsPressed] = useState(false);
-
-  // 👉 Styles dynamiques pour le conteneur du bouton
-  const buttonStyle = [
-    styles.button,
-    {
-      backgroundColor: isPressed ? COLORS.white : COLORS.orange,
-      borderColor: COLORS.orange,
-      borderWidth: 1,
-    },
-    style,
-  ];
-
-  const textStyle = [
-    styles.text,
-    { color: isPressed ? COLORS.orange : COLORS.white },
-  ];
-
-  return (
-    <Pressable
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      onPress={onPress}
-      style={buttonStyle}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-    >
-      <Text style={textStyle}>{label}</Text>
-    </Pressable>
-  );
-};
+const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style }) => (
+  <TouchableOpacity
+    style={[styles.button, style]}
+    onPress={onPress}
+    activeOpacity={0.7}
+    accessibilityRole="button"
+    accessibilityLabel={label}
+  >
+    <Text style={styles.text}>{label}</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   button: {
@@ -50,11 +28,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 100,
+    backgroundColor: COLORS.orange,
+    borderWidth: 1,
+    borderColor: COLORS.orange,
   },
   text: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
     textAlign: 'center',
+    color: COLORS.white,
   },
 });
 

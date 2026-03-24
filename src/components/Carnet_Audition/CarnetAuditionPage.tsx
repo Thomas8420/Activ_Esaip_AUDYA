@@ -145,7 +145,7 @@ const CarnetAuditionPage = () => {
         </View>
       </ScrollView>
         {/* --- MODALE D'AJOUT DE DOCUMENT --- */}
-              <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+              <Modal visible={isModalVisible} animationType="slide" transparent={true} onRequestClose={() => setIsModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                   <View style={styles.modalContent}>
                     <Text style={styles.modalTitle}>NOUVEAU DOCUMENT</Text>
