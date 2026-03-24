@@ -87,7 +87,6 @@ Ce fichier documente l'utilité de chaque fichier ou dossier présent à la raci
 |-------------------|------|
 | `doc/` | Documentation du projet. Voir [doc/README.md](../README.md) pour l'index complet. Contient les docs dev (`doc/dev/`) et managers (`doc/manager/`). |
 | `README.md` | README standard du dépôt (généré lors du scaffolding React Native). Contenu générique — remplacé fonctionnellement par `doc/`. |
-| `CLAUDE.md` | Instructions destinées à l'assistant IA Claude Code. Décrit l'architecture, les conventions, les règles de sécurité et l'état du projet. Source de vérité pour les développements assistés par IA. |
 | `API_DOCUMENTATION.md` | Documentation des endpoints backend. Référence des shapes JSON, méthodes HTTP, paramètres attendus. |
 | `AUDIT_REPORT.md` | Rapport d'audit technique du Sprint 2. Contient l'analyse de l'architecture, de la qualité du code et de la couverture de tests à un instant T. |
 | `audit_architecture_report.json` | Export JSON brut de l'audit d'architecture (données source du rapport `AUDIT_REPORT.md`). Peut être supprimé une fois l'audit intégré à la documentation. |
@@ -102,4 +101,3 @@ Ce fichier documente l'utilité de chaque fichier ou dossier présent à la raci
 | `.watchmanconfig` | Configuration de Watchman (outil de surveillance de fichiers utilisé par Metro). Fichier vide = configuration par défaut. |
 | `.bundle/` | Configuration Bundler Ruby (chemin d'installation des gems). |
 | `.idea/` | Fichiers de configuration de l'IDE JetBrains (Android Studio / WebStorm). Peut être commité pour partager la configuration IDE en équipe. |
-| `.claude/` | Données de session de l'assistant Claude Code (mémoire, contexte). Non pertinent pour le développement. |
