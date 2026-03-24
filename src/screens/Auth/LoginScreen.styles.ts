@@ -81,4 +81,7 @@ export const loginScreenStyles = StyleSheet.create({
     backgroundColor: COLORS.border,
     marginVertical: SPACING.lg,
   },
+  fieldSpacingLg: {marginBottom: SPACING.md},
+  fieldSpacingMd: {marginBottom: SPACING.sm},
+  serverErrorText: {fontSize: 13, color: COLORS.error, marginTop: 4, marginBottom: SPACING.sm},
 });

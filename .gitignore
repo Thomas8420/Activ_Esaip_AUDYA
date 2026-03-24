@@ -66,6 +66,10 @@ yarn-error.log
 # testing
 /coverage
 
+# Fichiers de configuration locale (ne jamais committer)
+.env.local
+.env.*.local
+
 # Yarn
 .yarn/*
 !.yarn/patches

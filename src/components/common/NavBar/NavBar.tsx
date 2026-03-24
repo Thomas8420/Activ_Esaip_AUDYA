@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles, COLORS } from '../../../screens/Home/HomeScreen.styles';
 import { useNavigation } from '../../../context/NavigationContext';
 import { useAuth } from '../../../context/AuthContext';
@@ -27,6 +28,7 @@ const NavBar = () => {
   const { navigateToSettings, navigateToMyProfile } = useNavigation();
   const { logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
+  const { top: topInset } = useSafeAreaInsets();
 
   return (
     <>
@@ -39,13 +41,14 @@ const NavBar = () => {
 
         {/* Actions à droite (pilule orange) */}
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.headerIconBtn} accessibilityLabel="Notifications">
+          <TouchableOpacity style={styles.headerIconBtn} accessibilityLabel="Notifications" accessibilityRole="button">
             <BellIcon width={30} height={30} fill={COLORS.white} />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.headerIconBtn}
             accessibilityLabel="Paramètres"
+            accessibilityRole="button"
             onPress={navigateToSettings}
           >
             <SettingsIcon width={30} height={30} color="white" />
@@ -53,8 +56,10 @@ const NavBar = () => {
 
           {/* Bouton pour ouvrir/fermer le menu déroulant */}
           <TouchableOpacity
-            style={[styles.headerIconBtn, {flexDirection: 'row', gap: 4, width: 'auto', paddingHorizontal: 5}]}
+            style={styles.headerIconBtnWide}
             onPress={() => setProfileOpen(!profileOpen)}
+            accessibilityLabel="Menu profil"
+            accessibilityRole="button"
           >
             <ProfileIcon width={30} height={30} color="white" />
             <DropdownIcon width={18} height={18} color="white" />
@@ -70,10 +75,12 @@ const NavBar = () => {
           <Pressable style={styles.dropdownOverlay} onPress={() => setProfileOpen(false)} />
 
           {/* Contenu du menu déroulant */}
-          <View style={styles.dropdown}>
+          <View style={[styles.dropdown, { top: 25 + topInset }]}>
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}
+              accessibilityLabel="Mon profil"
+              accessibilityRole="button"
             >
                 <ProfileIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Profil</Text>
@@ -82,6 +89,8 @@ const NavBar = () => {
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); navigateToSettings(); }}
+              accessibilityLabel="Préférences"
+              accessibilityRole="button"
             >
                 <SettingsIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Préférences</Text>
@@ -90,6 +99,8 @@ const NavBar = () => {
             <TouchableOpacity
               style={styles.dropdownItem}
               onPress={() => { setProfileOpen(false); logout(); }}
+              accessibilityLabel="Déconnexion"
+              accessibilityRole="button"
             >
                 <LogoutIcon width={18} height={18} color="#F15A24" />
                 <Text style={styles.dropdownLabel}>Déconnexion</Text>

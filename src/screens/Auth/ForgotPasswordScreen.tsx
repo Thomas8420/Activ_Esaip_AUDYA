@@ -11,7 +11,6 @@ import {ApiError} from '../../services/api';
 type Props = {
   onSubmit: () => void;
   onRegister: () => void;
-  onBack: () => void;
 };
 
 /**

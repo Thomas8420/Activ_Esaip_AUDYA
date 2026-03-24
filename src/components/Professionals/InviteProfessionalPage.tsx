@@ -8,7 +8,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
@@ -71,7 +72,12 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             <Text style={styles.formCardTitle}>
               FICHE DE VOTRE{'\n'}PROFESSIONNEL
             </Text>
-            <TouchableOpacity style={styles.formBackButton} onPress={onBack}>
+            <TouchableOpacity
+              style={styles.formBackButton}
+              onPress={onBack}
+              accessibilityLabel="Revenir à la liste"
+              accessibilityRole="button"
+            >
               <Text style={styles.formBackButtonText}>Revenir à la liste</Text>
             </TouchableOpacity>
           </View>
@@ -80,11 +86,13 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           <TouchableOpacity
             style={styles.formDropdownButton}
             onPress={() => { setSpecialtyOpen(!specialtyOpen); setCountryOpen(false); }}
+            accessibilityLabel={specialty || 'Spécialité'}
+            accessibilityRole="button"
           >
             <Text style={[styles.formDropdownText, specialty ? styles.formDropdownTextSelected : null]}>
               {specialty || 'Spécialité *'}
             </Text>
-            <Text style={{ fontSize: 12, color: '#999' }}>▼</Text>
+            <Text style={styles.formDropdownArrow}>▼</Text>
           </TouchableOpacity>
           {specialtyOpen && (
             <View style={styles.formDropdownMenu}>
@@ -93,6 +101,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
                   key={s}
                   style={styles.formDropdownItem}
                   onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
+                  accessibilityLabel={s}
+                  accessibilityRole="button"
                 >
                   <Text style={styles.formDropdownItemText}>{s}</Text>
                 </TouchableOpacity>
@@ -159,11 +169,13 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           <TouchableOpacity
             style={styles.formDropdownButton}
             onPress={() => { setCountryOpen(!countryOpen); setSpecialtyOpen(false); }}
+            accessibilityLabel={country || 'Pays'}
+            accessibilityRole="button"
           >
             <Text style={[styles.formDropdownText, country ? styles.formDropdownTextSelected : null]}>
               {country || 'Pays *'}
             </Text>
-            <Text style={{ fontSize: 12, color: '#999' }}>▼</Text>
+            <Text style={styles.formDropdownArrow}>▼</Text>
           </TouchableOpacity>
           {countryOpen && (
             <View style={styles.formDropdownMenu}>
@@ -172,6 +184,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
                   key={c}
                   style={styles.formDropdownItem}
                   onPress={() => { setCountry(c); setCountryOpen(false); }}
+                  accessibilityLabel={c}
+                  accessibilityRole="button"
                 >
                   <Text style={styles.formDropdownItemText}>{c}</Text>
                 </TouchableOpacity>
@@ -211,7 +225,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           />
 
           {/* Note personnalisée */}
-          <Text style={[styles.formSectionTitle, { fontSize: 13, marginTop: 4 }]}>
+          <Text style={styles.formNoteLabel}>
             Souhaitez-vous personnaliser cette invitation en y ajoutant une note ?
           </Text>
           <TextInput
@@ -228,9 +242,11 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             style={styles.formCheckboxRow}
             onPress={() => setConsentChecked(!consentChecked)}
             activeOpacity={0.8}
+            accessibilityLabel="J'accepte les conditions de partage de données médicales"
+            accessibilityRole="checkbox"
           >
             <View style={[styles.formCheckbox, consentChecked && styles.formCheckboxChecked]}>
-              {consentChecked && <Text style={styles.formCheckboxTick}>✓</Text>}
+              {consentChecked && <Icon name="checkmark" size={14} color={COLORS.white} />}
             </View>
             <Text style={styles.formCheckboxLabel}>
               Attention, l'ajout d'un professionnel donne accès à vos données médicales.
@@ -243,6 +259,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             style={[styles.formSubmitButton, !isFormValid && styles.formSubmitButtonDisabled]}
             onPress={handleSubmit}
             disabled={!isFormValid}
+            accessibilityLabel="Envoyer l'invitation"
+            accessibilityRole="button"
           >
             <Text style={styles.formSubmitButtonText}>Envoyer l'invitation</Text>
           </TouchableOpacity>

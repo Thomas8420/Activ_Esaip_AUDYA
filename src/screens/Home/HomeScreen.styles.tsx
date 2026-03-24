@@ -58,6 +58,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerIconBtnWide: {
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 5,
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   // ── Dropdown Profil (Main Page 3) ──
   dropdownOverlay: {

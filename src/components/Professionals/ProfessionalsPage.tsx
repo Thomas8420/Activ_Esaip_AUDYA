@@ -76,7 +76,7 @@ const MOCK_PROFESSIONALS: Professional[] = [
  * Il intègre la barre de navigation, le filtre, la grille de professionnels et le bouton d'action flottant.
  */
 const ProfessionalsPage = () => {
-  const { navigateToProfile } = useNavigation();
+  const { navigateToProfile, navigateToMessagingChat } = useNavigation();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
@@ -114,6 +114,20 @@ const ProfessionalsPage = () => {
   const handleResendInvitation = useCallback((_id: string) => {
     // TODO: Implémenter l'appel API de renvoi d'invitation
   }, []);
+
+  const handleMessage = useCallback((professional: Professional) => {
+    navigateToMessagingChat({
+      id: null,
+      subject: `Conversation avec ${professional.firstName} ${professional.lastName}`,
+      correspondentId: professional.id,
+      correspondentName: `${professional.firstName} ${professional.lastName}`,
+      correspondentPhone: professional.phone,
+      correspondentEmail: professional.email,
+      correspondentCity: professional.city,
+      correspondentZip: professional.zipCode,
+      status: 'pending',
+    });
+  }, [navigateToMessagingChat]);
 
   const filteredProfessionals = useMemo(() =>
     professionals
@@ -168,6 +182,7 @@ const ProfessionalsPage = () => {
                 onToggleFavorite={() => handleToggleFavorite(professional.id)}
                 onResendInvitation={() => handleResendInvitation(professional.id)}
                 onViewProfile={() => navigateToProfile(professional)}
+                onMessage={() => handleMessage(professional)}
               />
             ))
           ) : (

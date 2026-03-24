@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ChatIcon from '../../../assets/images/chat.svg';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 import { Screen, useNavigation } from '../../../context/NavigationContext';
 import { MENU_ITEMS } from '../../../constants';
+import ChatbotModal from '../../Chatbot/ChatbotModal';
 
 /** Icône maison */
 const HomeIcon = ({ color }: { color: string }) => (
@@ -50,6 +52,8 @@ const SCREEN_LABELS: Partial<Record<Screen, string>> = {
 const BottomNav = () => {
   const { currentScreen, goHome, navigateTo, navigateToMessaging, navigateToAgenda } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const sectionLabel = SCREEN_LABELS[currentScreen] ?? 'Menu';
 
@@ -68,11 +72,13 @@ const BottomNav = () => {
     } else if (itemId === 'hearing') {
         navigateTo('appareillage');
     }
-    // TODO: implémenter la navigation pour les autres onglets
   };
 
   return (
     <>
+      {/* ── Chatbot ── */}
+      <ChatbotModal visible={chatbotOpen} onClose={() => setChatbotOpen(false)} />
+
       {/* ── Popup menu ── */}
       <Modal
         visible={menuOpen}
@@ -106,18 +112,34 @@ const BottomNav = () => {
                             </React.Fragment>
                           );
                         })}
+            {MENU_ITEMS.map((item, index) => (
+              <React.Fragment key={item.id}>
+                {index > 0 && <View style={styles.menuSeparator} />}
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleMenuItemPress(item.id)}
+                  activeOpacity={0.7}
+                  accessibilityLabel={item.label}
+                  accessibilityRole="button"
+                >
+                  <item.icon width={22} height={22} fill={COLORS.orange} />
+                  <Text style={styles.menuItemLabel}>{item.label}</Text>
+                </TouchableOpacity>
+              </React.Fragment>
+            ))}
           </View>
         </Pressable>
       </Modal>
 
       {/* ── Barre ── */}
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingBottom: 10 + bottomInset / 4 }]}>
         {/* Bouton Accueil */}
         <TouchableOpacity
           style={styles.sideButton}
           onPress={goHome}
           activeOpacity={0.7}
           accessibilityLabel="Accueil"
+          accessibilityRole="button"
         >
           <HomeIcon color={COLORS.white} />
         </TouchableOpacity>
@@ -128,6 +150,7 @@ const BottomNav = () => {
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
           accessibilityLabel="Ouvrir le menu"
+          accessibilityRole="button"
         >
           <MenuIcon color={COLORS.orange} />
           <Text style={styles.centerLabel} numberOfLines={1}>
@@ -135,12 +158,13 @@ const BottomNav = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Bouton Chat (Fab intégré) */}
+        {/* Bouton Chat (Fab intégré) — ouvre le chatbot AUDYA */}
         <TouchableOpacity
           style={styles.fabButton}
-          onPress={navigateToMessaging}
+          onPress={() => setChatbotOpen(true)}
           activeOpacity={0.7}
-          accessibilityLabel="Messagerie"
+          accessibilityLabel="Assistant AUDYA"
+          accessibilityRole="button"
         >
           <ChatIcon width={26} height={26} fill={COLORS.white} />
         </TouchableOpacity>
