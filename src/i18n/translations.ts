@@ -3,7 +3,7 @@
 // Pour ajouter une langue : dupliquer un bloc et renseigner toutes les clés.
 // Pour ajouter une clé : l'ajouter dans les 3 langues.
 
-export type Language = 'FR' | 'EN' | 'ES';
+export type Language = 'FR' | 'EN' | 'ES' | 'TH' | 'AR' | 'HY';
 
 type TranslationMap = Record<string, string>;
 
@@ -256,4 +256,253 @@ const ES: TranslationMap = {
   'error.delete':   'Imposible eliminar la cuenta.',
 };
 
-export const TRANSLATIONS: Record<Language, TranslationMap> = { FR, EN, ES };
+const TH: TranslationMap = {
+  // ── เมนูหลัก ────────────────────────────────────────────────────────────
+  'menu.health':         'สุขภาพของฉัน',
+  'menu.hearing':        'อุปกรณ์ช่วยฟังของฉัน',
+  'menu.notebook':       'สมุดบันทึกการได้ยิน',
+  'menu.professionals':  'ผู้เชี่ยวชาญของฉัน',
+  'menu.agenda':         'ตารางนัดหมายของฉัน',
+  'menu.message':        'ข้อความของฉัน',
+  'menu.questionnaire':  'แบบสอบถามของฉัน',
+  'menu.news':           'ข่าวสาร',
+
+  // ── ป้ายกำกับหน้าจอ ───────────────────────────────────────────────────────
+  'screen.home':              'หน้าหลัก',
+  'screen.health':            'สุขภาพของฉัน',
+  'screen.professionals':     'ผู้เชี่ยวชาญของฉัน',
+  'screen.settings':          'การตั้งค่าของฉัน',
+  'screen.profile':           'โปรไฟล์ของฉัน',
+  'screen.messaging':         'ข้อความของฉัน',
+  'screen.agenda':            'ตารางนัดหมายของฉัน',
+  'screen.notebook':          'สมุดบันทึกการได้ยิน',
+  'screen.hearing':           'อุปกรณ์ช่วยฟังของฉัน',
+  'screen.questionnaire':     'แบบสอบถามของฉัน',
+  'screen.news':              'ข่าวสาร',
+  'screen.menu':              'เมนู',
+
+  // ── NavBar ─────────────────────────────────────────────────────────────
+  'navbar.notifications':   'การแจ้งเตือน',
+  'navbar.settings':        'การตั้งค่า',
+  'navbar.profileMenu':     'เมนูโปรไฟล์',
+  'navbar.profile':         'โปรไฟล์',
+  'navbar.preferences':     'ความชอบ',
+  'navbar.logout':          'ออกจากระบบ',
+
+  // ── BottomNav ──────────────────────────────────────────────────────────
+  'bottomnav.home':      'หน้าหลัก',
+  'bottomnav.openMenu':  'เปิดเมนู',
+  'bottomnav.assistant': 'ผู้ช่วย AUDYA',
+
+  // ── หน้าหลัก ───────────────────────────────────────────────────────────
+  'main.banner':           'Audya ช่วยให้การติดตามผู้ป่วยง่ายขึ้นและเสริมสร้างการประสานงานแบบสหสาขาวิชาชีพ',
+  'main.footer.copyright': '© {year} AUDYA — สงวนลิขสิทธิ์ทั้งหมด',
+  'main.footer.legal':     'ข้อกำหนดทางกฎหมาย',
+  'main.footer.rgpd':      'RGPD',
+  'main.footer.cookies':   'คุกกี้',
+  'main.footer.contact':   'ติดต่อเรา',
+
+  // ── การตั้งค่า ─────────────────────────────────────────────────────────
+  'settings.title':                 'การตั้งค่าของฉัน',
+  'settings.preferences':           'ความชอบ',
+  'settings.language':              'ภาษา',
+  'settings.date':                  'วันที่',
+  'settings.time':                  'เวลา',
+  'settings.notifications':         'การแจ้งเตือน',
+  'settings.notif.messages':        'การแจ้งเตือนข้อความ',
+  'settings.notif.alerts':          'การแจ้งเตือนการเตือนภัย',
+  'settings.notif.tasks':           'การแจ้งเตือนงาน',
+  'settings.password':              'รหัสผ่านของฉัน',
+  'settings.password.new':          'รหัสผ่านใหม่',
+  'settings.password.confirm':      'ยืนยันรหัสผ่าน',
+  'settings.password.mismatch':     'รหัสผ่านไม่ตรงกัน',
+  'settings.password.change':       'เปลี่ยนรหัสผ่าน',
+  'settings.password.changing':     'กำลังอัปเดต…',
+  'settings.password.show':         'แสดงรหัสผ่าน',
+  'settings.password.hide':         'ซ่อนรหัสผ่าน',
+  'settings.password.showConfirm':  'แสดงการยืนยัน',
+  'settings.password.hideConfirm':  'ซ่อนการยืนยัน',
+  'settings.account':               'บัญชีของฉัน',
+  'settings.account.delete':        'ลบบัญชีของฉัน',
+  'settings.save':                  'บันทึกการเปลี่ยนแปลง',
+  'settings.saving':                'กำลังบันทึก…',
+
+  // ── Modal ──────────────────────────────────────────────────────────────
+  'modal.delete.text':    'คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของคุณ?',
+  'modal.delete.cancel':  'ยกเลิก',
+  'modal.delete.confirm': 'ใช่',
+
+  // ── ข้อผิดพลาด ─────────────────────────────────────────────────────────
+  'error.load':     'ไม่สามารถโหลดการตั้งค่าได้',
+  'error.save':     'ไม่สามารถบันทึกการตั้งค่าได้',
+  'error.password': 'ไม่สามารถเปลี่ยนรหัสผ่านได้',
+  'error.delete':   'ไม่สามารถลบบัญชีได้',
+};
+
+const AR: TranslationMap = {
+  // ── القائمة الرئيسية ────────────────────────────────────────────────────
+  'menu.health':         'صحتي',
+  'menu.hearing':        'أجهزة السمع',
+  'menu.notebook':       'دفتر السمع',
+  'menu.professionals':  'متخصصوي',
+  'menu.agenda':         'جدول أعمالي',
+  'menu.message':        'رسائلي',
+  'menu.questionnaire':  'استبياناتي',
+  'menu.news':           'الأخبار',
+
+  // ── تسميات الشاشة ──────────────────────────────────────────────────────
+  'screen.home':              'الرئيسية',
+  'screen.health':            'صحتي',
+  'screen.professionals':     'متخصصوي',
+  'screen.settings':          'إعداداتي',
+  'screen.profile':           'ملفي الشخصي',
+  'screen.messaging':         'رسائلي',
+  'screen.agenda':            'جدول أعمالي',
+  'screen.notebook':          'دفتر السمع',
+  'screen.hearing':           'أجهزة السمع',
+  'screen.questionnaire':     'استبياناتي',
+  'screen.news':              'الأخبار',
+  'screen.menu':              'القائمة',
+
+  // ── NavBar ─────────────────────────────────────────────────────────────
+  'navbar.notifications':   'الإشعارات',
+  'navbar.settings':        'الإعدادات',
+  'navbar.profileMenu':     'قائمة الملف الشخصي',
+  'navbar.profile':         'الملف الشخصي',
+  'navbar.preferences':     'التفضيلات',
+  'navbar.logout':          'تسجيل الخروج',
+
+  // ── BottomNav ──────────────────────────────────────────────────────────
+  'bottomnav.home':      'الرئيسية',
+  'bottomnav.openMenu':  'فتح القائمة',
+  'bottomnav.assistant': 'مساعد AUDYA',
+
+  // ── الصفحة الرئيسية ────────────────────────────────────────────────────
+  'main.banner':           'تبسّط Audya متابعة المرضى وتعزّز التنسيق متعدد التخصصات',
+  'main.footer.copyright': '© {year} AUDYA — جميع الحقوق محفوظة',
+  'main.footer.legal':     'الشروط القانونية',
+  'main.footer.rgpd':      'RGPD',
+  'main.footer.cookies':   'ملفات تعريف الارتباط',
+  'main.footer.contact':   'اتصل بنا',
+
+  // ── الإعدادات ──────────────────────────────────────────────────────────
+  'settings.title':                 'إعداداتي',
+  'settings.preferences':           'التفضيلات',
+  'settings.language':              'اللغة',
+  'settings.date':                  'التاريخ',
+  'settings.time':                  'الوقت',
+  'settings.notifications':         'الإشعارات',
+  'settings.notif.messages':        'إشعارات الرسائل',
+  'settings.notif.alerts':          'إشعارات التنبيهات',
+  'settings.notif.tasks':           'إشعارات المهام',
+  'settings.password':              'كلمة مروري',
+  'settings.password.new':          'كلمة مرور جديدة',
+  'settings.password.confirm':      'تأكيد كلمة المرور',
+  'settings.password.mismatch':     'كلمتا المرور غير متطابقتين.',
+  'settings.password.change':       'تغيير كلمة المرور',
+  'settings.password.changing':     'جارٍ التحديث…',
+  'settings.password.show':         'إظهار كلمة المرور',
+  'settings.password.hide':         'إخفاء كلمة المرور',
+  'settings.password.showConfirm':  'إظهار التأكيد',
+  'settings.password.hideConfirm':  'إخفاء التأكيد',
+  'settings.account':               'حسابي',
+  'settings.account.delete':        'حذف حسابي',
+  'settings.save':                  'حفظ التغييرات',
+  'settings.saving':                'جارٍ الحفظ…',
+
+  // ── نافذة الحذف ────────────────────────────────────────────────────────
+  'modal.delete.text':    'هل تريد حقاً حذف حسابك؟',
+  'modal.delete.cancel':  'إلغاء',
+  'modal.delete.confirm': 'نعم',
+
+  // ── الأخطاء ────────────────────────────────────────────────────────────
+  'error.load':     'تعذّر تحميل الإعدادات.',
+  'error.save':     'تعذّر حفظ الإعدادات.',
+  'error.password': 'تعذّر تغيير كلمة المرور.',
+  'error.delete':   'تعذّر حذف الحساب.',
+};
+
+const HY: TranslationMap = {
+  // ── Հիմնական ընտրացանկ ─────────────────────────────────────────────────
+  'menu.health':         'Իմ առողջությունը',
+  'menu.hearing':        'Իմ լսողական սարքերը',
+  'menu.notebook':       'Իմ լսողական օրագիրը',
+  'menu.professionals':  'Իմ մասնագետները',
+  'menu.agenda':         'Իմ ժամանակացույցը',
+  'menu.message':        'Իմ հաղորդագրությունները',
+  'menu.questionnaire':  'Իմ հարցաթերթերը',
+  'menu.news':           'Նորություններ',
+
+  // ── Էկրանի պիտակներ ────────────────────────────────────────────────────
+  'screen.home':              'Գլխավոր',
+  'screen.health':            'Իմ առողջությունը',
+  'screen.professionals':     'Իմ մասնագետները',
+  'screen.settings':          'Իմ կարգավորումները',
+  'screen.profile':           'Իմ պրոֆիլը',
+  'screen.messaging':         'Իմ հաղորդագրությունները',
+  'screen.agenda':            'Իմ ժամանակացույցը',
+  'screen.notebook':          'Իմ լսողական օրագիրը',
+  'screen.hearing':           'Իմ լսողական սարքերը',
+  'screen.questionnaire':     'Իմ հարցաթերթերը',
+  'screen.news':              'Նորություններ',
+  'screen.menu':              'Ընտրացանկ',
+
+  // ── NavBar ─────────────────────────────────────────────────────────────
+  'navbar.notifications':   'Ծանուցումներ',
+  'navbar.settings':        'Կարգավորումներ',
+  'navbar.profileMenu':     'Պրոֆիլի ընտրացանկ',
+  'navbar.profile':         'Պրոֆիլ',
+  'navbar.preferences':     'Նախապատվություններ',
+  'navbar.logout':          'Ելք',
+
+  // ── BottomNav ──────────────────────────────────────────────────────────
+  'bottomnav.home':      'Գլխավոր',
+  'bottomnav.openMenu':  'Բացել ընտրացանկը',
+  'bottomnav.assistant': 'AUDYA օգնական',
+
+  // ── Գլխավոր էջ ────────────────────────────────────────────────────────
+  'main.banner':           'Audya-ն պարզեցնում է հիվանդի հետևումը եւ ամրապնդում բազմամասնագիտական համակարգումը',
+  'main.footer.copyright': '© {year} AUDYA — Բոլոր իրավունքները պաշտպանված են',
+  'main.footer.legal':     'Իրավական ծանուցում',
+  'main.footer.rgpd':      'RGPD',
+  'main.footer.cookies':   'Թխուկներ',
+  'main.footer.contact':   'Կապ մեզ հետ',
+
+  // ── Կարգավորումներ ─────────────────────────────────────────────────────
+  'settings.title':                 'ԻՄ ԿԱՐԳԱՎՈՐՈՒՄՆԵՐԸ',
+  'settings.preferences':           'Նախապատվություններ',
+  'settings.language':              'Լեզու',
+  'settings.date':                  'Ամսաթիվ',
+  'settings.time':                  'Ժամ',
+  'settings.notifications':         'Ծանուցումներ',
+  'settings.notif.messages':        'Հաղորդագրությունների ծանուցումներ',
+  'settings.notif.alerts':          'Ահազանգերի ծանուցումներ',
+  'settings.notif.tasks':           'Առաջադրանքների ծանուցումներ',
+  'settings.password':              'Իմ գաղտնաբառը',
+  'settings.password.new':          'Նոր գաղտնաբառ',
+  'settings.password.confirm':      'Հաստատել գաղտնաբառը',
+  'settings.password.mismatch':     'Գաղտնաբառերը չեն համընկնում։',
+  'settings.password.change':       'Փոխել գաղտնաբառը',
+  'settings.password.changing':     'Թարմացվում է…',
+  'settings.password.show':         'Ցույց տալ գաղտնաբառը',
+  'settings.password.hide':         'Թաքցնել գաղտնաբառը',
+  'settings.password.showConfirm':  'Ցույց տալ հաստատումը',
+  'settings.password.hideConfirm':  'Թաքցնել հաստատումը',
+  'settings.account':               'Իմ հաշիվը',
+  'settings.account.delete':        'Ջնջել իմ հաշիվը',
+  'settings.save':                  'Պահպանել փոփոխությունները',
+  'settings.saving':                'Պահպանվում է…',
+
+  // ── Հաշվի ջնջման modal ────────────────────────────────────────────────
+  'modal.delete.text':    'Դուք իսկապե՞ս ուզում եք ջնջել ձեր հաշիվը։',
+  'modal.delete.cancel':  'Չեղարկել',
+  'modal.delete.confirm': 'Այո',
+
+  // ── Սխալներ ───────────────────────────────────────────────────────────
+  'error.load':     'Հնարավոր չէ բեռնել կարգավորումները։',
+  'error.save':     'Հնարավոր չէ պահպանել կարգավորումները։',
+  'error.password': 'Հնարավոր չէ փոխել գաղտնաբառը։',
+  'error.delete':   'Հնարավոր չէ ջնջել հաշիվը։',
+};
+
+export const TRANSLATIONS: Record<Language, TranslationMap> = { FR, EN, ES, TH, AR, HY };
