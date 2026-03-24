@@ -172,6 +172,7 @@ const NotificationPanel = ({
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.overlay,
     zIndex: 20,
   },
   panel: {
