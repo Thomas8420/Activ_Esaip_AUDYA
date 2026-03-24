@@ -1,7 +1,7 @@
-
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import HomeScreen from './src/screens/Home/HomeScreen';
+import HealthScreen from './src/screens/Health/HealthScreen';
 import ProfessionalsScreen from './src/screens/Professionals/ProfessionalsScreen';
 import ProfessionalProfileScreen from './src/screens/Professionals/ProfessionalProfileScreen';
 import AddProfessionalScreen from './src/screens/Professionals/AddProfessionalScreen';
@@ -30,6 +30,7 @@ function AppContent() {
     <>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       {currentScreen === 'home' && <HomeScreen />}
+      {currentScreen === 'health' && <HealthScreen />}
       {currentScreen === 'professionals' && <ProfessionalsScreen />}
       {currentScreen === 'professional-profile' && <ProfessionalProfileScreen />}
       {currentScreen === 'add-professional' && <AddProfessionalScreen />}

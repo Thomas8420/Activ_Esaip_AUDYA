@@ -3,28 +3,7 @@ import React, { createContext, useState, useMemo, useCallback, ReactNode } from 
 /**
  * Types d'écran disponibles dans l'application
  */
-export type Screen =
-  | 'home'
-  | 'professionals'
-  | 'professional-profile'
-  | 'add-professional'
-  | 'invite-professional'
-  | 'settings'
-  | 'my-profile'
-  | 'messaging'
-  | 'messaging-chat'
-  | 'agenda'
-  | 'agenda-day'
-  | 'agenda-form'
-  | 'carnet-audition'
-  | 'appareillage'
-  | 'register-step1'
-  | 'register-step1bis'
-  | 'register-step2'
-  | 'register-step3'
-  | 'register-step4'
-  | 'register-step5'
-  | 'register-success';
+export type Screen = 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional' | 'settings' | 'my-profile' | 'messaging' | 'messaging-chat' | 'agenda' | 'agenda-day' | 'agenda-form';
 
 /**
  * Données transmises à l'écran de conversation
@@ -98,7 +77,7 @@ interface NavigationContextType {
   navigateToAgenda: () => void;
   navigateToAgendaDay: (date: string) => void;
   navigateToAgendaForm: (event?: SelectedAgendaEvent | null) => void;
-  navigateToCarnetAudition: () => void;
+  navigateToHealth: () => void;
 }
 
 export const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -182,6 +161,10 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     setHistory(prev => [...prev, 'carnet-audition']);
   }, []);
 
+  const navigateToHealth = () => {
+    setHistory(prev => [...prev, 'health']);
+  };
+
   const value = useMemo(() => ({
     currentScreen,
     previousScreen,
@@ -202,17 +185,9 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
     navigateToAgenda,
     navigateToAgendaDay,
     navigateToAgendaForm,
-    navigateToCarnetAudition,
-  }), [
-    currentScreen, previousScreen,
-    selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate,
-    navigateTo, goHome, goBack,
-    navigateToProfile, navigateToAdd, navigateToInvite,
-    navigateToSettings, navigateToMyProfile,
-    navigateToMessaging, navigateToMessagingChat,
-    navigateToAgenda, navigateToAgendaDay, navigateToAgendaForm,
-    navigateToCarnetAudition,
-  ]);
+    navigateToHealth,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [currentScreen, previousScreen, selectedProfessional, selectedConversation, selectedAgendaEvent, selectedAgendaDate]);
 
   return (
     <NavigationContext.Provider value={value}>
