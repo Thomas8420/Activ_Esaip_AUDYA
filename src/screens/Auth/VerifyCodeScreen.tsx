@@ -108,7 +108,7 @@ const VerifyCodeScreen: React.FC<Props> = ({visible, onClose, onSuccess}) => {
                   placeholder="Ex : 123456"
                   value={code}
                   onChangeText={text => {
-                    setCode(text.replace(/\D/g, '').slice(0, 6));
+                    setCode(text.replaceAll(/\D/g, '').slice(0, 6));
                     if (codeError) setCodeError('');
                   }}
                   keyboardType="numeric"

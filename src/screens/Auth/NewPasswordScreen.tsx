@@ -64,59 +64,49 @@ const NewPasswordScreen: React.FC<Props> = ({token, onSuccess}) => {
         <View style={styles.card}>
           <Text style={styles.title}>Nouveau mot de passe</Text>
 
-          {(['password', 'confirmPassword'] as const).map(field => (
-            <View key={field}>
-              <View
-                style={[
-                  styles.inputContainer,
-                  form.errors[field] ? styles.inputError : null,
-                ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder={
-                    field === 'password'
-                      ? 'Nouveau mot de passe *'
-                      : 'Confirmation du mot de passe *'
-                  }
-                  placeholderTextColor="#999"
-                  value={form[field]}
-                  onChangeText={t => {
-                    (field === 'password'
-                      ? form.setPassword
-                      : form.setConfirmPassword)(t);
-                    form.clearError(field);
-                  }}
-                  secureTextEntry={
-                    field === 'password'
-                      ? !form.showPassword
-                      : !form.showConfirmPassword
-                  }
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    (field === 'password'
-                      ? form.setShowPassword
-                      : form.setShowConfirmPassword)(v => !v)
-                  }
-                  style={styles.eyeBtn}>
-                  <Icon
-                    name={
-                      (field === 'password'
-                        ? form.showPassword
-                        : form.showConfirmPassword)
-                        ? 'eye-outline'
-                        : 'eye-off-outline'
-                    }
-                    size={22}
-                    color="#666"
+          {(['password', 'confirmPassword'] as const).map(field => { // NOSONAR
+            const isPasswordField = field === 'password';
+            const showCurrent = isPasswordField ? form.showPassword : form.showConfirmPassword;
+            const setShowCurrent = isPasswordField ? form.setShowPassword : form.setShowConfirmPassword;
+            const setValueCurrent = isPasswordField ? form.setPassword : form.setConfirmPassword;
+            const placeholder = isPasswordField ? 'Nouveau mot de passe *' : 'Confirmation du mot de passe *';
+            return (
+              <View key={field}>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    form.errors[field] ? styles.inputError : null,
+                  ]}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder={placeholder}
+                    placeholderTextColor="#999"
+                    value={form[field]}
+                    onChangeText={t => {
+                      setValueCurrent(t);
+                      form.clearError(field);
+                    }}
+                    secureTextEntry={!showCurrent}
                   />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setShowCurrent(v => !v)}
+                    style={styles.eyeBtn}
+                    accessibilityLabel={showCurrent ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    accessibilityRole="button"
+                  >
+                    <Icon
+                      name={showCurrent ? 'eye-outline' : 'eye-off-outline'}
+                      size={22}
+                      color="#666"
+                    />
+                  </TouchableOpacity>
+                </View>
+                {form.errors[field] ? (
+                  <Text style={styles.errorText}>{form.errors[field]}</Text>
+                ) : null}
               </View>
-              {form.errors[field] ? (
-                <Text style={styles.errorText}>{form.errors[field]}</Text>
-              ) : null}
-            </View>
-          ))}
+            );
+          })}
 
           {/* Checkbox CGV */}
           <TouchableOpacity
@@ -125,7 +115,10 @@ const NewPasswordScreen: React.FC<Props> = ({token, onSuccess}) => {
               form.setAcceptCGV(v => !v);
               form.clearError('cgv');
             }}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+            accessibilityLabel="J'accepte les CGV - CGU"
+            accessibilityRole="checkbox"
+          >
             <View
               style={[
                 styles.checkbox,
@@ -153,7 +146,10 @@ const NewPasswordScreen: React.FC<Props> = ({token, onSuccess}) => {
                   form.setContact(val);
                   form.clearError('contact');
                 }}
-                activeOpacity={0.7}>
+                activeOpacity={0.7}
+                accessibilityLabel={val.toUpperCase()}
+                accessibilityRole="radio"
+              >
                 <View
                   style={[
                     styles.radioCircle,
@@ -170,7 +166,7 @@ const NewPasswordScreen: React.FC<Props> = ({token, onSuccess}) => {
           ) : null}
 
           {serverError ? (
-            <Text style={[styles.errorText, {textAlign: 'center'}]}>
+            <Text style={styles.serverErrorText}>
               {serverError}
             </Text>
           ) : null}

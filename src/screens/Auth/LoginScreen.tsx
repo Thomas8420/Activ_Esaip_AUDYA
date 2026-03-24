@@ -83,7 +83,7 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
 
         <View style={styles.formSection}>
           {/* Champ Email */}
-          <View style={{marginBottom: 16}}>
+          <View style={styles.fieldSpacingLg}>
             <Text style={styles.fieldLabel}>Email</Text>
             <TextInput
               style={[styles.inputBase, inputColors(!!emailError)]}
@@ -105,7 +105,7 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
           </View>
 
           {/* Champ Mot de passe */}
-          <View style={{marginBottom: 8}}>
+          <View style={styles.fieldSpacingMd}>
             <Text style={styles.fieldLabel}>Mot de passe</Text>
             <View style={[styles.passwordRow, inputColors(!!passwordError)]}>
               <TextInput
@@ -122,7 +122,10 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
               />
               <TouchableOpacity
                 onPress={() => setShowPassword(v => !v)}
-                style={styles.eyeButton}>
+                style={styles.eyeButton}
+                accessibilityLabel={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                accessibilityRole="button"
+              >
                 <Icon
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={22}
@@ -137,7 +140,7 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
 
           {/* Erreur serveur */}
           {serverError ? (
-            <Text style={[styles.errorText, {marginBottom: 8}]}>
+            <Text style={styles.serverErrorText}>
               {serverError}
             </Text>
           ) : null}
@@ -145,7 +148,10 @@ const LoginScreen: React.FC<Props> = ({onForgotPassword, onRegister, onVerifyCod
           {/* Mot de passe oublié */}
           <TouchableOpacity
             style={styles.forgotPasswordContainer}
-            onPress={onForgotPassword}>
+            onPress={onForgotPassword}
+            accessibilityLabel="Mot de passe oublié"
+            accessibilityRole="button"
+          >
             <Text style={styles.forgotPasswordText}>
               Mot de passe oublié ?
             </Text>

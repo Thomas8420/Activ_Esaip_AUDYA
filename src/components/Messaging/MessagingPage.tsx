@@ -102,6 +102,33 @@ const MessagingPage = () => {
     navigateToMessagingChat(selected);
   }, [contacts, navigateToMessagingChat]);
 
+  // ── Render content ──────────────────────────────────────────────────────────
+  const renderContent = () => {
+    if (isLoading) {
+      return <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 40 }} />;
+    }
+    if (displayed.length === 0) {
+      return (
+        <View style={styles.emptyState} testID="emptyState">
+          <View style={styles.emptyCircle}>
+            <PersonIcon />
+          </View>
+        </View>
+      );
+    }
+    return (
+      <FlatList
+        data={displayed}
+        keyExtractor={item => String(item.id)}
+        renderItem={renderItem}
+        style={styles.listContainer}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        testID="conversationList"
+      />
+    );
+  };
+
   // ── Render row ───────────────────────────────────────────────────────────────
   const renderItem = useCallback(({ item }: { item: Conversation }) => {
     const contact = contacts.find(c => c.id === item.correspondentId);
@@ -129,7 +156,7 @@ const MessagingPage = () => {
         )}
       </TouchableOpacity>
     );
-  }, [contacts, openConversation, onlineContactIds]);
+  }, [contacts, openConversation]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -157,25 +184,8 @@ const MessagingPage = () => {
         </TouchableOpacity>
       </View>
 
-      {isLoading ? (
-        <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 40 }} />
-      ) : displayed.length === 0 ? (
-        <View style={styles.emptyState} testID="emptyState">
-          <View style={styles.emptyCircle}>
-            <PersonIcon />
-          </View>
-        </View>
-      ) : (
-        <FlatList
-          data={displayed}
-          keyExtractor={item => String(item.id)}
-          renderItem={renderItem}
-          style={styles.listContainer}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          testID="conversationList"
-        />
-      )}
+      {renderContent()}
+
 
       <BottomNav />
     </SafeAreaView>

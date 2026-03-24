@@ -36,6 +36,8 @@ const ProfessionalListRow: React.FC<ProfessionalListRowProps> = ({
         <TouchableOpacity
           onPress={onToggleFavorite}
           style={styles.listActionButton}
+          accessibilityLabel={professional.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          accessibilityRole="button"
         >
           <Icon
             name={professional.isFavorite ? 'star' : 'star-outline'}
@@ -46,6 +48,8 @@ const ProfessionalListRow: React.FC<ProfessionalListRowProps> = ({
         <TouchableOpacity
           onPress={onViewProfile}
           style={[styles.listActionButton, styles.listActionButtonPrimary]}
+          accessibilityLabel={`Voir la fiche de ${professional.firstName} ${professional.lastName}`}
+          accessibilityRole="button"
         >
           <Icon name="eye-outline" size={14} color={COLORS.white} />
         </TouchableOpacity>

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
 
-export { COLORS, FONT_REGULAR, FONT_SEMIBOLD };
+export { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
 
 export const registerStyles = StyleSheet.create({
   // ── Layout ──

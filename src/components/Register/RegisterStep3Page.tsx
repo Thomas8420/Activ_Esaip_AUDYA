@@ -70,7 +70,7 @@ const RegisterStep3Page = () => {
   const [q3, setQ3]   = useState('');
   const [q10, setQ10]   = useState<string[]>([]);
   const [q10b, setQ10b] = useState<string[]>([]);
-  const [ouiNon, setOuiNon] = useState<string[]>(Array(7).fill(''));
+  const [ouiNon, setOuiNon] = useState<string[]>(new Array(7).fill(''));
 
   const [modal, setModal] = useState<ModalConfig>({ visible: false, title: '', options: [], value: '', onSelect: () => {} });
 
@@ -105,10 +105,9 @@ const RegisterStep3Page = () => {
 
           {/* Q2 à Q9 — questions Oui/Non générées dynamiquement */}
           {QUESTIONS_OUI_NON.map((q, i) => {
-            const indexes = [1, 3, 4, 5, 6, 7, 8]; // numéros de questions correspondants
             return (
               <Dropdown
-                key={i}
+                key={q.title}
                 label={q.label}
                 value={ouiNon[i]}
                 placeholder="Non"

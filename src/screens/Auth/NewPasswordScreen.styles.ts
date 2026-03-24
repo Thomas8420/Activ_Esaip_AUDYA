@@ -117,4 +117,11 @@ export const newPasswordScreenStyles = StyleSheet.create({
     lineHeight: 20,
   },
   submitButton: {marginBottom: SPACING.md},
+  serverErrorText: {
+    fontSize: TYPOGRAPHY.fontSize.xs,
+    color: COLORS.error,
+    marginBottom: SPACING.sm,
+    marginLeft: 4,
+    textAlign: 'center',
+  },
 });

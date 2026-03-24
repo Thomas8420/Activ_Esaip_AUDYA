@@ -503,7 +503,7 @@ const ProfilePage = () => {
             {/* ── Enregistrer ── */}
             <TouchableOpacity
               style={styles.saveButton}
-              onPress={handleSave}
+              onPress={() => { void handleSave(); }}
               disabled={isSaving}
               activeOpacity={0.8}
               testID="saveProfileButton"

@@ -27,7 +27,7 @@ type AuthScreen =
 function parseResetToken(url: string | null): string {
   if (!url) return '';
   try {
-    const match = url.match(/[?&]token=([^&]+)/);
+    const match = /[?&]token=([^&]+)/.exec(url);
     return match ? decodeURIComponent(match[1]) : '';
   } catch {
     return '';
@@ -97,7 +97,6 @@ const AuthFlow: React.FC = () => {
         <ForgotPasswordScreen
           onSubmit={() => setScreen('email-verification')}
           onRegister={() => setScreen('register')}
-          onBack={() => setScreen('login')}
         />
       )}
 

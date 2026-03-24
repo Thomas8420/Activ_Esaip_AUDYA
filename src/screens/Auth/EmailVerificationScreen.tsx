@@ -17,7 +17,7 @@ const EmailVerificationScreen: React.FC<Props> = ({onNewEmail}) => {
     <AuthContainer>
       <View style={styles.card}>
         {/* Icône "@" via code ASCII pour éviter les problèmes d'encodage */}
-        <Text style={styles.atIcon}>{String.fromCharCode(64)}</Text>
+        <Text style={styles.atIcon}>{String.fromCodePoint(64)}</Text>
 
         <Text style={styles.title}>E-mail de vérification</Text>
 

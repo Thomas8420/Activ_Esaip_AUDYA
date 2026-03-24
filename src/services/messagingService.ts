@@ -1,5 +1,10 @@
 import { apiFetch } from './api';
 
+// ─── Shared type aliases ──────────────────────────────────────────────────────
+
+export type ConversationStatus = 'pending' | 'blocked' | 'finished';
+export type ContactPresenceStatus = 'online' | 'offline' | 'away';
+
 // ─── API response types (snake_case) ─────────────────────────────────────────
 
 export interface ConversationApiResponse {
@@ -7,7 +12,7 @@ export interface ConversationApiResponse {
   subject: string;
   correspondent_id: string;
   correspondent_name: string;
-  status: 'pending' | 'blocked' | 'finished';
+  status: ConversationStatus;
   last_message: string;
   last_message_at: string;
   unread_count: number;
@@ -18,7 +23,7 @@ export interface ContactApiResponse {
   id: string;
   name: string;
   avatar: string | null;
-  status: 'online' | 'offline' | 'away';
+  status: ContactPresenceStatus;
 }
 
 export interface MessageFileApiResponse {
@@ -44,7 +49,7 @@ export interface Conversation {
   subject: string;
   correspondentId: string;
   correspondentName: string;
-  status: 'pending' | 'blocked' | 'finished';
+  status: ConversationStatus;
   lastMessage: string;
   lastMessageAt: string;
   unreadCount: number;
@@ -54,7 +59,7 @@ export interface Contact {
   id: string;
   name: string;
   avatarUrl: string | null;
-  status: 'online' | 'offline' | 'away';
+  status: ContactPresenceStatus;
 }
 
 export interface MessageFile {
@@ -192,9 +197,9 @@ export async function fetchMessages(
   conversationId: number,
   lastId?: number,
 ): Promise<Message[]> {
-  const url = lastId != null
-    ? `/ajaxchat/getmessages/${conversationId}?lastid=${lastId}`
-    : `/ajaxchat/getmessages/${conversationId}`;
+  const url = lastId == null
+    ? `/ajaxchat/getmessages/${conversationId}`
+    : `/ajaxchat/getmessages/${conversationId}?lastid=${lastId}`;
   const raw = await apiFetch<{ messages: MessageApiResponse[] }>(url);
   return raw.messages.map(mapMessage);
 }
@@ -247,8 +252,10 @@ export async function fetchContactStatuses(): Promise<Record<string, string>> {
  * POST /ajaxchat/setstatus
  * Définit le statut de l'utilisateur courant.
  */
+export type UserPresenceStatus = ContactPresenceStatus | 'dnd';
+
 export async function setUserStatus(
-  status: 'online' | 'offline' | 'away' | 'dnd',
+  status: UserPresenceStatus,
 ): Promise<void> {
   await apiFetch('/ajaxchat/setstatus', {
     method: 'POST',

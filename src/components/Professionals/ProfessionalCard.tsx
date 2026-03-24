@@ -113,7 +113,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             </Text>
           </View>
 
-          <TouchableOpacity style={styles.resendInvitationButton} onPress={onResendInvitation}>
+          <TouchableOpacity
+            style={styles.resendInvitationButton}
+            onPress={onResendInvitation}
+            accessibilityLabel="Renvoyer l'invitation"
+            accessibilityRole="button"
+          >
             <Text style={styles.resendInvitationButtonText}>Renvoyer l'invitation</Text>
           </TouchableOpacity>
         </View>

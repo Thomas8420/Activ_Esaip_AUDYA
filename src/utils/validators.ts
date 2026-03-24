@@ -41,7 +41,7 @@ export const validatePassword = (password: string): string | null => {
   if (!password) return ERROR_MESSAGES.PASSWORD_REQUIRED;
   if (password.length < 8) return ERROR_MESSAGES.PASSWORD_TOO_SHORT;
   if (!/[A-Z]/.test(password)) return 'Le mot de passe doit contenir au moins une majuscule';
-  if (!/[0-9]/.test(password)) return 'Le mot de passe doit contenir au moins un chiffre';
+  if (!/\d/.test(password)) return 'Le mot de passe doit contenir au moins un chiffre';
   if (!/[^A-Za-z0-9]/.test(password)) return 'Le mot de passe doit contenir au moins un caractère spécial';
   return null;
 };
@@ -49,7 +49,7 @@ export const validatePassword = (password: string): string | null => {
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "L'email est requis",
   EMAIL_INVALID: 'Veuillez utiliser une adresse Gmail, Outlook, Orange, Yahoo ou similaire',
-  PASSWORD_REQUIRED: 'Le mot de passe est requis',
-  PASSWORD_TOO_SHORT: 'Minimum 8 caractères',
-  PASSWORD_MISMATCH: 'Les mots de passe ne correspondent pas',
+  PASSWORD_REQUIRED: 'Le mot de passe est requis', // NOSONAR
+  PASSWORD_TOO_SHORT: 'Minimum 8 caractères', // NOSONAR
+  PASSWORD_MISMATCH: 'Les mots de passe ne correspondent pas', // NOSONAR
 };

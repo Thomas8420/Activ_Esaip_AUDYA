@@ -10,7 +10,7 @@ import RegisterStep5Screen from '../../screens/Register/RegisterStep5Screen';
 import RegisterSuccessScreen from '../../screens/Register/RegisterSuccessScreen';
 
 interface Props {
-  onComplete: () => void;
+  readonly onComplete: () => void;
 }
 
 /**

@@ -10,8 +10,8 @@ export type NewPasswordErrors = {
 
 /** Hook de gestion du formulaire "Nouveau mot de passe". */
 export const useNewPassword = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState(''); // NOSONAR
+  const [confirmPassword, setConfirmPassword] = useState(''); // NOSONAR
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptCGV, setAcceptCGV] = useState(false);

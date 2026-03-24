@@ -67,7 +67,7 @@ const RegisterStep4Page = () => {
 
           {/* Profession — dropdown */}
           <TouchableOpacity style={s.inputRow} onPress={() => setShowModal(true)} activeOpacity={0.7}>
-            <Text style={[s.inputRowText, { color: form.profession ? COLORS.text : COLORS.textLight }]}>
+            <Text style={[s.inputRowText, { color: Boolean(form.profession) ? COLORS.text : COLORS.textLight }]}>
               {form.profession || 'Cadres et professions intellect...'}
             </Text>
             <Text style={{ fontSize: 14, color: COLORS.textLight }}>▼</Text>
@@ -95,7 +95,7 @@ const RegisterStep4Page = () => {
           {/* Champs optionnels générés dynamiquement */}
           {CHAMPS_OPTIONNELS.map(({ key, placeholder, numeric }) => (
             <TextInput key={key} style={s.input} placeholder={placeholder} placeholderTextColor={COLORS.textLight}
-              keyboardType={numeric ? 'numeric' : 'default'}
+              keyboardType={Boolean(numeric) ? 'numeric' : 'default'}
               value={form[key as keyof typeof form] as string}
               onChangeText={v => setForm({ ...form, [key]: v })} />
           ))}

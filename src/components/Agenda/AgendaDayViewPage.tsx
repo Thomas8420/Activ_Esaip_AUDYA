@@ -35,9 +35,9 @@ const MONTHS_FR = [
 
 function parseDateParts(dateISO: string): { year: number; month: number; day: number } {
   return {
-    year: parseInt(dateISO.slice(0, 4)),
-    month: parseInt(dateISO.slice(5, 7)) - 1,
-    day: parseInt(dateISO.slice(8, 10)),
+    year: Number.parseInt(dateISO.slice(0, 4), 10),
+    month: Number.parseInt(dateISO.slice(5, 7), 10) - 1,
+    day: Number.parseInt(dateISO.slice(8, 10), 10),
   };
 }
 
@@ -55,8 +55,8 @@ function addDays(dateISO: string, delta: number): string {
 }
 
 function timeToMinutes(timeStr: string): number {
-  const hours = parseInt(timeStr.slice(0, 2));
-  const minutes = parseInt(timeStr.slice(3, 5));
+  const hours = Number.parseInt(timeStr.slice(0, 2), 10);
+  const minutes = Number.parseInt(timeStr.slice(3, 5), 10);
   return hours * 60 + minutes;
 }
 
@@ -80,7 +80,7 @@ interface AgendaDayViewPageProps {
  * Vue timeline d'une journée — affiche les events sur un axe horaire (6h–22h).
  */
 const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate }) => {
-  const { goBack, navigateToAgendaForm } = useNavigation();
+  const { navigateToAgendaForm } = useNavigation();
   const scrollRef = useRef<ScrollView>(null);
 
   const [currentDate, setCurrentDate] = useState(initialDate);
@@ -132,10 +132,9 @@ const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate
   const goNextDay = () => setCurrentDate(prev => addDays(prev, 1));
 
   // ── Ouvrir le formulaire (création) ─────────────────────────────────────
-  const handleAddEvent = (hour?: number) => {
-    const defaultHour = hour ?? 9;
-    const startStr = `${currentDate} ${String(defaultHour).padStart(2, '0')}:00`;
-    const endStr   = `${currentDate} ${String(defaultHour + 1).padStart(2, '0')}:00`;
+  const handleAddEvent = (hour: number = 9) => {
+    const startStr = `${currentDate} ${String(hour).padStart(2, '0')}:00`;
+    const endStr   = `${currentDate} ${String(hour + 1).padStart(2, '0')}:00`;
     const event: SelectedAgendaEvent = {
       id: null,
       title: '',

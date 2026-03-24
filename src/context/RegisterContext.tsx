@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode, useContext } from 'react';
+import React, { createContext, useState, useMemo, useCallback, ReactNode, useContext } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -88,7 +88,7 @@ const DEFAULT_REGISTER_DATA: RegisterData = {
   photoUri: null,
   // Step 3
   dureeGene: '',
-  ouiNon: Array(7).fill(''),
+  ouiNon: new Array(7).fill(''),
   evolutionSurdite: '',
   situationsDifficiles: [],
   situationsDifficilesBis: [],
@@ -117,14 +117,19 @@ interface RegisterContextType {
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
 
 export const RegisterProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [registerData, setRegisterDataState] = useState<RegisterData>(DEFAULT_REGISTER_DATA);
+  const [registerData, setRegisterData] = useState<RegisterData>(DEFAULT_REGISTER_DATA);
 
-  const setRegisterData = (data: Partial<RegisterData>) => {
-    setRegisterDataState(prev => ({ ...prev, ...data }));
-  };
+  const updateRegisterData = useCallback((data: Partial<RegisterData>) => {
+    setRegisterData(prev => ({ ...prev, ...data }));
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ registerData, setRegisterData: updateRegisterData }),
+    [registerData, updateRegisterData],
+  );
 
   return (
-    <RegisterContext.Provider value={{ registerData, setRegisterData }}>
+    <RegisterContext.Provider value={contextValue}>
       {children}
     </RegisterContext.Provider>
   );

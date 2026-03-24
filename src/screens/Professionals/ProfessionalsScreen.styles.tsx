@@ -734,4 +734,15 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.white,
   },
+  formDropdownArrow: {
+    fontSize: 12,
+    color: COLORS.textLighter,
+  },
+  formNoteLabel: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 13,
+    color: COLORS.text,
+    marginTop: 4,
+    marginBottom: 16,
+  },
 });

@@ -76,8 +76,8 @@ const ProfessionalProfilePage: React.FC<ProfessionalProfilePageProps> = ({
           <View style={styles.profileAvatar} />
 
           {/* Champs */}
-          {fields.map((field, index) => (
-            <View key={index} style={styles.profileField}>
+          {fields.map(field => (
+            <View key={field.label} style={styles.profileField}>
               <Text style={styles.profileFieldLabel}>
                 {field.label}{' '}
                 <Text style={styles.profileFieldValue}>{field.value}</Text>

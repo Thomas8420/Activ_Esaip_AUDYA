@@ -28,6 +28,7 @@ const MONTHS_FR = [
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ];
 const DAYS_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const DAYS_FR_KEYS = ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'];
 
 function formatSelectedDay(year: number, month: number, day: number): string {
   const date = new Date(year, month, day);
@@ -144,6 +145,50 @@ const AgendaPage = () => {
     navigateToAgendaForm(event);
   };
 
+  // ── Render du contenu journalier ─────────────────────────────────────────
+  const renderDayContent = () => {
+    if (isLoading) {
+      return <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 32 }} />;
+    }
+    if (selectedEvents.length === 0) {
+      return (
+        <Text style={styles.emptyDayText} testID="emptyDay">
+          Aucun rendez-vous ce jour
+        </Text>
+      );
+    }
+    return (
+      <View style={styles.eventListContainer} testID="eventList">
+        {selectedEvents.map(ev => (
+          <TouchableOpacity
+            key={ev.id}
+            style={styles.eventRow}
+            onPress={() => handleEditEvent(ev)}
+            activeOpacity={0.75}
+            testID={`event-${ev.id}`}
+          >
+            <View style={[styles.eventColorBar, { backgroundColor: ev.backgroundColor }]} />
+            <View style={styles.eventContent}>
+              <Text style={styles.eventTitle}>{ev.title}</Text>
+              <Text style={styles.eventTime}>
+                {formatTime(ev.start)} – {formatTime(ev.end)}
+              </Text>
+              {!!ev.professionalName && (
+                <Text style={styles.eventPro}>{ev.professionalName}</Text>
+              )}
+              {!!ev.location && (
+                <Text style={styles.eventLocation}>{ev.location}</Text>
+              )}
+            </View>
+            <View style={styles.eventEditBtn}>
+              <Text style={styles.eventEditBtnText}>›</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
   // ── Render ───────────────────────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -175,13 +220,13 @@ const AgendaPage = () => {
           {/* Jours de la semaine */}
           <View style={styles.weekRow}>
             {DAYS_FR.map((d, i) => (
-              <Text key={i} style={styles.weekDayLabel}>{d}</Text>
+              <Text key={DAYS_FR_KEYS[i]} style={styles.weekDayLabel}>{d}</Text>
             ))}
           </View>
 
           {/* Grille des jours */}
           <View style={styles.daysGrid} testID="calendarGrid">
-            {grid.map((cell, idx) => {
+            {grid.map(cell => {
               const dateISO = cell.otherMonth
                 ? '' // on ne sélectionne pas les jours des autres mois
                 : formatDateISO(currentYear, currentMonth, cell.day);
@@ -189,10 +234,11 @@ const AgendaPage = () => {
               const isToday = !cell.otherMonth && dateISO === todayISO;
               const hasEvents = !cell.otherMonth && eventDateSet.has(dateISO);
               const dayEvents = hasEvents ? (eventsByDate[dateISO] ?? []) : [];
+              const cellKey = cell.otherMonth ? `other-${cell.day}` : dateISO;
 
               return (
                 <TouchableOpacity
-                  key={idx}
+                  key={cellKey}
                   style={[styles.dayCell, { width: DAY_CELL_SIZE, height: DAY_CELL_SIZE + 16 }]}
                   onPress={() => {
                     if (!cell.otherMonth) {
@@ -200,7 +246,7 @@ const AgendaPage = () => {
                     }
                   }}
                   activeOpacity={cell.otherMonth ? 1 : 0.7}
-                  testID={!cell.otherMonth ? `day-${dateISO}` : undefined}
+                  testID={cell.otherMonth ? undefined : `day-${dateISO}`}
                 >
                   {isSelected && !isToday && (
                     <View style={styles.daySelectedCircle} />
@@ -223,9 +269,9 @@ const AgendaPage = () => {
                   </Text>
                   {hasEvents && (
                     <View style={styles.eventDotsRow}>
-                      {dayEvents.slice(0, 3).map((ev, di) => (
+                      {dayEvents.slice(0, 3).map(ev => (
                         <View
-                          key={di}
+                          key={ev.id}
                           style={[styles.eventDot, { backgroundColor: ev.backgroundColor }]}
                         />
                       ))}
@@ -241,9 +287,9 @@ const AgendaPage = () => {
         <View style={styles.selectedDayBar}>
           <Text style={styles.selectedDayText} testID="selectedDayText">
             {formatSelectedDay(
-              parseInt(selectedDate.slice(0, 4)),
-              parseInt(selectedDate.slice(5, 7)) - 1,
-              parseInt(selectedDate.slice(8, 10)),
+              Number.parseInt(selectedDate.slice(0, 4), 10),
+              Number.parseInt(selectedDate.slice(5, 7), 10) - 1,
+              Number.parseInt(selectedDate.slice(8, 10), 10),
             )}
           </Text>
           <TouchableOpacity
@@ -257,42 +303,7 @@ const AgendaPage = () => {
         </View>
 
         {/* ── Liste des events du jour ── */}
-        {isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 32 }} />
-        ) : selectedEvents.length === 0 ? (
-          <Text style={styles.emptyDayText} testID="emptyDay">
-            Aucun rendez-vous ce jour
-          </Text>
-        ) : (
-          <View style={styles.eventListContainer} testID="eventList">
-            {selectedEvents.map(ev => (
-              <TouchableOpacity
-                key={ev.id}
-                style={styles.eventRow}
-                onPress={() => handleEditEvent(ev)}
-                activeOpacity={0.75}
-                testID={`event-${ev.id}`}
-              >
-                <View style={[styles.eventColorBar, { backgroundColor: ev.backgroundColor }]} />
-                <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>{ev.title}</Text>
-                  <Text style={styles.eventTime}>
-                    {formatTime(ev.start)} – {formatTime(ev.end)}
-                  </Text>
-                  {!!ev.professionalName && (
-                    <Text style={styles.eventPro}>{ev.professionalName}</Text>
-                  )}
-                  {!!ev.location && (
-                    <Text style={styles.eventLocation}>{ev.location}</Text>
-                  )}
-                </View>
-                <View style={styles.eventEditBtn}>
-                  <Text style={styles.eventEditBtnText}>›</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
+        {renderDayContent()}
 
         {/* Espace bas pour le FAB */}
         <View style={{ height: 80 }} />

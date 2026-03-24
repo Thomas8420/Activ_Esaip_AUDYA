@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoAudya from '../../assets/images/logo-audya.svg';
-import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
+import { registerStyles as s } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';

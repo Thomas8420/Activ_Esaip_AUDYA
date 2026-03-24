@@ -56,7 +56,7 @@ const NavBar = () => {
 
           {/* Bouton pour ouvrir/fermer le menu déroulant */}
           <TouchableOpacity
-            style={[styles.headerIconBtn, {flexDirection: 'row', gap: 4, width: 'auto', paddingHorizontal: 5}]}
+            style={styles.headerIconBtnWide}
             onPress={() => setProfileOpen(!profileOpen)}
             accessibilityLabel="Menu profil"
             accessibilityRole="button"

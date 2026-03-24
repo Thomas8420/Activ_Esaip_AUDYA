@@ -66,7 +66,6 @@ const BottomNav = () => {
     } else if (itemId === 'agenda') {
       navigateToAgenda();
     }
-    // TODO: implémenter la navigation pour les autres onglets
   };
 
   return (

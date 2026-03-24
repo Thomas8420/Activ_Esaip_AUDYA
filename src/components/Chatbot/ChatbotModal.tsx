@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
+import { COLORS, FONT_REGULAR } from '../../screens/Home/HomeScreen.styles';
 import {
   ChatbotMessage,
   MOCK_CHATBOT_MESSAGES,

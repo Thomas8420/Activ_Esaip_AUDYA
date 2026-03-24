@@ -115,8 +115,8 @@ export const NavigationProvider: React.FC<{ children: ReactNode; initialScreen?:
   const [selectedAgendaEvent, setSelectedAgendaEvent] = useState<SelectedAgendaEvent | null>(null);
   const [selectedAgendaDate, setSelectedAgendaDate] = useState<string | null>(null);
 
-  const currentScreen = history[history.length - 1];
-  const previousScreen = history.length > 1 ? history[history.length - 2] : 'home';
+  const currentScreen = history.at(-1)!;
+  const previousScreen = history.length > 1 ? history.at(-2)! : 'home';
 
   const navigateTo = useCallback((screen: Screen) => {
     setHistory(prev => [...prev, screen]);
