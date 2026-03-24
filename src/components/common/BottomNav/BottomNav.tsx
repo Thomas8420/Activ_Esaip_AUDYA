@@ -75,12 +75,17 @@ const BottomNav = () => {
 
   return (
     <>
-      {/* ── Chatbot ── */}
-      <ChatbotModal visible={chatbotOpen} onClose={() => setChatbotOpen(false)} />
+      {/* ── Chatbot — rendu conditionnel : évite qu'un Modal visible={false}
+          intercepte les touches sur la barre (bug Android) ── */}
+      {chatbotOpen && (
+        <ChatbotModal visible onClose={() => setChatbotOpen(false)} />
+      )}
 
-      {/* ── Popup menu ── */}
+      {/* ── Popup menu — même logique : conditionnel pour éviter le touch-up
+          du bouton central qui rouvre/ferme immédiatement la modale ── */}
+      {menuOpen && (
       <Modal
-        visible={menuOpen}
+        visible
         transparent
         animationType="fade"
         onRequestClose={() => setMenuOpen(false)}
@@ -113,6 +118,7 @@ const BottomNav = () => {
           </View>
         </TouchableOpacity>
       </Modal>
+      )}
 
       {/* ── Barre ── */}
       <View style={[styles.container, { paddingBottom: Math.max(10, bottomInset) }]}>
