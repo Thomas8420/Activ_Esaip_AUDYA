@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   StatusBar,
-  Modal
+  Modal,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -128,6 +129,8 @@ const CarnetAuditionPage = () => {
               <CTA1
                 label="Ajouter un document"
                 onPress={() => setIsModalVisible(true)}
+                style={Platform.OS === 'ios' ? { paddingHorizontal: 10, paddingVertical: 7, minWidth: 0 } : undefined}
+                textStyle={Platform.OS === 'ios' ? { fontSize: 12 } : undefined}
               />
             </View>
           </View>

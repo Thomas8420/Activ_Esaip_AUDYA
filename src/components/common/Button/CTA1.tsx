@@ -1,14 +1,15 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { COLORS, FONT_SEMIBOLD } from '../../../screens/Home/HomeScreen.styles';
 
 interface Cta1ButtonProps {
   readonly label: string;
   readonly onPress?: () => void;
   readonly style?: ViewStyle;
+  readonly textStyle?: TextStyle;
 }
 
-const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style }) => (
+const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style, textStyle }) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={onPress}
@@ -16,7 +17,7 @@ const Cta1Button: React.FC<Cta1ButtonProps> = ({ label, onPress, style }) => (
     accessibilityRole="button"
     accessibilityLabel={label}
   >
-    <Text style={styles.text}>{label}</Text>
+    <Text style={[styles.text, textStyle]}>{label}</Text>
   </TouchableOpacity>
 );
 
