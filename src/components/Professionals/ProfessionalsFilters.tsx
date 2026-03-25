@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 export interface Filters {
   searchQuery: string;
   itemsPerPage: number;
@@ -123,7 +124,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             <Text style={styles.filterButtonText}>{filters.itemsPerPage} items</Text>
             <Text style={styles.filterDropdownChevron}>▼</Text>
           </TouchableOpacity>
-          {itemsPerPageOpen && (
+          <AnimatedDropdown visible={itemsPerPageOpen}>
             <View style={styles.filterDropdownMenuOverlay}>
               {itemsPerPageOptions.map(option => (
                 <TouchableOpacity
@@ -135,7 +136,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
                 </TouchableOpacity>
               ))}
             </View>
-          )}
+          </AnimatedDropdown>
         </View>
 
         {/* Dropdown: Spécialité */}
@@ -149,7 +150,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             </Text>
             <Text style={styles.filterDropdownChevron}>▼</Text>
           </TouchableOpacity>
-          {specialtyOpen && (
+          <AnimatedDropdown visible={specialtyOpen}>
             <View style={[styles.filterDropdownMenuOverlay, { maxHeight: 200 }]}>
               <TouchableOpacity
                 onPress={() => handleSpecialtyChange('')}
@@ -169,7 +170,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
                 ))}
               </ScrollView>
             </View>
-          )}
+          </AnimatedDropdown>
         </View>
       </View>
 

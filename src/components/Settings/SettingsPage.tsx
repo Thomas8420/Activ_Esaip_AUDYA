@@ -27,6 +27,7 @@ import {
 } from '../../services/settingsService';
 import { useNavigation } from '../../context/NavigationContext';
 import { useLanguage, Language } from '../../context/LanguageContext';
+import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 /**
@@ -224,7 +225,7 @@ const SettingsPage = () => {
                     <Text style={styles.prefDropdownValue}>{settings.language}</Text>
                     <Text style={styles.prefDropdownChevron}>▼</Text>
                   </TouchableOpacity>
-                  {langOpen && (
+                  <AnimatedDropdown visible={langOpen}>
                     <View style={styles.prefDropdownMenu}>
                       {LANGUAGE_OPTIONS.map((opt, i) => (
                         <TouchableOpacity
@@ -251,7 +252,7 @@ const SettingsPage = () => {
                         </TouchableOpacity>
                       ))}
                     </View>
-                  )}
+                  </AnimatedDropdown>
                 </View>
 
                 {/* Dropdown Format date */}
@@ -273,7 +274,7 @@ const SettingsPage = () => {
                     <Text style={styles.prefDropdownValue}>{settings.dateFormat}</Text>
                     <Text style={styles.prefDropdownChevron}>▼</Text>
                   </TouchableOpacity>
-                  {dateOpen && (
+                  <AnimatedDropdown visible={dateOpen}>
                     <View style={styles.prefDropdownMenu}>
                       {DATE_FORMAT_OPTIONS.map((opt, i) => (
                         <TouchableOpacity
@@ -299,7 +300,7 @@ const SettingsPage = () => {
                         </TouchableOpacity>
                       ))}
                     </View>
-                  )}
+                  </AnimatedDropdown>
                 </View>
 
               </View>
@@ -326,7 +327,7 @@ const SettingsPage = () => {
                     <Text style={styles.prefDropdownValue}>{settings.timeFormat}</Text>
                     <Text style={styles.prefDropdownChevron}>▼</Text>
                   </TouchableOpacity>
-                  {timeOpen && (
+                  <AnimatedDropdown visible={timeOpen}>
                     <View style={styles.prefDropdownMenu}>
                       {TIME_FORMAT_OPTIONS.map((opt, i) => (
                         <TouchableOpacity
@@ -352,7 +353,7 @@ const SettingsPage = () => {
                         </TouchableOpacity>
                       ))}
                     </View>
-                  )}
+                  </AnimatedDropdown>
                 </View>
 
                 {/* Spacer : aligne Heure sur la même largeur que Langue et Date */}

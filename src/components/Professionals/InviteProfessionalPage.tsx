@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
@@ -94,7 +95,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             </Text>
             <Text style={styles.formDropdownArrow}>▼</Text>
           </TouchableOpacity>
-          {specialtyOpen && (
+          <AnimatedDropdown visible={specialtyOpen}>
             <View style={styles.formDropdownMenu}>
               {SPECIALTIES.map(s => (
                 <TouchableOpacity
@@ -108,7 +109,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
                 </TouchableOpacity>
               ))}
             </View>
-          )}
+          </AnimatedDropdown>
 
           {/* Nom * */}
           <TextInput
@@ -177,7 +178,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             </Text>
             <Text style={styles.formDropdownArrow}>▼</Text>
           </TouchableOpacity>
-          {countryOpen && (
+          <AnimatedDropdown visible={countryOpen}>
             <View style={styles.formDropdownMenu}>
               {COUNTRIES.map(c => (
                 <TouchableOpacity
@@ -191,7 +192,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
                 </TouchableOpacity>
               ))}
             </View>
-          )}
+          </AnimatedDropdown>
 
           {/* E-mail */}
           <TextInput

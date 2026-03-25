@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
@@ -85,7 +86,7 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             </Text>
             <Text style={{ fontSize: 12, color: '#999' }}>▼</Text>
           </TouchableOpacity>
-          {specialtyOpen && (
+          <AnimatedDropdown visible={specialtyOpen}>
             <View style={styles.formDropdownMenu}>
               <TouchableOpacity
                 style={styles.formDropdownItem}
@@ -103,7 +104,7 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
                 </TouchableOpacity>
               ))}
             </View>
-          )}
+          </AnimatedDropdown>
 
           {/* Nom */}
           <TextInput

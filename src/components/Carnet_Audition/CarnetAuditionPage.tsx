@@ -22,6 +22,7 @@ import CTA1 from '../common/Button/CTA1';
 import { COLORS } from '../../screens/Home/HomeScreen.styles';
 import { useLanguage } from '../../context/LanguageContext';
 import CTA4 from '../common/Button/CTA4';
+import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 
 // Vues déportées
 import { CarnetTimelineView } from './CarnetTimelineView';
@@ -135,7 +136,7 @@ const CarnetAuditionPage = () => {
                   </View>
                 </TouchableOpacity>
 
-                {dropdownOpen && (
+                <AnimatedDropdown visible={dropdownOpen}>
                   <View style={styles.dropdownList}>
                     {filterOptions.map((opt) => (
                       <TouchableOpacity
@@ -147,7 +148,7 @@ const CarnetAuditionPage = () => {
                       </TouchableOpacity>
                     ))}
                   </View>
-                )}
+                </AnimatedDropdown>
               </View>
 
               <CTA1

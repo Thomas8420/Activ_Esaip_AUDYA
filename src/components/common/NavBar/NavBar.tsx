@@ -18,6 +18,7 @@ import {
 } from '../../../services/notificationService';
 import NotificationPanel from './NotificationPanel';
 import { useLanguage } from '../../../context/LanguageContext';
+import AnimatedDropdown from '../AnimatedDropdown/AnimatedDropdown';
 
 // --- Imports des icônes SVG ---
 // Chaque icône est un composant React à part entière.
@@ -130,7 +131,7 @@ const NavBar = () => {
       )}
 
       {/* -- Menu déroulant du profil -- */}
-      {profileOpen && (
+      <AnimatedDropdown visible={profileOpen}>
         <>
           {/* Filtre gris semi-transparent qui ferme le menu au clic */}
           <Pressable style={styles.dropdownOverlay} onPress={() => setProfileOpen(false)} />
@@ -168,7 +169,7 @@ const NavBar = () => {
             </TouchableOpacity>
           </View>
         </>
-      )}
+      </AnimatedDropdown>
     </>
   );
 };
