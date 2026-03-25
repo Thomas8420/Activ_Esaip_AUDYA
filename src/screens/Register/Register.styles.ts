@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
+import { COLORS, FONT_REGULAR, FONT_SEMIBOLD, FONT_BOLD } from '../Home/HomeScreen.styles';
 
-export { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
+export { COLORS, FONT_REGULAR, FONT_SEMIBOLD, FONT_BOLD } from '../Home/HomeScreen.styles';
 
 export const registerStyles = StyleSheet.create({
   // ── Layout ──
@@ -493,32 +493,43 @@ export const registerStyles = StyleSheet.create({
     fontFamily: FONT_SEMIBOLD,
   },
   photoModalSheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: COLORS.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
-    gap: 12,
+    paddingBottom: 36,
   },
-  photoModalBtn: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    alignItems: 'center',
+  photoModalTitle: {
+    fontFamily: FONT_BOLD,
+    fontSize: 18,
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 24,
   },
-  photoModalCancel: {
-    borderColor: 'transparent' as any,
-    marginTop: 4,
+  photoModalPickBtn: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 22,
+    height: 48,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: 8,
+    marginBottom: 12,
   },
-  photoModalBtnText: {
+  photoModalPickBtnText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 15,
-    color: COLORS.text,
+    color: COLORS.white,
+  },
+  photoModalCancelBtn: {
+    height: 44,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  photoModalCancelText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.textLight,
   },
 
   // ── Checkbox verte (Q10) ──

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
+  Animated,
+  Dimensions,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -20,6 +22,10 @@ import {
   getMockReply,
   sendChatbotMessage,
 } from '../../services/chatbotService';
+
+// ─── Constantes ───────────────────────────────────────────────────────────────
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 // ─── Icônes ───────────────────────────────────────────────────────────────────
 
@@ -44,6 +50,48 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
   const [isSending, setIsSending] = useState(false);
   const flatListRef = useRef<FlatList<ChatbotMessage>>(null);
   const { bottom: bottomInset } = useSafeAreaInsets();
+
+  // ── Animation ─────────────────────────────────────────────────────────────
+  const fadeAnim  = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+
+  useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 220,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          damping: 22,
+          stiffness: 180,
+          mass: 0.8,
+          overshootClamping: false,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      fadeAnim.setValue(0);
+      slideAnim.setValue(SCREEN_HEIGHT);
+    }
+  }, [visible, fadeAnim, slideAnim]);
+
+  const handleClose = useCallback(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: SCREEN_HEIGHT,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => onClose());
+  }, [fadeAnim, slideAnim, onClose]);
 
   // ── Chargement initial de la conversation ─────────────────────────────────
   useEffect(() => {
@@ -135,90 +183,97 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
-      onRequestClose={onClose}
+      animationType="none"
+      onRequestClose={handleClose}
+      statusBarTranslucent
     >
-      {/* Conteneur racine nécessaire pour Android — évite que le Pressable overlay
-          intercepte le touch-up provenant du bouton FAB qui a ouvert la modale */}
       <View style={styles.modalRoot}>
-        {/* Overlay semi-transparent qui ferme le modal */}
+        {/* Fond sombre — fade indépendant du sheet, pointerEvents none */}
+        <Animated.View
+          style={[StyleSheet.absoluteFill, styles.overlayBackground, { opacity: fadeAnim }]}
+          pointerEvents="none"
+        />
+
+        {/* Zone de tap pour fermer — occupe l'espace au-dessus du sheet */}
         <TouchableOpacity
           style={styles.overlay}
-          onPress={onClose}
+          onPress={handleClose}
           activeOpacity={1}
         />
 
-        {/* Contenu du chatbot */}
-        <KeyboardAvoidingView
-          style={styles.sheet}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-        {/* En-tête teal */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <View style={styles.headerAvatar}>
-              <Text style={styles.headerAvatarText}>IA</Text>
-            </View>
-            <View style={styles.aiBadge}>
-              <Text style={styles.aiBadgeText}>ASSISTANT</Text>
-            </View>
-          </View>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>AUDYA</Text>
-            <Text style={styles.headerSubtitle}>Assistant santé auditive</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            accessibilityLabel="Fermer le chatbot"
+        {/* Sheet chatbot — slide indépendant */}
+        <Animated.View style={{ transform: [{ translateY: slideAnim }] }}>
+          <KeyboardAvoidingView
+            style={styles.sheet}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            <Icon name="close" size={22} color={COLORS.white} />
-          </TouchableOpacity>
-        </View>
+            {/* En-tête teal */}
+            <View style={styles.header}>
+              <View style={styles.headerLeft}>
+                <View style={styles.headerAvatar}>
+                  <Text style={styles.headerAvatarText}>IA</Text>
+                </View>
+                <View style={styles.aiBadge}>
+                  <Text style={styles.aiBadgeText}>ASSISTANT</Text>
+                </View>
+              </View>
+              <View style={styles.headerCenter}>
+                <Text style={styles.headerTitle}>AUDYA</Text>
+                <Text style={styles.headerSubtitle}>Assistant santé auditive</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleClose}
+                accessibilityLabel="Fermer le chatbot"
+              >
+                <Icon name="close" size={22} color={COLORS.white} />
+              </TouchableOpacity>
+            </View>
 
-        {/* Liste des messages */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={item => String(item.id)}
-          renderItem={renderMessage}
-          style={styles.messagesList}
-          contentContainerStyle={styles.messagesContent}
-          onContentSizeChange={scrollToBottom}
-          onLayout={scrollToBottom}
-          showsVerticalScrollIndicator={false}
-        />
+            {/* Liste des messages */}
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              keyExtractor={item => String(item.id)}
+              renderItem={renderMessage}
+              style={styles.messagesList}
+              contentContainerStyle={styles.messagesContent}
+              onContentSizeChange={scrollToBottom}
+              onLayout={scrollToBottom}
+              showsVerticalScrollIndicator={false}
+            />
 
-        {/* Indicateur "en train d'écrire" */}
-        {isSending && (
-          <View style={styles.typingIndicator}>
-            <Text style={styles.typingText}>AUDYA répond…</Text>
-          </View>
-        )}
+            {/* Indicateur "en train d'écrire" */}
+            {isSending && (
+              <View style={styles.typingIndicator}>
+                <Text style={styles.typingText}>AUDYA répond…</Text>
+              </View>
+            )}
 
-        {/* Zone de saisie */}
-        <View style={[styles.inputArea, Platform.OS === 'ios' && { paddingBottom: Math.max(10, bottomInset) }]}>
-          <TextInput
-            style={styles.textInput}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder="Posez votre question…"
-            placeholderTextColor={COLORS.textLight}
-            multiline
-            returnKeyType="default"
-            onSubmitEditing={handleSend}
-            accessibilityLabel="Saisir votre message"
-          />
-          <TouchableOpacity
-            style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
-            onPress={handleSend}
-            disabled={!canSend}
-            accessibilityLabel="Envoyer"
-          >
-            <SendIcon />
-          </TouchableOpacity>
-        </View>
-        </KeyboardAvoidingView>
+            {/* Zone de saisie */}
+            <View style={[styles.inputArea, Platform.OS === 'ios' && { paddingBottom: Math.max(10, bottomInset) }]}>
+              <TextInput
+                style={styles.textInput}
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder="Posez votre question…"
+                placeholderTextColor={COLORS.textLight}
+                multiline
+                returnKeyType="default"
+                onSubmitEditing={handleSend}
+                accessibilityLabel="Saisir votre message"
+              />
+              <TouchableOpacity
+                style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
+                onPress={() => { void handleSend(); }}
+                disabled={!canSend}
+                accessibilityLabel="Envoyer"
+              >
+                <SendIcon />
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -230,13 +285,14 @@ const styles = StyleSheet.create({
   modalRoot: {
     flex: 1,
   },
+  overlayBackground: {
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-
   },
   sheet: {
-    height: '72%',
+    height: Math.round(SCREEN_HEIGHT * 0.72),
     backgroundColor: '#F0F0F0',
     overflow: 'hidden',
   },

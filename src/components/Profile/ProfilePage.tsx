@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path, Rect } from 'react-native-svg';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {
   launchCamera,
   launchImageLibrary,
@@ -21,6 +22,7 @@ import { styles, COLORS } from '../../screens/Profile/ProfileScreen.styles';
 import { useLanguage } from '../../context/LanguageContext';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
 import {
   PatientProfile,
   fetchPatientProfile,
@@ -125,6 +127,7 @@ const ProfilePage = () => {
   // ── Photo state ──────────────────────────────────────────────────────────────
   /** URI locale de la photo sélectionnée (non encore uploadée) */
   const [localPhotoUri, setLocalPhotoUri] = useState<string | null>(null);
+  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   // ── Load on mount ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -168,28 +171,22 @@ const ProfilePage = () => {
   };
 
   const handlePickPhoto = () => {
-    Alert.alert(
-      'Photo de profil',
-      'Choisir une source',
-      [
-        {
-          text: 'Prendre une photo',
-          onPress: () =>
-            launchCamera(
-              { mediaType: 'photo', quality: 0.8, saveToPhotos: false },
-              handleImagePickerResponse,
-            ),
-        },
-        {
-          text: 'Choisir dans la galerie',
-          onPress: () =>
-            launchImageLibrary(
-              { mediaType: 'photo', quality: 0.8, selectionLimit: 1 },
-              handleImagePickerResponse,
-            ),
-        },
-        { text: 'Annuler', style: 'cancel' },
-      ],
+    setIsPhotoModalVisible(true);
+  };
+
+  const handlePickFromGallery = () => {
+    setIsPhotoModalVisible(false);
+    launchImageLibrary(
+      { mediaType: 'photo', quality: 0.8, selectionLimit: 1 },
+      handleImagePickerResponse,
+    );
+  };
+
+  const handlePickFromCamera = () => {
+    setIsPhotoModalVisible(false);
+    launchCamera(
+      { mediaType: 'photo', quality: 0.8, saveToPhotos: false },
+      handleImagePickerResponse,
     );
   };
 
@@ -517,6 +514,44 @@ const ProfilePage = () => {
           </>
         )}
       </ScrollView>
+
+      <BottomSheetModal
+        visible={isPhotoModalVisible}
+        onClose={() => setIsPhotoModalVisible(false)}
+      >
+        <View style={styles.photoModalSheet}>
+          <Text style={styles.photoModalTitle}>Photo de profil</Text>
+          <TouchableOpacity
+            style={styles.photoModalPickBtn}
+            onPress={handlePickFromGallery}
+            activeOpacity={0.8}
+            accessibilityLabel="Choisir dans la galerie"
+            accessibilityRole="button"
+          >
+            <Icon name="images-outline" size={20} color={COLORS.white} />
+            <Text style={styles.photoModalPickBtnText}>Choisir dans la galerie</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.photoModalPickBtn}
+            onPress={handlePickFromCamera}
+            activeOpacity={0.8}
+            accessibilityLabel="Prendre une photo"
+            accessibilityRole="button"
+          >
+            <Icon name="camera-outline" size={20} color={COLORS.white} />
+            <Text style={styles.photoModalPickBtnText}>Prendre une photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.photoModalCancelBtn}
+            onPress={() => setIsPhotoModalVisible(false)}
+            activeOpacity={0.7}
+            accessibilityLabel="Annuler"
+            accessibilityRole="button"
+          >
+            <Text style={styles.photoModalCancelText}>Annuler</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetModal>
 
       <BottomNav />
     </SafeAreaView>

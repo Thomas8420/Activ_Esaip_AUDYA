@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   StatusBar,
   Text,
@@ -10,8 +11,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
+import DocumentPicker, { types as DocumentTypes } from 'react-native-document-picker';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
 import { styles, COLORS } from '../../screens/Health/HealthScreen.styles';
 import { fetchPatientHealth, PatientHealth, USE_HEALTH_API } from '../../services/healthService';
 import QrCode from '../../assets/images/qr-code.svg';
@@ -45,6 +48,8 @@ const HealthPage = () => {
   const { t } = useLanguage();
   const [health, setHealth] = useState<PatientHealth | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
+  const [uploadTarget, setUploadTarget] = useState<'familyHistory' | 'medicalHistory' | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -102,6 +107,31 @@ const HealthPage = () => {
     if (!health) {return;}
     const newValue = health.smoker === 'Oui' ? 'Non' : 'Oui';
     handleUpdateField('smoker', newValue);
+  };
+
+  const handleOpenUploadModal = (target: 'familyHistory' | 'medicalHistory') => {
+    setUploadTarget(target);
+    setIsUploadModalVisible(true);
+  };
+
+  const handlePickDocument = async () => {
+    try {
+      const results = await DocumentPicker.pick({
+        type: [DocumentTypes.pdf, DocumentTypes.doc, DocumentTypes.docx, DocumentTypes.plainText, DocumentTypes.images],
+        allowMultiSelection: false,
+      });
+      const file = results[0];
+      const fileName = file.name ?? 'document';
+      setHealth(prev => {
+        if (!prev) { return prev; }
+        return { ...prev, documents: [...prev.documents, fileName] };
+      });
+      setIsUploadModalVisible(false);
+    } catch (err) {
+      if (!DocumentPicker.isCancel(err)) {
+        Alert.alert('Erreur', 'Impossible de sélectionner le document.');
+      }
+    }
   };
 
   const bmiValue = useMemo(() => {
@@ -223,7 +253,13 @@ const HealthPage = () => {
                   />
                 </View>
                 <View style={styles.inlineDivider} />
-                <TouchableOpacity style={styles.documentButton} activeOpacity={0.7}>
+                <TouchableOpacity
+                  style={styles.documentButton}
+                  activeOpacity={0.7}
+                  onPress={() => handleOpenUploadModal('familyHistory')}
+                  accessibilityLabel="Ajouter un document pour les antécédents familiaux"
+                  accessibilityRole="button"
+                >
                   <Text style={styles.documentButtonText}>Document</Text>
                   <Icon name="download-outline" size={13} color={COLORS.text} />
                 </TouchableOpacity>
@@ -248,7 +284,13 @@ const HealthPage = () => {
                   ))}
                 </View>
                 <View style={styles.inlineDivider} />
-                <TouchableOpacity style={styles.documentButton} activeOpacity={0.7}>
+                <TouchableOpacity
+                  style={styles.documentButton}
+                  activeOpacity={0.7}
+                  onPress={() => handleOpenUploadModal('medicalHistory')}
+                  accessibilityLabel="Ajouter un document pour les antécédents médicaux"
+                  accessibilityRole="button"
+                >
                   <Text style={styles.documentButtonText}>Document</Text>
                   <Icon name="download-outline" size={13} color={COLORS.text} />
                 </TouchableOpacity>
@@ -264,6 +306,37 @@ const HealthPage = () => {
           </>
         )}
       </ScrollView>
+
+      <BottomSheetModal
+        visible={isUploadModalVisible}
+        onClose={() => setIsUploadModalVisible(false)}
+      >
+        <View style={styles.uploadModalSheet}>
+          <Text style={styles.uploadModalTitle}>Ajouter un document</Text>
+          <Text style={styles.uploadModalSubtitle}>
+            {uploadTarget === 'familyHistory' ? 'Antécédents familiaux' : 'Antécédents médicaux'}
+          </Text>
+          <TouchableOpacity
+            style={styles.uploadModalPickBtn}
+            onPress={handlePickDocument}
+            activeOpacity={0.8}
+            accessibilityLabel="Choisir un fichier"
+            accessibilityRole="button"
+          >
+            <Icon name="document-attach-outline" size={20} color={COLORS.white} />
+            <Text style={styles.uploadModalPickBtnText}>Choisir un fichier</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.uploadModalCancelBtn}
+            onPress={() => setIsUploadModalVisible(false)}
+            activeOpacity={0.7}
+            accessibilityLabel="Annuler"
+            accessibilityRole="button"
+          >
+            <Text style={styles.uploadModalCancelText}>Annuler</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetModal>
 
       <BottomNav />
     </SafeAreaView>

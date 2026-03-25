@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
+import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
@@ -214,22 +216,40 @@ const RegisterStep2Page = () => {
       </Modal>
 
       {/* Modal source photo */}
-      <Modal visible={photoModal} transparent animationType="fade" onRequestClose={() => setPhotoModal(false)} accessibilityViewIsModal={true}>
-        <TouchableOpacity style={s.modalOverlay} onPress={() => setPhotoModal(false)} activeOpacity={1}>
-          <View style={s.photoModalSheet}>
-            <Text style={s.modalTitle}>Ajouter une photo</Text>
-            <TouchableOpacity style={s.photoModalBtn} onPress={handlePickFromGallery} activeOpacity={0.7}>
-              <Text style={s.photoModalBtnText}>📷  Choisir depuis la galerie</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.photoModalBtn} onPress={handlePickFromCamera} activeOpacity={0.7}>
-              <Text style={s.photoModalBtnText}>📸  Prendre une photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[s.photoModalBtn, s.photoModalCancel]} onPress={() => setPhotoModal(false)} activeOpacity={0.7}>
-              <Text style={[s.photoModalBtnText, { color: COLORS.textLight }]}>Annuler</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <BottomSheetModal visible={photoModal} onClose={() => setPhotoModal(false)}>
+        <View style={s.photoModalSheet}>
+          <Text style={s.photoModalTitle}>Ajouter une photo</Text>
+          <TouchableOpacity
+            style={s.photoModalPickBtn}
+            onPress={handlePickFromGallery}
+            activeOpacity={0.8}
+            accessibilityLabel="Choisir dans la galerie"
+            accessibilityRole="button"
+          >
+            <Icon name="images-outline" size={20} color={COLORS.white} />
+            <Text style={s.photoModalPickBtnText}>Choisir depuis la galerie</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={s.photoModalPickBtn}
+            onPress={handlePickFromCamera}
+            activeOpacity={0.8}
+            accessibilityLabel="Prendre une photo"
+            accessibilityRole="button"
+          >
+            <Icon name="camera-outline" size={20} color={COLORS.white} />
+            <Text style={s.photoModalPickBtnText}>Prendre une photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={s.photoModalCancelBtn}
+            onPress={() => setPhotoModal(false)}
+            activeOpacity={0.7}
+            accessibilityLabel="Annuler"
+            accessibilityRole="button"
+          >
+            <Text style={s.photoModalCancelText}>Annuler</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetModal>
     </SafeAreaView>
   );
 };

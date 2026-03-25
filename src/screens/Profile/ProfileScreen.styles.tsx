@@ -12,9 +12,9 @@ export const COLORS = {
   background: '#f5f3ef',
 };
 
-export const FONT_REGULAR = 'Montserrat-Regular';
+export const FONT_REGULAR  = 'Montserrat-Regular';
 export const FONT_SEMIBOLD = 'Montserrat-SemiBold';
-export const FONT_BOLD = 'Montserrat-Bold';
+export const FONT_BOLD     = 'Montserrat-Bold';
 
 export const styles = StyleSheet.create({
   safeArea: {
@@ -205,5 +205,46 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_SEMIBOLD,
     fontSize: 15,
     color: COLORS.white,
+  },
+
+  // ── Photo modal ────────────────────────────────────────────────────────────
+  photoModalSheet: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 24,
+    paddingBottom: 36,
+  },
+  photoModalTitle: {
+    fontFamily: FONT_BOLD,
+    fontSize: 18,
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  photoModalPickBtn: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 22,
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  photoModalPickBtnText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.white,
+  },
+  photoModalCancelBtn: {
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoModalCancelText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.textLight,
   },
 });

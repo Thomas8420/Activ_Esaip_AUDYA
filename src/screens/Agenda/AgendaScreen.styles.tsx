@@ -20,8 +20,9 @@ export const FONT_REGULAR  = 'Montserrat-Regular';
 export const FONT_SEMIBOLD = 'Montserrat-SemiBold';
 export const FONT_BOLD     = 'Montserrat-Bold';
 
-/** Largeur d'une cellule jour = 1/7 de la largeur de l'écran */
-export const DAY_CELL_SIZE = Math.floor((SCREEN_WIDTH - 32) / 7);
+/** Largeur d'une cellule jour = 1/7 de l'espace disponible
+ *  SCREEN_WIDTH - 32 (marginHorizontal 16×2) - 16 (paddingHorizontal 8×2 du calendarCard) */
+export const DAY_CELL_SIZE = Math.floor((SCREEN_WIDTH - 48) / 7);
 
 /** Hauteur d'une heure en px dans la timeline */
 export const HOUR_HEIGHT = 64;

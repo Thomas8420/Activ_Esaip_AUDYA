@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, FONT_BOLD } from '../Home/HomeScreen.styles';
+import { COLORS, FONT_BOLD, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
 
 export const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: COLORS.background },
@@ -40,7 +40,14 @@ export const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 12, color: '#333' },
   rightControl: { flexDirection: 'row', alignItems: 'center' },
   displayText: { fontSize: 11, color: '#999', marginRight: 5 },
-  displayIcons: { flexDirection: 'row', gap: 10 },
+  displayIcons: { flexDirection: 'row', gap: 6 },
+  viewModeBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   rowBottom: {
     flexDirection: 'row',
@@ -136,62 +143,72 @@ export const styles = StyleSheet.create({
   dateText: { fontSize: 10, color: '#999', marginBottom: 5 },
   docTitle: { fontSize: 13, fontFamily: FONT_BOLD, color: '#1A3B5D' },
   docDesc: { fontSize: 11, color: '#444', marginTop: 3 },
-  actionIcons: { flexDirection: 'row', gap: 15, marginTop: 15, alignItems: 'center' },
-
-  // --- Styles pour la Modale d'Ajout ---
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end'
+  actionIcons: { flexDirection: 'row', gap: 8, marginTop: 12, alignItems: 'center', justifyContent: 'center' },
+  timelineActionBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.offWhite,
   },
+
+  // --- Modale d'ajout de document ---
   modalContent: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding: 20,
-    minHeight: 400
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 24,
+    paddingBottom: 36,
   },
   modalTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: FONT_BOLD,
+    fontSize: 18,
     color: COLORS.orange,
-    marginBottom: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: 24,
   },
   inputLabel: {
+    fontFamily: FONT_SEMIBOLD,
     fontSize: 12,
-    color: '#666',
-    marginBottom: 5,
-    fontWeight: 'bold'
+    color: COLORS.textLight,
+    marginBottom: 6,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: COLORS.border,
     borderRadius: 8,
     padding: 12,
-    marginBottom: 15,
-    backgroundColor: '#F9F9F9'
+    marginBottom: 16,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 13,
+    color: COLORS.text,
+    backgroundColor: '#F9F9F9',
   },
   uploadButtonModal: {
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: '#CCC',
-    borderStyle: 'dashed',
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: COLORS.orange,
+    borderRadius: 22,
+    height: 48,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 25
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 12,
   },
   uploadButtonTextModal: {
-    color: '#666',
-    fontWeight: '500'
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.white,
+    flexShrink: 1,
   },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 20, // Écart corrigé pour tes nouveaux boutons
-    marginTop: 20,
+    gap: 20,
+    marginTop: 8,
   },
   // Boutons originaux (au cas où tu en aurais encore besoin ailleurs, sinon tu peux les enlever)
   cancelButton: {

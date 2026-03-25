@@ -23,13 +23,13 @@ const ProfessionalListRow: React.FC<ProfessionalListRowProps> = ({
 }) => {
   return (
     <View style={[styles.listRow, isAlternate && styles.listRowAlternate]}>
-      <Text style={styles.listCellSpecialty} numberOfLines={1}>
+      <Text style={styles.listCellSpecialty} numberOfLines={1} ellipsizeMode="tail">
         {professional.specialty}
       </Text>
-      <Text style={styles.listCellName} numberOfLines={1}>
+      <Text style={styles.listCellName} numberOfLines={1} ellipsizeMode="tail">
         {professional.lastName}
       </Text>
-      <Text style={styles.listCellName} numberOfLines={1}>
+      <Text style={styles.listCellName} numberOfLines={1} ellipsizeMode="tail">
         {professional.firstName}
       </Text>
       <View style={styles.listCellActions}>

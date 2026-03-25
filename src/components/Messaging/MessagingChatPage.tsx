@@ -35,10 +35,6 @@ const POLL_INTERVAL_MS = 10_000;
 
 // ─── Icônes ───────────────────────────────────────────────────────────────────
 
-const ClipIcon = () => (
-  <Icon name="attach" size={22} color={COLORS.textLight} />
-);
-
 const SendIcon = () => (
   <Icon name="send" size={20} color={COLORS.white} />
 );
@@ -198,19 +194,6 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
         Alert.alert('Erreur', 'Impossible de sélectionner le document.');
       }
     }
-  };
-
-  // ── Action sheet pièces jointes ──────────────────────────────────────────────
-  const handleAttach = () => {
-    Alert.alert(
-      'Pièce jointe',
-      'Choisir un type',
-      [
-        { text: 'Photo',    onPress: pickImage },
-        { text: 'Document', onPress: pickDocument },
-        { text: 'Annuler',  style: 'cancel' },
-      ],
-    );
   };
 
   // ── Supprimer une pièce jointe en attente ────────────────────────────────────
@@ -418,11 +401,21 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
         <View style={styles.inputArea}>
           <TouchableOpacity
             style={styles.attachButton}
-            onPress={handleAttach}
-            accessibilityLabel="Ajouter une pièce jointe"
-            testID="attachButton"
+            onPress={pickImage}
+            accessibilityLabel="Ajouter une photo"
+            accessibilityRole="button"
+            testID="attachPhotoButton"
           >
-            <ClipIcon />
+            <Icon name="image-outline" size={20} color={COLORS.textLight} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.attachButton}
+            onPress={() => { void pickDocument(); }}
+            accessibilityLabel="Ajouter un document"
+            accessibilityRole="button"
+            testID="attachDocButton"
+          >
+            <Icon name="document-outline" size={20} color={COLORS.textLight} />
           </TouchableOpacity>
 
           <TextInput

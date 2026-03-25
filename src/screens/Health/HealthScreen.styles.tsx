@@ -300,5 +300,53 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text,
   },
+
+  // ─── Upload Modal ─────────────────────────────────────────────────────────
+  uploadModalSheet: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 24,
+    paddingBottom: 36,
+  },
+  uploadModalTitle: {
+    fontFamily: FONT_BOLD,
+    fontSize: 18,
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  uploadModalSubtitle: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 13,
+    color: COLORS.textLight,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  uploadModalPickBtn: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 22,
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  uploadModalPickBtnText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.white,
+  },
+  uploadModalCancelBtn: {
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  uploadModalCancelText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 15,
+    color: COLORS.textLight,
+  },
 });
 

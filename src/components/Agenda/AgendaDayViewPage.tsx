@@ -16,6 +16,7 @@ import {
   USE_AGENDA_API,
 } from '../../services/agendaService';
 import { useNavigation, SelectedAgendaEvent } from '../../context/NavigationContext';
+import CTA1 from '../common/Button/CTA1';
 import { useLanguage } from '../../context/LanguageContext';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
@@ -81,7 +82,7 @@ interface AgendaDayViewPageProps {
  * Vue timeline d'une journée — affiche les events sur un axe horaire (6h–22h).
  */
 const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate }) => {
-  const { navigateToAgendaForm } = useNavigation();
+  const { navigateToAgendaForm, navigateToAgenda } = useNavigation();
   const { t } = useLanguage();
   const scrollRef = useRef<ScrollView>(null);
 
@@ -192,16 +193,22 @@ const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate
         </TouchableOpacity>
       </View>
 
-      {/* Bouton ajouter */}
-      <View style={{ alignItems: 'flex-end', paddingHorizontal: 16, paddingVertical: 8, backgroundColor: COLORS.white }}>
+      {/* Boutons Vue mois / Ajouter */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 10, backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
         <TouchableOpacity
-          style={styles.dayViewAddBtn}
-          onPress={() => handleAddEvent()}
-          testID="dayViewAddBtn"
-          activeOpacity={0.8}
+          style={styles.dayViewBtn}
+          onPress={navigateToAgenda}
+          testID="monthViewBtn"
+          activeOpacity={0.7}
         >
-          <Text style={styles.dayViewAddBtnText}>+ Ajouter</Text>
+          <Text style={styles.dayViewBtnText}>Vue mois</Text>
         </TouchableOpacity>
+        <CTA1
+          label="+ Ajouter"
+          onPress={() => handleAddEvent()}
+          style={{ height: 38, paddingHorizontal: 16, paddingVertical: 0 }}
+          textStyle={{ fontSize: 14 }}
+        />
       </View>
 
       {isLoading ? (

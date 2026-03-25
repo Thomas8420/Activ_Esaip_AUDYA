@@ -8,13 +8,16 @@ import {
   ActivityIndicator,
   Alert,
   StatusBar,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+import DocumentPicker, { types as DocumentTypes } from 'react-native-document-picker';
 
 // Navigation & Communs
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
 import CTA1 from '../common/Button/CTA1';
 import { COLORS } from '../../screens/Home/HomeScreen.styles';
 import { useLanguage } from '../../context/LanguageContext';
@@ -49,6 +52,7 @@ const CarnetAuditionPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('Tout');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const filterOptions = ['Tout', 'Ordonnances', 'CR Orthophonie', 'Notes de suivi'];
 
   useEffect(() => {
@@ -70,6 +74,25 @@ const CarnetAuditionPage = () => {
     load();
   }, []);
 
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedFile(null);
+  };
+
+  const handlePickDocument = async () => {
+    try {
+      const results = await DocumentPicker.pick({
+        type: [DocumentTypes.pdf, DocumentTypes.doc, DocumentTypes.docx, DocumentTypes.plainText, DocumentTypes.images],
+        allowMultiSelection: false,
+      });
+      setSelectedFile(results[0].name ?? 'document');
+    } catch (err) {
+      if (!DocumentPicker.isCancel(err)) {
+        Alert.alert('Erreur', 'Impossible de sélectionner le fichier.');
+      }
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <StatusBar barStyle="dark-content" />
@@ -90,14 +113,14 @@ const CarnetAuditionPage = () => {
               <View style={styles.rightControl}>
                 <Text style={styles.displayText}>Affichage</Text>
                 <View style={styles.displayIcons}>
-                    <TouchableOpacity onPress={() => setViewMode('timeline')} accessibilityLabel="Vue timeline" accessibilityRole="button">
-                      <TimelineIcon width={22} height={22} color={viewMode === 'timeline' ? COLORS.orange : COLORS.border} />
+                    <TouchableOpacity style={styles.viewModeBtn} onPress={() => setViewMode('timeline')} accessibilityLabel="Vue timeline" accessibilityRole="button">
+                      <TimelineIcon width={18} height={18} color={viewMode === 'timeline' ? COLORS.orange : COLORS.border} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setViewMode('grid')} accessibilityLabel="Vue grille" accessibilityRole="button">
-                      <GridIcon width={22} height={22} color={viewMode === 'grid' ? COLORS.orange : COLORS.border} />
+                    <TouchableOpacity style={styles.viewModeBtn} onPress={() => setViewMode('grid')} accessibilityLabel="Vue grille" accessibilityRole="button">
+                      <GridIcon width={18} height={18} color={viewMode === 'grid' ? COLORS.orange : COLORS.border} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setViewMode('list')} accessibilityLabel="Vue liste" accessibilityRole="button">
-                      <ListIcon width={22} height={22} color={viewMode === 'list' ? COLORS.orange : COLORS.border} />
+                    <TouchableOpacity style={styles.viewModeBtn} onPress={() => setViewMode('list')} accessibilityLabel="Vue liste" accessibilityRole="button">
+                      <ListIcon width={18} height={18} color={viewMode === 'list' ? COLORS.orange : COLORS.border} />
                     </TouchableOpacity>
                 </View>
               </View>
@@ -149,42 +172,41 @@ const CarnetAuditionPage = () => {
         </View>
       </ScrollView>
         {/* --- MODALE D'AJOUT DE DOCUMENT --- */}
-              <Modal visible={isModalVisible} animationType="slide" transparent={true} onRequestClose={() => setIsModalVisible(false)}>
-                <View style={styles.modalOverlay}>
-                  <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>NOUVEAU DOCUMENT</Text>
+        <BottomSheetModal visible={isModalVisible} onClose={handleCloseModal}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>NOUVEAU DOCUMENT</Text>
 
-                    <Text style={styles.inputLabel}>Nom du document</Text>
-                    <TextInput style={styles.input} placeholder="Ex: Audiogramme Mars 2026" placeholderTextColor="#999" />
+            <Text style={styles.inputLabel}>Nom du document</Text>
+            <TextInput style={styles.input} placeholder="Ex: Audiogramme Mars 2026" placeholderTextColor="#999" />
 
-                    <Text style={styles.inputLabel}>Type de document</Text>
-                    <TextInput style={styles.input} placeholder="Ex: Ordonnance, CR..." placeholderTextColor="#999" />
+            <Text style={styles.inputLabel}>Type de document</Text>
+            <TextInput style={styles.input} placeholder="Ex: Ordonnance, CR..." placeholderTextColor="#999" />
 
-                    {/* Bouton d'importation de fichier */}
-                    <TouchableOpacity style={styles.uploadButtonModal} onPress={() => Alert.alert("Fichier", "Ouvrir les dossiers du téléphone")}>
-                      <Text style={styles.uploadButtonTextModal}>📁 Choisir un fichier (PDF, PNG...)</Text>
-                    </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.uploadButtonModal}
+              onPress={handlePickDocument}
+              activeOpacity={0.8}
+              accessibilityLabel="Choisir un fichier"
+              accessibilityRole="button"
+            >
+              <Icon name="document-attach-outline" size={20} color="#FFFFFF" />
+              <Text style={styles.uploadButtonTextModal} numberOfLines={1}>
+                {selectedFile ?? 'Choisir un fichier (PDF, PNG…)'}
+              </Text>
+            </TouchableOpacity>
 
-                    {/* Boutons d'action */}
-                    <View style={styles.modalActions}>
-                        {/* 👉 UTILISATION DU CTA4 POUR ANNULER */}
-                        <CTA4
-                            label="Annuler"
-                            onPress={() => setIsModalVisible(false)}
-                        />
-
-                        {/* 👉 UTILISATION DU CTA1 POUR ENREGISTRER */}
-                        <CTA1
-                            label="Enregistrer"
-                            onPress={() => {
-                                setIsModalVisible(false);
-                                Alert.alert("Succès", "Document ajouté avec succès !");
-                            }}
-                        />
-                    </View>
-                  </View>
-                </View>
-              </Modal>
+            <View style={styles.modalActions}>
+              <CTA4 label="Annuler" onPress={handleCloseModal} />
+              <CTA1
+                label="Enregistrer"
+                onPress={() => {
+                  handleCloseModal();
+                  Alert.alert('Succès', 'Document ajouté avec succès !');
+                }}
+              />
+            </View>
+          </View>
+        </BottomSheetModal>
       <BottomNav />
     </SafeAreaView>
   );

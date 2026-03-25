@@ -6,9 +6,7 @@ import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import DeviceCard from './DeviceCard';
 import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
-import EyeIcon from '../../assets/images/eye.svg';
-import DownloadIcon from '../../assets/images/download.svg';
-import TrashIcon from '../../assets/images/trash.svg';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useLanguage } from '../../context/LanguageContext';
 
 export interface AppareilDetails {
@@ -82,8 +80,8 @@ const AppareillagePage = () => {
             </View>
 
             {/* --- LIGNES DU TABLEAU --- */}
-            {appareilsMock.map((appareil) => (
-              <View key={String(appareil.id)} style={styles.row}>
+            {appareilsMock.map((appareil, index) => (
+              <View key={String(appareil.id)} style={[styles.row, index % 2 !== 0 && styles.rowAlternate]}>
                 <View style={styles.col1}>
                   <Text style={styles.nameText} numberOfLines={1}>{appareil.type}</Text>
                 </View>
@@ -100,7 +98,7 @@ const AppareillagePage = () => {
                     accessibilityLabel={`Voir détails ${appareil.marque}`}
                     accessibilityRole="button"
                   >
-                    <EyeIcon width={14} height={14} color="#333" />
+                    <Icon name="eye-outline" size={14} color={COLORS.white} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -120,7 +118,7 @@ const AppareillagePage = () => {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>VOTRE APPAREIL</Text>
                 <TouchableOpacity onPress={closeDetailsModal} style={styles.closeBtn} accessibilityLabel="Fermer" accessibilityRole="button">
-                  <Text style={styles.closeBtnText}>✕</Text>
+                  <Icon name="close" size={14} color={COLORS.text} />
                 </TouchableOpacity>
               </View>
 
@@ -153,13 +151,13 @@ const AppareillagePage = () => {
                     <Text style={styles.actionsLabel}>ACTIONS</Text>
                     <View style={styles.bigActionsRow}>
                       <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Voir" accessibilityRole="button">
-                        <EyeIcon width={28} height={28} color="#333" />
+                        <Icon name="eye-outline" size={26} color={COLORS.textLight} />
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Télécharger" accessibilityRole="button">
-                        <DownloadIcon width={28} height={28} color="#333" />
+                        <Icon name="download-outline" size={26} color={COLORS.textLight} />
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Supprimer" accessibilityRole="button">
-                        <TrashIcon width={28} height={28} color="#333" />
+                        <Icon name="trash-outline" size={26} color={COLORS.textLight} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -215,14 +213,24 @@ const styles = StyleSheet.create({
   },
 
   // --- TABLEAU HISTORIQUE ---
-  tableContainer: { width: '90%', alignSelf: 'center', marginTop: 5, marginBottom: 10 },
-  headerRow: { flexDirection: 'row', backgroundColor: '#F0F0F0', paddingVertical: 12, paddingHorizontal: 8, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
-  headerText: { fontSize: 9, fontFamily: FONT_BOLD, color: COLORS.textLight, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: COLORS.border, backgroundColor: COLORS.white },
-  rowText: { fontSize: 12, fontFamily: FONT_REGULAR, color: COLORS.text, textAlign: 'center' },
-  nameText: { fontSize: 12, fontFamily: FONT_SEMIBOLD, color: COLORS.text, textAlign: 'center' },
-  dateText: { fontSize: 11, fontFamily: FONT_REGULAR, color: COLORS.textLight, textAlign: 'center' },
-  eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#F0F0F0', justifyContent: 'center', alignItems: 'center' },
+  tableContainer: { marginTop: 5, marginBottom: 10, borderRadius: 8, overflow: 'hidden' },
+  headerRow: { flexDirection: 'row', backgroundColor: COLORS.orange, paddingVertical: 10, paddingHorizontal: 12 },
+  headerText: { fontFamily: FONT_SEMIBOLD, fontSize: 11, color: COLORS.white, textAlign: 'center', textTransform: 'uppercase' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: COLORS.border, backgroundColor: COLORS.white },
+  rowAlternate: { backgroundColor: COLORS.offWhite },
+  rowText: { fontFamily: FONT_REGULAR, fontSize: 13, color: COLORS.text, textAlign: 'center' },
+  nameText: { fontFamily: FONT_SEMIBOLD, fontSize: 13, color: COLORS.teal, textAlign: 'center' },
+  dateText: { fontFamily: FONT_REGULAR, fontSize: 12, color: COLORS.textLight, textAlign: 'center' },
+  eyeCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: COLORS.orange,
+    borderColor: COLORS.orange,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
   // --- COLONNES DU TABLEAU ---
   flex3: { flex: 3 }, flex25: { flex: 2.5 }, flex15Left: { flex: 1.5 }, flex15Center: { flex: 1.5 },
@@ -271,11 +279,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  closeBtnText: {
-    fontSize: 12,
-    fontFamily: FONT_BOLD,
-    color: COLORS.text,
-  },
   detailTable: {
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
@@ -321,13 +324,15 @@ const styles = StyleSheet.create({
   bigActionButton: {
     width: 65,
     height: 65,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#F8F9FA',
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
     elevation: 1,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 2,
     shadowOffset: { width: 0, height: 1 },
   },
