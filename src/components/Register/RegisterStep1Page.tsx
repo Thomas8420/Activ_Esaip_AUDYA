@@ -138,24 +138,24 @@ const RegisterStep1Page = () => {
           <PasswordField placeholder="Confirmation du mot de passe *" value={form.confirmation} error={errors.confirmation} show={showConfirm}  onToggle={() => setShowConfirm(!showConfirm)}  onChangeText={v => { setForm({ ...form, confirmation: v }); clearError('confirmation'); }} />
 
           {/* Acceptation CGV */}
-          <TouchableOpacity style={s.checkboxRow} onPress={() => { setForm({ ...form, cgv: !form.cgv }); clearError('cgv'); }} activeOpacity={0.7}>
+          <Pressable style={s.checkboxRow} onPress={() => { setForm({ ...form, cgv: !form.cgv }); clearError('cgv'); }}>
             <View style={[s.radioCircle, form.cgv && s.radioCircleSelected]}>
               {form.cgv && <View style={s.radioDot} />}
             </View>
             <Text style={s.checkboxLabel}>J'accepte les CGV - CGU *</Text>
-          </TouchableOpacity>
+          </Pressable>
           {errors.cgv && <Text style={s.errorText}>⊙ {errors.cgv}</Text>}
 
           {/* Consentement contact AUDYA */}
           <Text style={s.consentLabel}>J'accepte d'être contacté par AUDYA pour des enquêtes et évaluation de l'usage</Text>
           <View style={s.radioRow}>
             {(['oui', 'non'] as const).map(val => (
-              <TouchableOpacity key={val} style={s.radioOption} onPress={() => setForm({ ...form, contact: val })} activeOpacity={0.7}>
+              <Pressable key={val} style={s.radioOption} onPress={() => setForm({ ...form, contact: val })}>
                 <View style={[s.radioCircle, form.contact === val && s.radioCircleSelected]}>
                   {form.contact === val && <View style={s.radioDot} />}
                 </View>
                 <Text style={s.radioText}>{val.toUpperCase()}</Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
 

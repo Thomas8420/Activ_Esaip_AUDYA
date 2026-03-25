@@ -74,12 +74,12 @@ const RegisterStep4Page = () => {
           </TouchableOpacity>
 
           {/* Fumeur — case verte centrée */}
-          <TouchableOpacity style={s.checkboxRowCentered} onPress={() => setForm({ ...form, fumeur: !form.fumeur })} activeOpacity={0.7}>
+          <Pressable style={s.checkboxRowCentered} onPress={() => setForm({ ...form, fumeur: !form.fumeur })}>
             <View style={[s.checkbox, form.fumeur && s.checkboxGreen]}>
               {form.fumeur && <Text style={{ color: COLORS.white, fontSize: 12 }}>✓</Text>}
             </View>
             <Text style={[s.checkboxLabel, { flex: 0 }]}>Fumeur</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Taille et poids — champs obligatoires */}
           <TextInput style={[s.input, errors.taille ? s.inputError : null]} placeholder="Votre taille (cm) *"

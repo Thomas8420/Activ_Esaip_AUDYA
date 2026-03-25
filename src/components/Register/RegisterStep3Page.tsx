@@ -50,12 +50,12 @@ const CheckboxGroup = ({ label, list, onToggle }: CheckboxGroupProps) => (
   <View style={s.questionBlock}>
     <Text style={s.questionText}>{label}</Text>
     {SITUATIONS.map(item => (
-      <TouchableOpacity key={item} style={s.checkboxRow} onPress={() => onToggle(item)} activeOpacity={0.7}>
+      <Pressable key={item} style={s.checkboxRow} onPress={() => onToggle(item)}>
         <View style={[s.checkbox, list.includes(item) && s.checkboxGreen]}>
           {list.includes(item) && <Text style={{ color: COLORS.white, fontSize: 12 }}>✓</Text>}
         </View>
         <Text style={s.checkboxLabel}>{item}</Text>
-      </TouchableOpacity>
+      </Pressable>
     ))}
   </View>
 );
