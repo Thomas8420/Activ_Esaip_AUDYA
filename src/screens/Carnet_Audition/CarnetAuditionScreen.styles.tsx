@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, FONT_BOLD, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
+import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../Home/HomeScreen.styles';
 
 export const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: COLORS.background },
@@ -10,10 +10,6 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     minHeight: 600,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
   },
   title: {
     fontSize: 20,
@@ -25,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   controlsContainer: { marginBottom: 20, zIndex: 10 },
   rowTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  label: { fontFamily: FONT_BOLD, color: '#1A3B5D', marginRight: 10 },
+  label: { fontFamily: FONT_REGULAR, color: COLORS.textLight, marginRight: 10 },
   searchBox: {
     flex: 1,
     flexDirection: 'row',
@@ -133,26 +129,18 @@ export const styles = StyleSheet.create({
   iconLeft: { right: -15, borderColor: COLORS.orange },
   iconRight: { left: -15, borderColor: '#3ABFBF' },
   itemContent: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 15,
     padding: 12,
-    borderWidth: 1,
-    borderColor: '#EEE',
   },
-  author: { fontSize: 11, fontWeight: 'bold', color: '#666' },
+   author: { fontSize: 11, fontWeight: 'bold', color: '#666' },
   dateText: { fontSize: 10, color: '#999', marginBottom: 5 },
-  docTitle: { fontSize: 13, fontFamily: FONT_BOLD, color: '#1A3B5D' },
+  docTitle: { fontSize: 11, fontFamily: FONT_REGULAR, color: COLORS.textLight },
   docDesc: { fontSize: 11, color: '#444', marginTop: 3 },
   actionIcons: { flexDirection: 'row', gap: 8, marginTop: 12, alignItems: 'center', justifyContent: 'center' },
   timelineActionBtn: {
     width: 30,
     height: 30,
-    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.offWhite,
   },
 
   // --- Modale d'ajout de document ---
@@ -248,13 +236,13 @@ export const styles = StyleSheet.create({
   },
   rowText: { fontSize: 11, color: '#333' },
   rowActions: { flexDirection: 'row', gap: 15 },
-  eyeCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' },
+  eyeCircle: { width: 28, height: 28, justifyContent: 'center', alignItems: 'center' },
 
   // Styles pour la Grille
   gridContainer: { marginTop: 20 },
-  gridItem: { marginBottom: 25, backgroundColor: 'white', borderRadius: 15, elevation: 3, padding: 10 },
+  gridItem: { marginBottom: 25, padding: 10 },
   imagePlaceholder: { height: 200, backgroundColor: '#F9F9F9', borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#EEE' },
   gridCaption: { flexDirection: 'row', backgroundColor: '#E0E0E0', padding: 10, marginTop: 10, borderRadius: 5 },
-  captionLabel: { flex: 1, fontSize: 12, fontWeight: 'bold' },
+  captionLabel: { flex: 1, fontSize: 12, fontFamily: FONT_REGULAR },
   captionValue: { flex: 1, fontSize: 12 },
 });

@@ -101,28 +101,6 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Avertissement d'invitation en attente */}
-      {professional.isInvitationPending && (
-        <View>
-          <View style={styles.invitationWarning}>
-            <Text style={styles.invitationWarningText}>
-              <Text style={styles.invitationWarningTextBold}>
-                L'invitation n'a pas encore été validée.{'\n'}
-              </Text>
-              Vous ne pouvez pas utiliser la messagerie avec cet utilisateur.
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.resendInvitationButton}
-            onPress={onResendInvitation}
-            accessibilityLabel="Renvoyer l'invitation"
-            accessibilityRole="button"
-          >
-            <Text style={styles.resendInvitationButtonText}>Renvoyer l'invitation</Text>
-          </TouchableOpacity>
-        </View>
-      )}
     </View>
   );
 };

@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
+import DropdownIcon from '../../assets/images/dropdown.svg';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
@@ -84,32 +85,36 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           </View>
 
           {/* Spécialité * */}
-          <TouchableOpacity
-            style={styles.formDropdownButton}
-            onPress={() => { setSpecialtyOpen(!specialtyOpen); setCountryOpen(false); }}
-            accessibilityLabel={specialty || 'Spécialité'}
-            accessibilityRole="button"
-          >
-            <Text style={[styles.formDropdownText, specialty ? styles.formDropdownTextSelected : null]}>
-              {specialty || 'Spécialité *'}
-            </Text>
-            <Text style={styles.formDropdownArrow}>▼</Text>
-          </TouchableOpacity>
-          <AnimatedDropdown visible={specialtyOpen}>
-            <View style={styles.formDropdownMenu}>
-              {SPECIALTIES.map(s => (
-                <TouchableOpacity
-                  key={s}
-                  style={styles.formDropdownItem}
-                  onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
-                  accessibilityLabel={s}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.formDropdownItemText}>{s}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </AnimatedDropdown>
+          <View style={styles.formDropdownWrapper}>
+            <TouchableOpacity
+              style={styles.formDropdownButton}
+              onPress={() => { setSpecialtyOpen(!specialtyOpen); setCountryOpen(false); }}
+              accessibilityLabel={specialty || 'Spécialité'}
+              accessibilityRole="button"
+            >
+              <Text style={[styles.formDropdownText, specialty ? styles.formDropdownTextSelected : null]}>
+                {specialty || 'Spécialité *'}
+              </Text>
+              <View style={styles.dropdownArrowBg}>
+                <DropdownIcon width={10} height={10} fill="white" />
+              </View>
+            </TouchableOpacity>
+            <AnimatedDropdown visible={specialtyOpen}>
+              <View style={styles.formDropdownMenu}>
+                {SPECIALTIES.map(s => (
+                  <TouchableOpacity
+                    key={s}
+                    style={styles.formDropdownItem}
+                    onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
+                    accessibilityLabel={s}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.formDropdownItemText}>{s}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </AnimatedDropdown>
+          </View>
 
           {/* Nom * */}
           <TextInput
@@ -167,32 +172,36 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           />
 
           {/* Pays * */}
-          <TouchableOpacity
-            style={styles.formDropdownButton}
-            onPress={() => { setCountryOpen(!countryOpen); setSpecialtyOpen(false); }}
-            accessibilityLabel={country || 'Pays'}
-            accessibilityRole="button"
-          >
-            <Text style={[styles.formDropdownText, country ? styles.formDropdownTextSelected : null]}>
-              {country || 'Pays *'}
-            </Text>
-            <Text style={styles.formDropdownArrow}>▼</Text>
-          </TouchableOpacity>
-          <AnimatedDropdown visible={countryOpen}>
-            <View style={styles.formDropdownMenu}>
-              {COUNTRIES.map(c => (
-                <TouchableOpacity
-                  key={c}
-                  style={styles.formDropdownItem}
-                  onPress={() => { setCountry(c); setCountryOpen(false); }}
-                  accessibilityLabel={c}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.formDropdownItemText}>{c}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </AnimatedDropdown>
+          <View style={styles.formDropdownWrapper}>
+            <TouchableOpacity
+              style={styles.formDropdownButton}
+              onPress={() => { setCountryOpen(!countryOpen); setSpecialtyOpen(false); }}
+              accessibilityLabel={country || 'Pays'}
+              accessibilityRole="button"
+            >
+              <Text style={[styles.formDropdownText, country ? styles.formDropdownTextSelected : null]}>
+                {country || 'Pays *'}
+              </Text>
+              <View style={styles.dropdownArrowBg}>
+                <DropdownIcon width={10} height={10} fill="white" />
+              </View>
+            </TouchableOpacity>
+            <AnimatedDropdown visible={countryOpen}>
+              <View style={styles.formDropdownMenu}>
+                {COUNTRIES.map(c => (
+                  <TouchableOpacity
+                    key={c}
+                    style={styles.formDropdownItem}
+                    onPress={() => { setCountry(c); setCountryOpen(false); }}
+                    accessibilityLabel={c}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.formDropdownItemText}>{c}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </AnimatedDropdown>
+          </View>
 
           {/* E-mail */}
           <TextInput

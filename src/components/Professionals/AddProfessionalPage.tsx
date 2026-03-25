@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
+import DropdownIcon from '../../assets/images/dropdown.svg';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
@@ -72,39 +73,43 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
           <Text style={styles.formSectionTitle}>Recherche</Text>
 
           {/* Spécialité (dropdown) */}
-          <TouchableOpacity
-            style={styles.formDropdownButton}
-            onPress={() => setSpecialtyOpen(!specialtyOpen)}
-          >
-            <Text
-              style={[
-                styles.formDropdownText,
-                specialty ? styles.formDropdownTextSelected : null,
-              ]}
+          <View style={styles.formDropdownWrapper}>
+            <TouchableOpacity
+              style={styles.formDropdownButton}
+              onPress={() => setSpecialtyOpen(!specialtyOpen)}
             >
-              {specialty || 'Spécialité'}
-            </Text>
-            <Text style={{ fontSize: 12, color: '#999' }}>▼</Text>
-          </TouchableOpacity>
-          <AnimatedDropdown visible={specialtyOpen}>
-            <View style={styles.formDropdownMenu}>
-              <TouchableOpacity
-                style={styles.formDropdownItem}
-                onPress={() => { setSpecialty(''); setSpecialtyOpen(false); }}
+              <Text
+                style={[
+                  styles.formDropdownText,
+                  specialty ? styles.formDropdownTextSelected : null,
+                ]}
               >
-                <Text style={styles.formDropdownItemText}>Toutes</Text>
-              </TouchableOpacity>
-              {SPECIALTIES.map(s => (
+                {specialty || 'Spécialité'}
+              </Text>
+              <View style={styles.dropdownArrowBg}>
+                <DropdownIcon width={10} height={10} fill="white" />
+              </View>
+            </TouchableOpacity>
+            <AnimatedDropdown visible={specialtyOpen}>
+              <View style={styles.formDropdownMenu}>
                 <TouchableOpacity
-                  key={s}
                   style={styles.formDropdownItem}
-                  onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
+                  onPress={() => { setSpecialty(''); setSpecialtyOpen(false); }}
                 >
-                  <Text style={styles.formDropdownItemText}>{s}</Text>
+                  <Text style={styles.formDropdownItemText}>Toutes</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-          </AnimatedDropdown>
+                {SPECIALTIES.map(s => (
+                  <TouchableOpacity
+                    key={s}
+                    style={styles.formDropdownItem}
+                    onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
+                  >
+                    <Text style={styles.formDropdownItemText}>{s}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </AnimatedDropdown>
+          </View>
 
           {/* Nom */}
           <TextInput

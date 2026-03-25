@@ -89,6 +89,7 @@ const FR: TranslationMap = {
   'questionnaire.section.history': 'Historique ({count})',
   'device.ear.right':              'Oreille droite',
   'device.ear.left':               'Oreille gauche',
+  'device.download':               'Téléchargement',
 
   // ── Erreurs ────────────────────────────────────────────────────────────
   'error.load':     'Impossible de charger les paramètres.',
@@ -179,6 +180,7 @@ const EN: TranslationMap = {
   'questionnaire.section.history': 'History ({count})',
   'device.ear.right':              'Right ear',
   'device.ear.left':               'Left ear',
+  'device.download':               'Download',
 
   // ── Errors ─────────────────────────────────────────────────────────────
   'error.load':     'Unable to load settings.',
@@ -269,6 +271,7 @@ const ES: TranslationMap = {
   'questionnaire.section.history': 'Historial ({count})',
   'device.ear.right':              'Oído derecho',
   'device.ear.left':               'Oído izquierdo',
+  'device.download':               'Descargar',
 
   // ── Errores ────────────────────────────────────────────────────────────
   'error.load':     'Imposible cargar los ajustes.',
@@ -359,6 +362,7 @@ const TH: TranslationMap = {
   'questionnaire.section.history': 'ประวัติ ({count})',
   'device.ear.right':              'หูข้างขวา',
   'device.ear.left':               'หูข้างซ้าย',
+  'device.download':               'ดาวน์โหลด',
 
   // ── ข้อผิดพลาด ─────────────────────────────────────────────────────────
   'error.load':     'ไม่สามารถโหลดการตั้งค่าได้',
@@ -449,6 +453,7 @@ const AR: TranslationMap = {
   'questionnaire.section.history': 'السجل ({count})',
   'device.ear.right':              'الأذن اليمنى',
   'device.ear.left':               'الأذن اليسرى',
+  'device.download':               'تحميل',
 
   // ── الأخطاء ────────────────────────────────────────────────────────────
   'error.load':     'تعذّر تحميل الإعدادات.',
@@ -539,6 +544,7 @@ const HY: TranslationMap = {
   'questionnaire.section.history': 'Պատմություն ({count})',
   'device.ear.right':              'Աջ ականջ',
   'device.ear.left':               'Ձախ ականջ',
+  'device.download':               'Ներբեռնել',
 
   // ── Սխալներ ───────────────────────────────────────────────────────────
   'error.load':     'Հնարավոր չէ բեռնել կարգավորումները։',
@@ -629,6 +635,7 @@ const RU: TranslationMap = {
   'questionnaire.section.history': 'История ({count})',
   'device.ear.right':              'Правое ухо',
   'device.ear.left':               'Левое ухо',
+  'device.download':               'Скачать',
 
   // ── Ошибки ────────────────────────────────────────────────────────────
   'error.load':     'Не удалось загрузить настройки.',
@@ -719,6 +726,7 @@ const TR: TranslationMap = {
   'questionnaire.section.history': 'Geçmiş ({count})',
   'device.ear.right':              'Sağ kulak',
   'device.ear.left':               'Sol kulak',
+  'device.download':               'İndir',
 
   // ── Hatalar ────────────────────────────────────────────────────────────
   'error.load':     'Ayarlar yüklenemedi.',

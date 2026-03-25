@@ -120,15 +120,14 @@ const NavBar = () => {
       </View>
 
       {/* -- Panel notifications -- */}
-      {notifOpen && (
-        <NotificationPanel
-          notifications={notifications}
-          topOffset={25 + topInset}
-          onClose={() => setNotifOpen(false)}
-          onMarkAsRead={handleMarkAsRead}
-          onMarkAllAsRead={handleMarkAllAsRead}
-        />
-      )}
+      <NotificationPanel
+        visible={notifOpen}
+        notifications={notifications}
+        topOffset={25 + topInset}
+        onClose={() => setNotifOpen(false)}
+        onMarkAsRead={handleMarkAsRead}
+        onMarkAllAsRead={handleMarkAllAsRead}
+      />
 
       {/* -- Menu déroulant du profil -- */}
       {profileOpen && (

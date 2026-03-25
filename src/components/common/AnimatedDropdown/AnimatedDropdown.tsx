@@ -62,7 +62,7 @@ const AnimatedDropdown: React.FC<Props> = ({ visible, children, absolute = false
     <Animated.View
       pointerEvents={absolute ? 'box-none' : 'auto'}
       style={[
-        absolute && { position: 'absolute', top: 0, left: 0, right: 0 },
+        absolute && { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 999, elevation: 20 },
         { opacity: fadeAnim, transform: [{ translateY }] },
       ]}
     >

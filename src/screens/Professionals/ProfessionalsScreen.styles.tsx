@@ -52,10 +52,11 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 16,
     marginBottom: 16,
-    elevation: 2,
+    elevation: 6,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 10,
+    zIndex: 10,
   },
   filtersHeader: {
     flexDirection: 'row',
@@ -74,17 +75,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modeIcon: {
-    width: 24,
-    height: 24,
+    width: 30,
+    height: 30,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  modeIconActive: {
-    backgroundColor: COLORS.orange,
-    borderColor: COLORS.orange,
   },
   modeMenuButton: {
     width: 32,
@@ -275,19 +270,34 @@ export const styles = StyleSheet.create({
     color: COLORS.white,
   },
 
+  // ── Dropdown Arrow (shared) ──
+  dropdownArrowBg: {
+    backgroundColor: '#D3D3D3',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   // ── Filter Dropdowns ──
   filterDropdownWrapper: {
     flex: 1,
+    zIndex: 100,
   },
   filterDropdownMenuOverlay: {
     position: 'absolute',
-    top: 50,
+    top: 44,
     left: 0,
     right: 0,
     backgroundColor: COLORS.white,
     borderRadius: 8,
     elevation: 5,
     zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   filterDropdownItem: {
     padding: 12,
@@ -398,33 +408,133 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_SEMIBOLD,
   },
 
-  // ── Invitation Warning ──
-  invitationWarning: {
-    backgroundColor: COLORS.offWhite,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: COLORS.orange,
-  },
-  invitationWarningText: {
-    fontFamily: FONT_REGULAR,
-    fontSize: 12,
-    color: COLORS.text,
-    lineHeight: 18,
-  },
-  invitationWarningTextBold: {
-    fontFamily: FONT_SEMIBOLD,
-  },
-  resendInvitationButton: {
-    backgroundColor: COLORS.orange,
+  // ── Pending Invitations Section ──
+  pendingSection: {
+    backgroundColor: COLORS.white,
     borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  pendingSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  pendingSectionTitle: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.textLight,
+    flex: 1,
+  },
+  pendingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    opacity: 0.6,
+  },
+  pendingRowAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
-  resendInvitationButtonText: {
+  pendingRowAvatarText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 12,
+    color: COLORS.textLight,
+  },
+  pendingRowInfo: {
+    flex: 1,
+  },
+  pendingRowName: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  pendingRowRole: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginTop: 2,
+  },
+
+  // ── Modal invitation en attente ──
+  pendingModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  pendingModalContent: {
+    width: '100%',
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 24,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  pendingModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  pendingModalTitle: {
+    fontFamily: FONT_BOLD,
+    fontSize: 16,
+    color: COLORS.orange,
+  },
+  pendingCloseBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1.5,
+    borderColor: COLORS.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pendingDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  pendingDetailLabel: {
+    flex: 1,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 12,
+    color: COLORS.textLight,
+    textTransform: 'uppercase',
+  },
+  pendingDetailValue: {
+    flex: 1.5,
+    fontFamily: FONT_REGULAR,
+    fontSize: 13,
+    color: COLORS.text,
+  },
+  pendingResendButton: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  pendingResendButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 14,
     color: COLORS.white,
@@ -498,7 +608,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#4A90D9',
   },
   profileMessageButton: {
-    backgroundColor: COLORS.teal,
+    backgroundColor: COLORS.orange,
     borderRadius: 20,
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -569,6 +679,10 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  formDropdownWrapper: {
+    marginBottom: 12,
+    zIndex: 100,
+  },
   formDropdownButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -577,7 +691,6 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    marginBottom: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
@@ -595,10 +708,12 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: COLORS.border,
-    marginTop: -8,
-    marginBottom: 12,
     elevation: 5,
     zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   formDropdownItem: {
     paddingHorizontal: 14,

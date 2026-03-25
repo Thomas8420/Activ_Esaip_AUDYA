@@ -7,8 +7,9 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
+import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
+import DropdownIcon from '../../assets/images/dropdown.svg';
 export interface Filters {
   searchQuery: string;
   itemsPerPage: number;
@@ -76,7 +77,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
         <Text style={styles.filtersTitle}>Filtres</Text>
         <View style={styles.filtersModeSelector}>
           <TouchableOpacity
-            style={[styles.modeIcon, viewMode === 'card' && styles.modeIconActive]}
+            style={styles.modeIcon}
             onPress={() => onViewModeChange('card')}
             accessibilityLabel="Vue grille"
             accessibilityRole="button"
@@ -84,12 +85,12 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
           >
             <Icon
               name="grid-outline"
-              size={20}
-              color={viewMode === 'card' ? '#E8622A' : '#999999'}
+              size={18}
+              color={viewMode === 'card' ? COLORS.orange : COLORS.border}
             />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.modeIcon, viewMode === 'list' && styles.modeIconActive]}
+            style={styles.modeIcon}
             onPress={() => onViewModeChange('list')}
             accessibilityLabel="Vue liste"
             accessibilityRole="button"
@@ -97,8 +98,8 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
           >
             <Icon
               name="list-outline"
-              size={20}
-              color={viewMode === 'list' ? '#E8622A' : '#999999'}
+              size={18}
+              color={viewMode === 'list' ? COLORS.orange : COLORS.border}
             />
           </TouchableOpacity>
         </View>
@@ -122,7 +123,9 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             onPress={() => setItemsPerPageOpen(!itemsPerPageOpen)}
           >
             <Text style={styles.filterButtonText}>{filters.itemsPerPage} items</Text>
-            <Text style={styles.filterDropdownChevron}>▼</Text>
+            <View style={styles.dropdownArrowBg}>
+              <DropdownIcon width={10} height={10} fill="white" />
+            </View>
           </TouchableOpacity>
           <AnimatedDropdown visible={itemsPerPageOpen} absolute>
             <View style={styles.filterDropdownMenuOverlay}>
@@ -148,7 +151,9 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             <Text style={styles.filterButtonText}>
               {filters.specialty || 'Spécialité'}
             </Text>
-            <Text style={styles.filterDropdownChevron}>▼</Text>
+            <View style={styles.dropdownArrowBg}>
+              <DropdownIcon width={10} height={10} fill="white" />
+            </View>
           </TouchableOpacity>
           <AnimatedDropdown visible={specialtyOpen} absolute>
             <View style={[styles.filterDropdownMenuOverlay, { maxHeight: 200 }]}>

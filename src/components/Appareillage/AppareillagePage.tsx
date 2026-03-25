@@ -146,21 +146,14 @@ const AppareillagePage = () => {
                     <Text style={styles.detailValue}>{selectedAppareil.serial}</Text>
                   </View>
 
-                  {/* Actions */}
-                  <View style={styles.actionsSection}>
-                    <Text style={styles.actionsLabel}>ACTIONS</Text>
-                    <View style={styles.bigActionsRow}>
-                      <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Voir" accessibilityRole="button">
-                        <Icon name="eye-outline" size={26} color={COLORS.textLight} />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Télécharger" accessibilityRole="button">
-                        <Icon name="download-outline" size={26} color={COLORS.textLight} />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.bigActionButton} accessibilityLabel="Supprimer" accessibilityRole="button">
-                        <Icon name="trash-outline" size={26} color={COLORS.textLight} />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+                  {/* Bouton téléchargement */}
+                  <TouchableOpacity
+                    style={styles.downloadButton}
+                    accessibilityLabel={t('device.download')}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.downloadButtonText}>{t('device.download')}</Text>
+                  </TouchableOpacity>
 
                 </View>
               )}
@@ -303,38 +296,19 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     textAlign: 'left',
   },
-  actionsSection: {
+  downloadButton: {
     marginTop: 20,
-    paddingVertical: 10,
+    backgroundColor: COLORS.orange,
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
   },
-  actionsLabel: {
-    fontSize: 13,
+  downloadButtonText: {
     fontFamily: FONT_BOLD,
-    color: COLORS.textLight,
-    marginBottom: 15,
+    fontSize: 14,
+    color: COLORS.white,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-  },
-  bigActionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
-  bigActionButton: {
-    width: 65,
-    height: 65,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    shadowOffset: { width: 0, height: 1 },
   },
 });
 

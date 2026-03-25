@@ -15,7 +15,7 @@ export const CarnetTimelineView = ({ documents }: Props) => (
         <View style={[styles.timelineIconWrapper, doc.side === 'left' ? styles.iconLeft : styles.iconRight]}>
           <Icon
             name="document-text-outline"
-            size={16}
+            size={20}
             color={doc.side === 'left' ? COLORS.orange : COLORS.teal}
           />
         </View>
@@ -23,8 +23,8 @@ export const CarnetTimelineView = ({ documents }: Props) => (
           <Text style={styles.author}>{doc.author}</Text>
           <Text style={styles.dateText}>le {doc.date} - 11:24</Text>
           {!!doc.patientName && (
-            <Text style={{ fontSize: 11, marginBottom: 4 }}>
-              <Text style={{ fontWeight: 'bold' }}>Patient : </Text>{doc.patientName}
+            <Text style={{ fontSize: 11, color: COLORS.textLight, marginBottom: 4 }}>
+              Patient : {doc.patientName}
             </Text>
           )}
           <Text style={styles.docTitle}>{doc.title || doc.type}</Text>
@@ -34,21 +34,21 @@ export const CarnetTimelineView = ({ documents }: Props) => (
               accessibilityLabel="Voir"
               accessibilityRole="button"
             >
-              <Icon name="eye-outline" size={16} color={COLORS.textLight} />
+              <Icon name="eye-outline" size={20} color={COLORS.textLight} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.timelineActionBtn}
               accessibilityLabel="Télécharger"
               accessibilityRole="button"
             >
-              <Icon name="download-outline" size={16} color={COLORS.textLight} />
+              <Icon name="download-outline" size={20} color={COLORS.textLight} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.timelineActionBtn}
               accessibilityLabel="Supprimer"
               accessibilityRole="button"
             >
-              <Icon name="trash-outline" size={16} color={COLORS.textLight} />
+              <Icon name="trash-outline" size={20} color={COLORS.textLight} />
             </TouchableOpacity>
           </View>
         </View>

@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   ActivityIndicator,
+  Modal,
   ScrollView,
   StatusBar,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
@@ -71,10 +74,41 @@ const MOCK_PROFESSIONALS: Professional[] = [
   },
 ];
 
+// ─── Sous-composant ligne invitation en attente (module-level) ────────────────
+
+interface PendingRowProps {
+  professional: Professional;
+  onPress: () => void;
+}
+
+const PendingRow = ({ professional, onPress }: PendingRowProps) => {
+  const initials = (professional.firstName[0] + professional.lastName[0]).toUpperCase();
+  return (
+    <TouchableOpacity
+      style={styles.pendingRow}
+      onPress={onPress}
+      accessibilityLabel={`Invitation en attente — ${professional.firstName} ${professional.lastName}`}
+      accessibilityRole="button"
+    >
+      <View style={styles.pendingRowAvatar}>
+        <Text style={styles.pendingRowAvatarText}>{initials}</Text>
+      </View>
+      <View style={styles.pendingRowInfo}>
+        <Text style={styles.pendingRowName}>{professional.firstName} {professional.lastName}</Text>
+        <Text style={styles.pendingRowRole}>{professional.role}</Text>
+      </View>
+      <Icon name="time-outline" size={16} color={COLORS.textLight} />
+    </TouchableOpacity>
+  );
+};
+
+// ─── Composant principal ──────────────────────────────────────────────────────
 
 /**
- * Composant principal qui assemble les différentes parties de l'écran des professionnels.
- * Il intègre la barre de navigation, le filtre, la grille de professionnels et le bouton d'action flottant.
+ * ProfessionalsPage — Orchestrateur de l'écran Mes Professionnels.
+ * Sépare les professionnels en deux catégories :
+ *   - Invitations en attente (section compacte + modal détail)
+ *   - Professionnels actifs (liste/grille filtrée)
  */
 const ProfessionalsPage = () => {
   const { navigateToProfile, navigateToMessagingChat, navigateToAdd } = useNavigation();
@@ -89,6 +123,7 @@ const ProfessionalsPage = () => {
     zipCode: '',
     city: '',
   });
+  const [pendingModalPro, setPendingModalPro] = useState<Professional | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -131,9 +166,16 @@ const ProfessionalsPage = () => {
     });
   }, [navigateToMessagingChat]);
 
+  // Invitations en attente — toujours affichées, hors filtres
+  const pendingProfessionals = useMemo(() =>
+    professionals.filter(p => p.isInvitationPending),
+  [professionals]);
+
+  // Professionnels actifs — filtrés et paginés
   const filteredProfessionals = useMemo(() =>
     professionals
       .filter(p => {
+        if (p.isInvitationPending) { return false; }
         const fullName = `${p.firstName} ${p.lastName}`.toLowerCase();
         const matchesSearch =
           fullName.includes(filters.searchQuery.toLowerCase()) ||
@@ -150,10 +192,8 @@ const ProfessionalsPage = () => {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <StatusBar barStyle="dark-content" />
 
-      {/* Affiche la barre de navigation */}
       <NavBar />
 
-      {/* Le contenu principal est dans un ScrollView pour permettre le défilement */}
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Titre */}
         <View style={styles.titleSection}>
@@ -175,7 +215,22 @@ const ProfessionalsPage = () => {
           <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 40 }} />
         )}
 
-        {/* Vue cartes */}
+        {/* Section invitations en attente */}
+        {!isLoading && pendingProfessionals.length > 0 && (
+          <View style={styles.pendingSection}>
+            <View style={styles.pendingSectionHeader}>
+              <Icon name="time-outline" size={16} color={COLORS.textLight} />
+              <Text style={styles.pendingSectionTitle}>
+                Invitations en attente ({pendingProfessionals.length})
+              </Text>
+            </View>
+            {pendingProfessionals.map(p => (
+              <PendingRow key={p.id} professional={p} onPress={() => setPendingModalPro(p)} />
+            ))}
+          </View>
+        )}
+
+        {/* Vue cartes — professionnels actifs */}
         {!isLoading && viewMode === 'card' && (
           filteredProfessionals.length > 0 ? (
             filteredProfessionals.map(professional => (
@@ -195,7 +250,7 @@ const ProfessionalsPage = () => {
           )
         )}
 
-        {/* Vue tableau */}
+        {/* Vue tableau — professionnels actifs */}
         {!isLoading && viewMode === 'list' && (
           <View style={styles.listContainer}>
             <View style={styles.listHeader}>
@@ -223,7 +278,67 @@ const ProfessionalsPage = () => {
         )}
       </ScrollView>
 
-      {/* Barre de navigation inférieure (inclut le bouton chat) */}
+      {/* Modal détail invitation en attente */}
+      {pendingModalPro !== null && (
+        <Modal
+          visible
+          animationType="fade"
+          transparent
+          onRequestClose={() => setPendingModalPro(null)}
+        >
+          <View style={styles.pendingModalOverlay}>
+            <View style={styles.pendingModalContent}>
+              <View style={styles.pendingModalHeader}>
+                <Text style={styles.pendingModalTitle}>Invitation en attente</Text>
+                <TouchableOpacity
+                  onPress={() => setPendingModalPro(null)}
+                  style={styles.pendingCloseBtn}
+                  accessibilityLabel="Fermer"
+                  accessibilityRole="button"
+                >
+                  <Icon name="close" size={14} color={COLORS.text} />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.pendingDetailRow}>
+                <Text style={styles.pendingDetailLabel}>Nom</Text>
+                <Text style={styles.pendingDetailValue}>
+                  {pendingModalPro.firstName} {pendingModalPro.lastName}
+                </Text>
+              </View>
+              <View style={styles.pendingDetailRow}>
+                <Text style={styles.pendingDetailLabel}>Spécialité</Text>
+                <Text style={styles.pendingDetailValue}>{pendingModalPro.role}</Text>
+              </View>
+              <View style={styles.pendingDetailRow}>
+                <Text style={styles.pendingDetailLabel}>Établissement</Text>
+                <Text style={styles.pendingDetailValue}>{pendingModalPro.company}</Text>
+              </View>
+              <View style={styles.pendingDetailRow}>
+                <Text style={styles.pendingDetailLabel}>E-mail</Text>
+                <Text style={styles.pendingDetailValue}>{pendingModalPro.email}</Text>
+              </View>
+              <View style={styles.pendingDetailRow}>
+                <Text style={styles.pendingDetailLabel}>Téléphone</Text>
+                <Text style={styles.pendingDetailValue}>{pendingModalPro.phone}</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.pendingResendButton}
+                onPress={() => {
+                  handleResendInvitation(pendingModalPro.id);
+                  setPendingModalPro(null);
+                }}
+                accessibilityLabel="Renvoyer l'invitation"
+                accessibilityRole="button"
+              >
+                <Text style={styles.pendingResendButtonText}>Renvoyer l'invitation</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
+
       <BottomNav />
     </SafeAreaView>
   );

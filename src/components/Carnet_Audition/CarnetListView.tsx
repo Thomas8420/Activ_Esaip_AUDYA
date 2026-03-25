@@ -55,21 +55,21 @@ export const CarnetListView: React.FC<Props> = ({ documents }) => {
               accessibilityLabel={`Voir ${doc.title ?? doc.type}`}
               accessibilityRole="button"
             >
-              <Icon name="eye-outline" size={14} color={COLORS.white} />
+              <Icon name="eye-outline" size={18} color={COLORS.white} />
             </TouchableOpacity>
             <TouchableOpacity
               style={localStyles.actionButton}
               accessibilityLabel="Télécharger"
               accessibilityRole="button"
             >
-              <Icon name="download-outline" size={14} color={COLORS.textLight} />
+              <Icon name="download-outline" size={18} color={COLORS.textLight} />
             </TouchableOpacity>
             <TouchableOpacity
               style={localStyles.actionButton}
               accessibilityLabel="Supprimer"
               accessibilityRole="button"
             >
-              <Icon name="trash-outline" size={14} color={COLORS.textLight} />
+              <Icon name="trash-outline" size={18} color={COLORS.textLight} />
             </TouchableOpacity>
           </View>
 
@@ -183,9 +183,9 @@ const localStyles = StyleSheet.create({
 
   // ── Cellules ─────────────────────────────────────────────────────────────
   cellPrimary: {
-    fontFamily: FONT_SEMIBOLD,
+    fontFamily: FONT_REGULAR,
     fontSize: 11,
-    color: COLORS.teal,
+    color: COLORS.textLight,
     textAlign: 'center',
   },
   cellSecondary: {
@@ -198,12 +198,8 @@ const localStyles = StyleSheet.create({
   actionButton: {
     width: 26,
     height: 26,
-    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.offWhite,
   },
   actionButtonPrimary: {
     backgroundColor: COLORS.orange,

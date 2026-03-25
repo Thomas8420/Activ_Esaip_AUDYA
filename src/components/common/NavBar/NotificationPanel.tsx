@@ -1,6 +1,7 @@
 // src/components/common/NavBar/NotificationPanel.tsx
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Dimensions,
   Pressable,
   ScrollView,
@@ -87,6 +88,7 @@ const NotifRow = ({ notification, onPress }: NotifRowProps) => {
 const PANEL_WIDTH = Math.min(Dimensions.get('window').width - 16, 340);
 
 interface NotificationPanelProps {
+  visible: boolean;
   notifications: AppNotification[];
   /** Position verticale du panel (top en px, déjà calculé avec topInset) */
   topOffset: number;
@@ -97,32 +99,75 @@ interface NotificationPanelProps {
 
 /**
  * NotificationPanel — Popup liste des notifications affichée sous la cloche.
- * Overlay semi-transparent derrière pour fermeture au clic extérieur.
+ * Fade-in + slide-down à l'ouverture, fade-out + slide-up à la fermeture.
+ * Démontage différé pour laisser l'animation de sortie se terminer.
  */
 const NotificationPanel = ({
+  visible,
   notifications,
   topOffset,
   onClose,
   onMarkAsRead,
   onMarkAllAsRead,
 }: NotificationPanelProps) => {
+  const [mounted, setMounted] = useState(visible);
+
+  const overlayOpacity  = useRef(new Animated.Value(visible ? 1 : 0)).current;
+  const panelOpacity    = useRef(new Animated.Value(visible ? 1 : 0)).current;
+  const panelTranslateY = useRef(new Animated.Value(visible ? 0 : -12)).current;
+  const animRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  useEffect(() => {
+    if (animRef.current) { animRef.current.stop(); animRef.current = null; }
+
+    if (visible) {
+      setMounted(true);
+      animRef.current = Animated.parallel([
+        Animated.timing(overlayOpacity,  { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(panelOpacity,    { toValue: 1, duration: 220, useNativeDriver: true }),
+        Animated.timing(panelTranslateY, { toValue: 0, duration: 220, useNativeDriver: true }),
+      ]);
+      animRef.current.start(({ finished }) => { if (finished) animRef.current = null; });
+    } else {
+      animRef.current = Animated.parallel([
+        Animated.timing(overlayOpacity,  { toValue: 0, duration: 160, useNativeDriver: true }),
+        Animated.timing(panelOpacity,    { toValue: 0, duration: 160, useNativeDriver: true }),
+        Animated.timing(panelTranslateY, { toValue: -12, duration: 160, useNativeDriver: true }),
+      ]);
+      animRef.current.start(({ finished }) => {
+        animRef.current = null;
+        if (finished) setMounted(false);
+      });
+    }
+  }, [visible, overlayOpacity, panelOpacity, panelTranslateY]);
+
+  if (!mounted) return null;
+
   const unreadCount = notifications.filter(n => n.readAt === null).length;
 
   return (
     <>
-      {/* Overlay transparent — ferme le panel au clic en dehors */}
-      <Pressable style={styles.overlay} onPress={onClose} />
+      {/* Overlay animé — ferme le panel au clic en dehors */}
+      <Animated.View
+        style={[styles.overlay, { opacity: overlayOpacity }]}
+        pointerEvents={visible ? 'auto' : 'none'}
+      >
+        <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
+      </Animated.View>
 
-      {/* Panel */}
-      <View style={[styles.panel, { top: topOffset }]}>
-
+      {/* Panel animé */}
+      <Animated.View
+        style={[
+          styles.panel,
+          { top: topOffset },
+          { opacity: panelOpacity, transform: [{ translateY: panelTranslateY }] },
+        ]}
+      >
         {/* En-tête */}
         <View style={styles.panelHeader}>
           <View style={styles.panelTitleRow}>
             <Icon name="notifications-outline" size={16} color={COLORS.orange} />
-            <Text style={styles.panelTitle}>
-              Notifications
-            </Text>
+            <Text style={styles.panelTitle}>Notifications</Text>
             {unreadCount > 0 && (
               <View style={styles.headerBadge}>
                 <Text style={styles.headerBadgeText}>{unreadCount}</Text>
@@ -162,7 +207,7 @@ const NotificationPanel = ({
             ))}
           </ScrollView>
         )}
-      </View>
+      </Animated.View>
     </>
   );
 };
