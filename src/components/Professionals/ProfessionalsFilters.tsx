@@ -124,7 +124,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             <Text style={styles.filterButtonText}>{filters.itemsPerPage} items</Text>
             <Text style={styles.filterDropdownChevron}>▼</Text>
           </TouchableOpacity>
-          <AnimatedDropdown visible={itemsPerPageOpen}>
+          <AnimatedDropdown visible={itemsPerPageOpen} absolute>
             <View style={styles.filterDropdownMenuOverlay}>
               {itemsPerPageOptions.map(option => (
                 <TouchableOpacity
@@ -150,7 +150,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
             </Text>
             <Text style={styles.filterDropdownChevron}>▼</Text>
           </TouchableOpacity>
-          <AnimatedDropdown visible={specialtyOpen}>
+          <AnimatedDropdown visible={specialtyOpen} absolute>
             <View style={[styles.filterDropdownMenuOverlay, { maxHeight: 200 }]}>
               <TouchableOpacity
                 onPress={() => handleSpecialtyChange('')}

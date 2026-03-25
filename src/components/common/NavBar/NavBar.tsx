@@ -131,44 +131,41 @@ const NavBar = () => {
       )}
 
       {/* -- Menu déroulant du profil -- */}
-      <AnimatedDropdown visible={profileOpen}>
-        <>
-          {/* Filtre gris semi-transparent qui ferme le menu au clic */}
-          <Pressable style={styles.dropdownOverlay} onPress={() => setProfileOpen(false)} />
-
-          {/* Contenu du menu déroulant */}
-          <View style={[styles.dropdown, { top: 25 + topInset }]}>
-            <TouchableOpacity
-              style={styles.dropdownItem}
-              onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}
-              accessibilityLabel="Mon profil"
-              accessibilityRole="button"
-            >
-                <ProfileIcon width={18} height={18} color="#F15A24" />
-                <Text style={styles.dropdownLabel}>{t('navbar.profile')}</Text>
-            </TouchableOpacity>
-            <View style={styles.dropdownSeparator} />
-            <TouchableOpacity
-              style={styles.dropdownItem}
-              onPress={() => { setProfileOpen(false); navigateToSettings(); }}
-              accessibilityLabel="Préférences"
-              accessibilityRole="button"
-            >
-                <SettingsIcon width={18} height={18} color="#F15A24" />
-                <Text style={styles.dropdownLabel}>{t('navbar.preferences')}</Text>
-            </TouchableOpacity>
-            <View style={styles.dropdownSeparator} />
-            <TouchableOpacity
-              style={styles.dropdownItem}
-              onPress={() => { setProfileOpen(false); logout(); }}
-              accessibilityLabel="Déconnexion"
-              accessibilityRole="button"
-            >
-                <LogoutIcon width={18} height={18} color="#F15A24" />
-                <Text style={styles.dropdownLabel}>{t('navbar.logout')}</Text>
-            </TouchableOpacity>
-          </View>
-        </>
+      {profileOpen && (
+        <Pressable style={styles.dropdownOverlay} onPress={() => setProfileOpen(false)} />
+      )}
+      <AnimatedDropdown visible={profileOpen} absolute>
+        <View style={[styles.dropdown, { top: 25 + topInset }]}>
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => { setProfileOpen(false); navigateToMyProfile(); }}
+            accessibilityLabel="Mon profil"
+            accessibilityRole="button"
+          >
+              <ProfileIcon width={18} height={18} color="#F15A24" />
+              <Text style={styles.dropdownLabel}>{t('navbar.profile')}</Text>
+          </TouchableOpacity>
+          <View style={styles.dropdownSeparator} />
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => { setProfileOpen(false); navigateToSettings(); }}
+            accessibilityLabel="Préférences"
+            accessibilityRole="button"
+          >
+              <SettingsIcon width={18} height={18} color="#F15A24" />
+              <Text style={styles.dropdownLabel}>{t('navbar.preferences')}</Text>
+          </TouchableOpacity>
+          <View style={styles.dropdownSeparator} />
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => { setProfileOpen(false); logout(); }}
+            accessibilityLabel="Déconnexion"
+            accessibilityRole="button"
+          >
+              <LogoutIcon width={18} height={18} color="#F15A24" />
+              <Text style={styles.dropdownLabel}>{t('navbar.logout')}</Text>
+          </TouchableOpacity>
+        </View>
       </AnimatedDropdown>
     </>
   );

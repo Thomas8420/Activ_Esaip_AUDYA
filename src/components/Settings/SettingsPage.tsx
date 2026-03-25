@@ -225,7 +225,7 @@ const SettingsPage = () => {
                     <Text style={styles.prefDropdownValue}>{settings.language}</Text>
                     <Text style={styles.prefDropdownChevron}>▼</Text>
                   </TouchableOpacity>
-                  <AnimatedDropdown visible={langOpen}>
+                  <AnimatedDropdown visible={langOpen} absolute>
                     <View style={styles.prefDropdownMenu}>
                       {LANGUAGE_OPTIONS.map((opt, i) => (
                         <TouchableOpacity
@@ -274,7 +274,7 @@ const SettingsPage = () => {
                     <Text style={styles.prefDropdownValue}>{settings.dateFormat}</Text>
                     <Text style={styles.prefDropdownChevron}>▼</Text>
                   </TouchableOpacity>
-                  <AnimatedDropdown visible={dateOpen}>
+                  <AnimatedDropdown visible={dateOpen} absolute>
                     <View style={styles.prefDropdownMenu}>
                       {DATE_FORMAT_OPTIONS.map((opt, i) => (
                         <TouchableOpacity
@@ -327,7 +327,7 @@ const SettingsPage = () => {
                     <Text style={styles.prefDropdownValue}>{settings.timeFormat}</Text>
                     <Text style={styles.prefDropdownChevron}>▼</Text>
                   </TouchableOpacity>
-                  <AnimatedDropdown visible={timeOpen}>
+                  <AnimatedDropdown visible={timeOpen} absolute>
                     <View style={styles.prefDropdownMenu}>
                       {TIME_FORMAT_OPTIONS.map((opt, i) => (
                         <TouchableOpacity

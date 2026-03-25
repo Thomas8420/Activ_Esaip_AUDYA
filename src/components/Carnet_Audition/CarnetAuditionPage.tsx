@@ -136,7 +136,7 @@ const CarnetAuditionPage = () => {
                   </View>
                 </TouchableOpacity>
 
-                <AnimatedDropdown visible={dropdownOpen}>
+                <AnimatedDropdown visible={dropdownOpen} absolute>
                   <View style={styles.dropdownList}>
                     {filterOptions.map((opt) => (
                       <TouchableOpacity
