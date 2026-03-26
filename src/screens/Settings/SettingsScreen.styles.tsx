@@ -212,6 +212,7 @@ export const styles = StyleSheet.create({
   },
   outlineButtonDisabled: {
     borderColor: COLORS.border,
+    backgroundColor: COLORS.border,
   },
   outlineButtonText: {
     fontFamily: FONT_SEMIBOLD,
