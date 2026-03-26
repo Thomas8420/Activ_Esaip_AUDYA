@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
+  Modal,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -210,35 +211,68 @@ const CarnetAuditionPage = () => {
           </View>
         </BottomSheetModal>
       {/* --- MODALE DE VISUALISATION --- */}
-      <BottomSheetModal visible={viewedDoc !== null} onClose={() => setViewedDoc(null)}>
-        {viewedDoc && (
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{viewedDoc.title ?? viewedDoc.type}</Text>
+      <Modal
+        visible={viewedDoc !== null}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setViewedDoc(null)}
+      >
+        <View style={styles.viewModalOverlay}>
+          <View style={styles.viewModalContent}>
+            <View style={styles.viewModalHeader}>
+              <Text style={styles.viewModalTitle}>VOTRE CARNET AUDITION</Text>
+              <TouchableOpacity
+                onPress={() => setViewedDoc(null)}
+                style={styles.viewModalCloseBtn}
+                accessibilityLabel="Fermer"
+                accessibilityRole="button"
+              >
+                <Icon name="close" size={14} color={COLORS.text} />
+              </TouchableOpacity>
+            </View>
 
-            <View style={styles.docDetailRow}>
-              <Icon name="person-outline" size={15} color={COLORS.textLight} />
-              <Text style={styles.docDetailText}>{viewedDoc.author}</Text>
-            </View>
-            <View style={styles.docDetailRow}>
-              <Icon name="calendar-outline" size={15} color={COLORS.textLight} />
-              <Text style={styles.docDetailText}>le {viewedDoc.date}</Text>
-            </View>
-            {!!viewedDoc.patientName && (
-              <View style={styles.docDetailRow}>
-                <Icon name="medical-outline" size={15} color={COLORS.textLight} />
-                <Text style={styles.docDetailText}>Patient : {viewedDoc.patientName}</Text>
+            {viewedDoc && (
+              <View style={styles.viewDetailTable}>
+                <View style={styles.viewDetailRow}>
+                  <Text style={styles.viewDetailLabel}>PATIENT</Text>
+                  <Text style={styles.viewDetailValue}>
+                    {viewedDoc.patientName ?? 'Non renseigné'}
+                  </Text>
+                </View>
+                <View style={styles.viewDetailRow}>
+                  <Text style={styles.viewDetailLabel}>NOM DU DOCUMENT</Text>
+                  <Text style={styles.viewDetailValue}>
+                    {viewedDoc.title ?? viewedDoc.type}
+                  </Text>
+                </View>
+                <View style={styles.viewDetailRow}>
+                  <Text style={styles.viewDetailLabel}>TYPE DE DOCUMENT</Text>
+                  <Text style={styles.viewDetailValue}>{viewedDoc.type}</Text>
+                </View>
+                <View style={styles.viewDetailRow}>
+                  <Text style={styles.viewDetailLabel}>DATE</Text>
+                  <Text style={styles.viewDetailValue}>{viewedDoc.date}</Text>
+                </View>
+
+                <View style={styles.viewActionsSection}>
+                  <Text style={styles.viewActionsLabel}>ACTIONS</Text>
+                  <View style={styles.viewBigActionsRow}>
+                    <TouchableOpacity style={styles.viewBigActionButton} accessibilityLabel="Voir" accessibilityRole="button">
+                      <Icon name="eye-outline" size={26} color={COLORS.textLight} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.viewBigActionButton} accessibilityLabel="Télécharger" accessibilityRole="button">
+                      <Icon name="download-outline" size={26} color={COLORS.textLight} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.viewBigActionButton} accessibilityLabel="Supprimer" accessibilityRole="button">
+                      <Icon name="trash-outline" size={26} color={COLORS.textLight} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
             )}
-            {!!viewedDoc.description && (
-              <Text style={styles.docDetailDesc}>{viewedDoc.description}</Text>
-            )}
-
-            <View style={styles.modalActions}>
-              <CTA4 label="Fermer" onPress={() => setViewedDoc(null)} />
-            </View>
           </View>
-        )}
-      </BottomSheetModal>
+        </View>
+      </Modal>
 
       <BottomNav />
     </SafeAreaView>
