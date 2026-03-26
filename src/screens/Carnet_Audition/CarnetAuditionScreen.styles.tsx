@@ -198,6 +198,25 @@ export const styles = StyleSheet.create({
     gap: 20,
     marginTop: 8,
   },
+  docDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
+  },
+  docDetailText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.textLight,
+  },
+  docDetailDesc: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 13,
+    color: COLORS.text,
+    lineHeight: 20,
+    marginTop: 8,
+    marginBottom: 12,
+  },
   // Boutons originaux (au cas où tu en aurais encore besoin ailleurs, sinon tu peux les enlever)
   cancelButton: {
     flex: 1,

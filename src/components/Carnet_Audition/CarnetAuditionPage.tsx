@@ -54,6 +54,7 @@ const CarnetAuditionPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('Tout');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [viewedDoc, setViewedDoc] = useState<AuditionDocument | null>(null);
   const filterOptions = ['Tout', 'Ordonnances', 'CR Orthophonie', 'Notes de suivi'];
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const CarnetAuditionPage = () => {
             <ActivityIndicator size="large" color={COLORS.orange} style={{ marginTop: 50 }} />
           ) : (
             <>
-              {viewMode === 'timeline' && <CarnetTimelineView documents={documents} />}
+              {viewMode === 'timeline' && <CarnetTimelineView documents={documents} onView={setViewedDoc} />}
               {viewMode === 'grid' && <CarnetGridView documents={documents} />}
               {viewMode === 'list' && <CarnetListView documents={documents} />}
             </>
@@ -208,6 +209,37 @@ const CarnetAuditionPage = () => {
             </View>
           </View>
         </BottomSheetModal>
+      {/* --- MODALE DE VISUALISATION --- */}
+      <BottomSheetModal visible={viewedDoc !== null} onClose={() => setViewedDoc(null)}>
+        {viewedDoc && (
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{viewedDoc.title ?? viewedDoc.type}</Text>
+
+            <View style={styles.docDetailRow}>
+              <Icon name="person-outline" size={15} color={COLORS.textLight} />
+              <Text style={styles.docDetailText}>{viewedDoc.author}</Text>
+            </View>
+            <View style={styles.docDetailRow}>
+              <Icon name="calendar-outline" size={15} color={COLORS.textLight} />
+              <Text style={styles.docDetailText}>le {viewedDoc.date}</Text>
+            </View>
+            {!!viewedDoc.patientName && (
+              <View style={styles.docDetailRow}>
+                <Icon name="medical-outline" size={15} color={COLORS.textLight} />
+                <Text style={styles.docDetailText}>Patient : {viewedDoc.patientName}</Text>
+              </View>
+            )}
+            {!!viewedDoc.description && (
+              <Text style={styles.docDetailDesc}>{viewedDoc.description}</Text>
+            )}
+
+            <View style={styles.modalActions}>
+              <CTA4 label="Fermer" onPress={() => setViewedDoc(null)} />
+            </View>
+          </View>
+        )}
+      </BottomSheetModal>
+
       <BottomNav />
     </SafeAreaView>
   );

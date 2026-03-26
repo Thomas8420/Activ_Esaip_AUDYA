@@ -5,9 +5,12 @@ import { styles } from '../../screens/Carnet_Audition/CarnetAuditionScreen.style
 import { COLORS } from '../../screens/Home/HomeScreen.styles';
 import { AuditionDocument } from '../../services/carnetauditionService';
 
-interface Props { documents: AuditionDocument[]; }
+interface Props {
+  documents: AuditionDocument[];
+  onView: (doc: AuditionDocument) => void;
+}
 
-export const CarnetTimelineView = ({ documents }: Props) => (
+export const CarnetTimelineView = ({ documents, onView }: Props) => (
   <View style={styles.timelineContainer}>
     <View style={styles.verticalLine} />
     {documents.map((doc) => (
@@ -31,6 +34,7 @@ export const CarnetTimelineView = ({ documents }: Props) => (
           <View style={styles.actionIcons}>
             <TouchableOpacity
               style={styles.timelineActionBtn}
+              onPress={() => onView(doc)}
               accessibilityLabel="Voir"
               accessibilityRole="button"
             >
