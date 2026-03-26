@@ -18,6 +18,10 @@ export interface PatientHealthApiResponse {
   weight_kg: number;
   family_history: string;
   medical_history: string[];
+  surgical_history: string[];
+  medications: string[];
+  allergies: string[];
+  physical_activity_hours: string;
   documents: string[];
 }
 
@@ -30,12 +34,16 @@ export interface PatientHealth {
   addressLine: string;
   cityZip: string;
   bmi: number;
-  sex: 'Homme' | 'Femme';
-  smoker: 'Oui' | 'Non';
+  sex: string;
+  smoker: string;
   heightCm: number;
   weightKg: number;
   familyHistory: string;
   medicalHistory: string[];
+  surgicalHistory: string[];
+  medications: string[];
+  allergies: string[];
+  physicalActivityHours: string;
   documents: string[];
 }
 
@@ -55,6 +63,10 @@ export function mapApiToPatientHealth(raw: PatientHealthApiResponse): PatientHea
     weightKg: raw.weight_kg,
     familyHistory: raw.family_history,
     medicalHistory: raw.medical_history,
+    surgicalHistory: raw.surgical_history,
+    medications: raw.medications,
+    allergies: raw.allergies,
+    physicalActivityHours: raw.physical_activity_hours,
     documents: raw.documents,
   };
 }

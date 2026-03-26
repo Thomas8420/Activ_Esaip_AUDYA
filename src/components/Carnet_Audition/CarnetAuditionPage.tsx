@@ -56,7 +56,14 @@ const CarnetAuditionPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [viewedDoc, setViewedDoc] = useState<AuditionDocument | null>(null);
-  const filterOptions = ['Tout', 'Ordonnances', 'CR Orthophonie', 'Notes de suivi'];
+  const [docCategory, setDocCategory] = useState('');
+  const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false);
+  const FILTER_OPTIONS = [
+    'Tout','Document d\'imagerie médicale','Audiométrie','Biologie','Bilan d\'efficacité',
+    'Bilan d\'orientation','Fiche de liaison','Compte-Rendus','Note de suivi','Ordonnance',
+    'CR Orthophonique','Otoscopie','Photo appareillages','Questionnaires',
+    'Tests auditifs spécifiques','Autres',
+  ];
 
   useEffect(() => {
     const load = async () => {
@@ -80,6 +87,8 @@ const CarnetAuditionPage = () => {
   const handleCloseModal = () => {
     setIsModalVisible(false);
     setSelectedFile(null);
+    setDocCategory('');
+    setIsCategoryPickerOpen(false);
   };
 
   const handlePickDocument = async () => {
@@ -140,7 +149,7 @@ const CarnetAuditionPage = () => {
 
                 <AnimatedDropdown visible={dropdownOpen} absolute>
                   <View style={styles.dropdownList}>
-                    {filterOptions.map((opt) => (
+                    {FILTER_OPTIONS.map((opt) => (
                       <TouchableOpacity
                         key={opt}
                         style={styles.dropdownItem}
@@ -183,7 +192,34 @@ const CarnetAuditionPage = () => {
             <TextInput style={styles.input} placeholder="Ex: Audiogramme Mars 2026" placeholderTextColor="#999" />
 
             <Text style={styles.inputLabel}>Type de document</Text>
-            <TextInput style={styles.input} placeholder="Ex: Ordonnance, CR..." placeholderTextColor="#999" />
+            <TouchableOpacity
+              style={[styles.input, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 48 }]}
+              onPress={() => setIsCategoryPickerOpen(v => !v)}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Sélectionner un type de document"
+            >
+              <Text style={{ fontSize: 13, color: docCategory ? '#2D2D2D' : '#999', fontFamily: 'Montserrat-Regular', flex: 1 }}>
+                {docCategory || 'Ex: Ordonnance, CR...'}
+              </Text>
+              <Icon name={isCategoryPickerOpen ? 'chevron-up' : 'chevron-down'} size={16} color="#999" />
+            </TouchableOpacity>
+            {isCategoryPickerOpen && (
+              <ScrollView style={{ maxHeight: 180, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 8, marginBottom: 12 }} nestedScrollEnabled>
+                {FILTER_OPTIONS.filter(o => o !== 'Tout').map(opt => (
+                  <TouchableOpacity
+                    key={opt}
+                    style={{ paddingVertical: 10, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}
+                    onPress={() => { setDocCategory(opt); setIsCategoryPickerOpen(false); }}
+                    activeOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityLabel={opt}
+                  >
+                    <Text style={{ fontSize: 13, color: '#2D2D2D', fontFamily: 'Montserrat-Regular' }}>{opt}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
 
             <TouchableOpacity
               style={styles.uploadButtonModal}
