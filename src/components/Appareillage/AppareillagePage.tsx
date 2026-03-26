@@ -299,16 +299,14 @@ const styles = StyleSheet.create({
   downloadButton: {
     marginTop: 20,
     backgroundColor: COLORS.orange,
-    borderRadius: 10,
+    borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
   },
   downloadButtonText: {
-    fontFamily: FONT_BOLD,
-    fontSize: 14,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
     color: COLORS.white,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
   },
 });
 
