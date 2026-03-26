@@ -23,6 +23,7 @@ import {
   USE_AGENDA_API,
 } from '../../services/agendaService';
 import { SelectedAgendaEvent, useNavigation } from '../../context/NavigationContext';
+import { sanitizeName, sanitizeText } from '../../utils/validators';
 import NavBar from '../common/NavBar/NavBar';
 import { styles, COLORS, DAY_CELL_SIZE } from '../../screens/Agenda/AgendaScreen.styles';
 
@@ -418,9 +419,10 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
               <TextInput
                 style={styles.formInput}
                 value={title}
-                onChangeText={setTitle}
+                onChangeText={v => setTitle(v.replace(/[<>]/g, ''))}
                 placeholder="Ex : Consultation audioprothésiste"
                 placeholderTextColor={COLORS.textLighter}
+                maxLength={200}
                 testID="fieldTitle"
               />
             </View>
@@ -431,9 +433,10 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
               <TextInput
                 style={styles.formInput}
                 value={proName}
-                onChangeText={setProName}
+                onChangeText={v => setProName(sanitizeName(v))}
                 placeholder="Nom du professionnel"
                 placeholderTextColor={COLORS.textLighter}
+                maxLength={100}
                 testID="fieldPro"
               />
             </View>
@@ -444,9 +447,10 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
               <TextInput
                 style={styles.formInput}
                 value={location}
-                onChangeText={setLocation}
+                onChangeText={v => setLocation(v.replace(/[<>]/g, ''))}
                 placeholder="Adresse ou cabinet"
                 placeholderTextColor={COLORS.textLighter}
+                maxLength={200}
                 testID="fieldLocation"
               />
             </View>
@@ -505,11 +509,12 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
               <TextInput
                 style={[styles.formInput, styles.formInputMultiline]}
                 value={notes}
-                onChangeText={setNotes}
+                onChangeText={v => setNotes(sanitizeText(v))}
                 placeholder="Notes supplémentaires…"
                 placeholderTextColor={COLORS.textLighter}
                 multiline
                 numberOfLines={3}
+                maxLength={500}
                 testID="fieldNotes"
               />
             </View>

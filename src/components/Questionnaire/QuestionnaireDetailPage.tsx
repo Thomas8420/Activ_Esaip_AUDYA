@@ -32,6 +32,26 @@ import {
 import { useNavigation } from '../../context/NavigationContext';
 import { useLanguage } from '../../context/LanguageContext';
 
+// ─── Helpers couleur échelle ──────────────────────────────────────────────────
+
+function getScaleColor(value: number, max: number): string {
+  const ratio = max > 0 ? value / max : 0;
+  if (ratio <= 0.2) { return '#006B2E'; }  // vert foncé
+  if (ratio <= 0.4) { return '#7A9200'; }  // jaune-vert foncé
+  if (ratio <= 0.6) { return '#FFC300'; }  // ambre franc
+  if (ratio <= 0.8) { return '#E8610A'; }  // orange profond
+  return '#CC0023';                         // rouge profond
+}
+
+function getScaleColorLight(value: number, max: number): string {
+  const ratio = max > 0 ? value / max : 0;
+  if (ratio <= 0.2) { return '#6FCF97'; }  // vert moyen
+  if (ratio <= 0.4) { return '#C8D94A'; }  // jaune-vert moyen
+  if (ratio <= 0.6) { return '#FFF0A0'; }  // jaune clair
+  if (ratio <= 0.8) { return '#FFDDB3'; }  // orange clair
+  return '#FFB3B3';                         // rouge clair
+}
+
 // ─── Contrôles de réponse (module-level) ──────────────────────────────────────
 
 interface ControlProps {
@@ -65,44 +85,57 @@ const BinaryControl = ({ question, selectedValue, onSelect }: ControlProps) => (
 );
 
 /** Curseur discret — scale10 (0-10) et VAS (0,10…100) */
-const ScaleControl = ({ question, selectedValue, onSelect }: ControlProps) => (
-  <View>
-    {/* Légendes min / max */}
-    {(question.minLabel || question.maxLabel) && (
-      <View style={styles.scaleLabelsRow}>
-        <Text style={styles.scaleMinLabel}>{question.minLabel ?? ''}</Text>
-        <Text style={styles.scaleMaxLabel}>{question.maxLabel ?? ''}</Text>
+const ScaleControl = ({ question, selectedValue, onSelect }: ControlProps) => {
+  const max = question.options[question.options.length - 1]?.value ?? 10;
+  return (
+    <View>
+      {/* Légendes min / max */}
+      {(question.minLabel || question.maxLabel) && (
+        <View style={styles.scaleLabelsRow}>
+          <Text style={styles.scaleMinLabel}>{question.minLabel ?? ''}</Text>
+          <Text style={styles.scaleMaxLabel}>{question.maxLabel ?? ''}</Text>
+        </View>
+      )}
+      {/* Cases numérotées avec couleur positionnelle */}
+      <View style={styles.scaleRow}>
+        {question.options.map(opt => {
+          const selected = selectedValue === opt.value;
+          const color = getScaleColor(opt.value, max);
+          return (
+            <TouchableOpacity
+              key={opt.value}
+              style={[
+                styles.scaleCell,
+                {
+                  backgroundColor: selected ? color : getScaleColorLight(opt.value, max),
+                  borderColor: color,
+                },
+              ]}
+              onPress={() => onSelect(question.id, opt.value)}
+              activeOpacity={0.7}
+              accessibilityLabel={`${opt.label}`}
+              accessibilityRole="radio"
+              accessibilityState={{ selected }}
+            >
+              <Text style={[styles.scaleCellText, { color: selected ? COLORS.white : color }]}>
+                {opt.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
-    )}
-    {/* Cases numérotées */}
-    <View style={styles.scaleRow}>
-      {question.options.map(opt => {
-        const selected = selectedValue === opt.value;
-        return (
-          <TouchableOpacity
-            key={opt.value}
-            style={[styles.scaleCell, selected && styles.scaleCellSelected]}
-            onPress={() => onSelect(question.id, opt.value)}
-            activeOpacity={0.7}
-            accessibilityLabel={`${opt.label}`}
-            accessibilityRole="radio"
-            accessibilityState={{ selected }}
-          >
-            <Text style={[styles.scaleCellText, selected && styles.scaleCellTextSelected]}>
-              {opt.label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+      {/* Indication visuelle de la valeur choisie */}
+      {selectedValue !== undefined && (
+        <Text style={styles.scaleSelectedHint}>
+          Valeur sélectionnée :{' '}
+          <Text style={[styles.scaleSelectedValue, { color: getScaleColor(selectedValue, max) }]}>
+            {selectedValue}
+          </Text>
+        </Text>
+      )}
     </View>
-    {/* Indication visuelle de la valeur choisie */}
-    {selectedValue !== undefined && (
-      <Text style={styles.scaleSelectedHint}>
-        Valeur sélectionnée : <Text style={styles.scaleSelectedValue}>{selectedValue}</Text>
-      </Text>
-    )}
-  </View>
-);
+  );
+};
 
 /** Radio boutons avec libellé complet — choice5 */
 const ChoiceControl = ({ question, selectedValue, onSelect }: ControlProps) => (
@@ -739,18 +772,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minWidth: 0,
   },
-  scaleCellSelected: {
-    borderColor: COLORS.orange,
-    backgroundColor: COLORS.orange,
-  },
+  scaleCellSelected: {},
   scaleCellText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 10,
-    color: COLORS.textLight,
   },
-  scaleCellTextSelected: {
-    color: COLORS.white,
-  },
+  scaleCellTextSelected: {},
   scaleSelectedHint: {
     fontFamily: FONT_REGULAR,
     fontSize: 12,

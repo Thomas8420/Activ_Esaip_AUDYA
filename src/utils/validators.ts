@@ -53,3 +53,77 @@ export const ERROR_MESSAGES = {
   PASSWORD_TOO_SHORT: 'Minimum 8 caractères', // NOSONAR
   PASSWORD_MISMATCH: 'Les mots de passe ne correspondent pas', // NOSONAR
 };
+
+// ─── Sanitisation des entrées utilisateur ────────────────────────────────────
+
+/**
+ * Retire les caractères HTML dangereux (<, >) de tout input texte.
+ * Utilisé sur : noms, prénoms, adresses, villes, champs texte libres.
+ */
+export const stripXSS = (value: string): string =>
+  value.replace(/[<>]/g, '');
+
+/**
+ * Sanitise un champ nom/prénom.
+ * Retire <, > (XSS). Autorise lettres, chiffres, espaces, tirets, apostrophes, accents.
+ */
+export const sanitizeName = (value: string): string =>
+  value.replace(/[<>]/g, '');
+
+/**
+ * Sanitise un champ texte libre (messages, notes, antécédents).
+ * Retire les balises HTML complètes et les caractères XSS.
+ */
+export const sanitizeText = (value: string): string =>
+  value.replace(/<[^>]*>/g, '').replace(/[<>]/g, '');
+
+/**
+ * Sanitise un numéro de téléphone.
+ * Autorise : chiffres, +, -, espaces, (, ), #, *
+ * Bloque tout le reste.
+ */
+export const sanitizePhone = (value: string): string =>
+  value.replace(/[^0-9+\-\s().#*]/g, '');
+
+/**
+ * Sanitise un code postal (international).
+ * Autorise : lettres, chiffres, espaces, tirets (UK: SW1A 1AA, FR: 75001, etc.)
+ * Bloque : <, >, &, ", ', ;, /, \
+ */
+export const sanitizeZipCode = (value: string): string =>
+  value.replace(/[^a-zA-Z0-9\s\-]/g, '');
+
+/**
+ * Sanitise un champ purement numérique (taille en cm, poids en kg, heures).
+ * Autorise : chiffres uniquement.
+ */
+export const sanitizeNumeric = (value: string): string =>
+  value.replace(/[^0-9]/g, '');
+
+/**
+ * Sanitise un champ email.
+ * Retire les caractères dangereux tout en préservant la structure email valide.
+ */
+export const sanitizeEmail = (value: string): string =>
+  value.replace(/[<>'";\s]/g, '');
+
+/**
+ * Sanitise un champ date sous forme texte (DD/MM/YYYY ou YYYY-MM-DD).
+ * Autorise : chiffres, /, -
+ */
+export const sanitizeDate = (value: string): string =>
+  value.replace(/[^0-9/\-]/g, '');
+
+/** Longueurs maximales recommandées par type de champ */
+export const MAX_LENGTHS = {
+  name: 100,
+  email: 254,
+  phone: 20,
+  zipCode: 20,
+  address: 200,
+  city: 100,
+  password: 128,
+  numericField: 5,   // taille/poids/heures
+  message: 2000,
+  text: 500,
+} as const;

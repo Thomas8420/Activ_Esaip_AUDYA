@@ -15,6 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, FONT_BOLD, FONT_REGULAR } from '../../screens/Home/HomeScreen.styles';
+import { sanitizeText } from '../../utils/validators';
 import {
   ChatbotMessage,
   MOCK_CHATBOT_MESSAGES,
@@ -255,11 +256,12 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ visible, onClose }) => {
               <TextInput
                 style={styles.textInput}
                 value={inputText}
-                onChangeText={setInputText}
+                onChangeText={v => setInputText(sanitizeText(v))}
                 placeholder="Posez votre question…"
                 placeholderTextColor={COLORS.textLight}
                 multiline
                 returnKeyType="default"
+                maxLength={1000}
                 onSubmitEditing={handleSend}
                 accessibilityLabel="Saisir votre message"
               />

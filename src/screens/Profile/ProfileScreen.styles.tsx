@@ -193,18 +193,94 @@ export const styles = StyleSheet.create({
     marginBottom: 14,
   },
 
-  // ── Save button ────────────────────────────────────────────────────────────
+  // ── Save button (CTA 1) ────────────────────────────────────────────────────
   saveButton: {
     backgroundColor: COLORS.orange,
-    borderRadius: 20,
-    paddingVertical: 16,
+    borderRadius: 22,
+    height: 48,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 8,
   },
   saveButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 15,
     color: COLORS.white,
+  },
+
+  // ── Dropdown trigger ───────────────────────────────────────────────────────
+  dropdownTrigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.offWhite,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  dropdownTriggerText: {
+    flex: 1,
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  dropdownTriggerPlaceholder: {
+    flex: 1,
+    fontFamily: FONT_REGULAR,
+    fontSize: 14,
+    color: COLORS.textLighter,
+  },
+
+  // ── Dropdown modal ─────────────────────────────────────────────────────────
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    paddingBottom: 36,
+    maxHeight: '70%',
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: COLORS.border,
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  modalItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.background,
+  },
+  modalItemSelected: {
+    backgroundColor: '#FFF5F0',
+  },
+  modalItemText: {
+    flex: 1,
+    fontFamily: FONT_REGULAR,
+    fontSize: 15,
+    color: COLORS.text,
+  },
+  modalItemTextSelected: {
+    color: COLORS.orange,
+    fontFamily: FONT_SEMIBOLD,
   },
 
   // ── Photo modal ────────────────────────────────────────────────────────────

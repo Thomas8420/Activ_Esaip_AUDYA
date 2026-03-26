@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Modal,
   ScrollView,
   StatusBar,
   Text,
@@ -17,6 +18,7 @@ import BottomNav from '../common/BottomNav/BottomNav';
 import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
 import { styles, COLORS } from '../../screens/Health/HealthScreen.styles';
 import { fetchPatientHealth, PatientHealth, USE_HEALTH_API } from '../../services/healthService';
+import { sanitizeName, sanitizeNumeric, MAX_LENGTHS } from '../../utils/validators';
 import QrCode from '../../assets/images/qr-code.svg';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -41,6 +43,10 @@ const MOCK_HEALTH: PatientHealth = {
   ],
 };
 
+// ─── Options sélecteur — niveau module (jamais dans le corps du composant) ────
+const SEX_OPTIONS = ['Homme', 'Femme', 'Autre'] as const;
+const SMOKER_OPTIONS = ['Oui', 'Non', 'Ancien fumeur'] as const;
+
 /**
  * Page Ma sante : resume de l'etat de sante + informations generales.
  */
@@ -48,8 +54,11 @@ const HealthPage = () => {
   const { t } = useLanguage();
   const [health, setHealth] = useState<PatientHealth | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeModal, setActiveModal] = useState<'sex' | 'smoker' | null>(null);
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const [uploadTarget, setUploadTarget] = useState<'familyHistory' | 'medicalHistory' | null>(null);
+  const [antecedentName, setAntecedentName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<{ name: string } | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -97,21 +106,17 @@ const HealthPage = () => {
     });
   };
 
-  const toggleSex = () => {
-    if (!health) {return;}
-    const newValue = health.sex === 'Homme' ? 'Femme' : 'Homme';
-    handleUpdateField('sex', newValue);
-  };
-
-  const toggleSmoker = () => {
-    if (!health) {return;}
-    const newValue = health.smoker === 'Oui' ? 'Non' : 'Oui';
-    handleUpdateField('smoker', newValue);
-  };
-
   const handleOpenUploadModal = (target: 'familyHistory' | 'medicalHistory') => {
     setUploadTarget(target);
+    setAntecedentName('');
+    setSelectedFile(null);
     setIsUploadModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setAntecedentName('');
+    setSelectedFile(null);
+    setIsUploadModalVisible(false);
   };
 
   const handlePickDocument = async () => {
@@ -121,17 +126,32 @@ const HealthPage = () => {
         allowMultiSelection: false,
       });
       const file = results[0];
-      const fileName = file.name ?? 'document';
-      setHealth(prev => {
-        if (!prev) { return prev; }
-        return { ...prev, documents: [...prev.documents, fileName] };
-      });
-      setIsUploadModalVisible(false);
+      setSelectedFile({ name: file.name ?? 'document' });
     } catch (err) {
       if (!DocumentPicker.isCancel(err)) {
         Alert.alert('Erreur', 'Impossible de sélectionner le document.');
       }
     }
+  };
+
+  const handleValidateAntecedent = () => {
+    if (!health || !antecedentName.trim()) { return; }
+    setHealth(prev => {
+      if (!prev) { return prev; }
+      const updated = { ...prev };
+      if (uploadTarget === 'familyHistory') {
+        const items = prev.familyHistory ? prev.familyHistory.split('\n').filter(Boolean) : [];
+        items.push(antecedentName.trim());
+        updated.familyHistory = items.join('\n');
+      } else {
+        updated.medicalHistory = [...prev.medicalHistory, antecedentName.trim()];
+      }
+      if (selectedFile) {
+        updated.documents = [...prev.documents, selectedFile.name];
+      }
+      return updated;
+    });
+    handleCloseModal();
   };
 
   const bmiValue = useMemo(() => {
@@ -155,43 +175,79 @@ const HealthPage = () => {
             <View style={styles.summaryCard}>
               <Text style={styles.summaryTopTitle}>{t('screen.health')}</Text>
 
-              <View style={styles.summaryRow}>
-                <View style={styles.summaryIdentity}>
-                  <Text style={styles.summaryNameLine}>
-                    {health.fullName} - {health.age} an(s) - {health.gender}
+              {/* Identité + adresse + IMC aligné sur toute la hauteur */}
+              <View style={styles.summaryIdentityRow}>
+                <View style={styles.summaryAvatar}>
+                  <Text style={styles.summaryAvatarText}>
+                    {health.fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()}
                   </Text>
-                  <Text style={styles.summaryAddressLine}>{health.addressLine}</Text>
-                  <Text style={styles.summaryAddressLine}>{health.cityZip}</Text>
                 </View>
-
-                <View style={styles.verticalDivider} />
-
-                <View style={styles.summaryMetrics}>
-                  <View style={styles.bmiBlock}>
-                    <Text style={styles.bmiLabel}>Mon IMC</Text>
-                    <View style={styles.bmiCircle}>
-                      <Text style={styles.bmiValue}>{bmiValue}</Text>
+                <View style={styles.summaryNameBlock}>
+                  <Text style={styles.summaryName}>{health.fullName}</Text>
+                  <View style={styles.summaryChips}>
+                    <View style={styles.summaryChip}>
+                      <Text style={styles.summaryChipText}>{health.age} ans</Text>
+                    </View>
+                    <View style={styles.summaryChip}>
+                      <Text style={styles.summaryChipText}>{health.gender}</Text>
                     </View>
                   </View>
-
-                  <View style={styles.metricDivider} />
-
-                  <View style={styles.qrCodeContainer}>
-                    <QrCode width={56} height={56} />
+                  <View style={styles.summaryAddressRow}>
+                    <Icon name="location-outline" size={13} color={COLORS.textLighter} />
+                    <Text style={styles.summaryAddressText}>
+                      {health.addressLine} · {health.cityZip}
+                    </Text>
                   </View>
                 </View>
+                <View style={styles.bmiBlock}>
+                  <View style={styles.bmiCircle}>
+                    <Text style={styles.bmiValue}>{bmiValue}</Text>
+                  </View>
+                  <Text style={styles.bmiLabel}>Mon IMC</Text>
+                </View>
+              </View>
+
+              <View style={styles.summaryDivider} />
+
+              {/* QR Code */}
+              <View style={styles.qrCodeContainer}>
+                <QrCode width={110} height={110} />
               </View>
             </View>
 
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>{t('health.section.general')}</Text>
 
+              {/* Informations corporelles */}
               <View style={styles.twoColumnRow}>
                 <View style={styles.fieldColumn}>
-                  <Text style={styles.fieldLabel}>Sexe *</Text>
+                  <Text style={styles.fieldLabel}>Taille (cm)</Text>
+                  <TextInput
+                    value={health.heightCm === 0 ? '' : String(health.heightCm)}
+                    onChangeText={(val) => handleUpdateField('heightCm', sanitizeNumeric(val))}
+                    keyboardType="numeric"
+                    maxLength={3}
+                    style={styles.textInputReadonly}
+                  />
+                </View>
+                <View style={styles.fieldColumn}>
+                  <Text style={styles.fieldLabel}>Poids (kg)</Text>
+                  <TextInput
+                    value={health.weightKg === 0 ? '' : String(health.weightKg)}
+                    onChangeText={(val) => handleUpdateField('weightKg', sanitizeNumeric(val))}
+                    keyboardType="numeric"
+                    maxLength={3}
+                    style={styles.textInputReadonly}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.twoColumnRow}>
+                <View style={styles.fieldColumn}>
+                  <Text style={styles.fieldLabel}>Sexe</Text>
                   <TouchableOpacity
                     style={styles.fieldValuePill}
-                    onPress={toggleSex}
+                    onPress={() => setActiveModal('sex')}
                     activeOpacity={0.7}
                     accessibilityLabel="Sexe"
                     accessibilityRole="button"
@@ -202,12 +258,11 @@ const HealthPage = () => {
                     </View>
                   </TouchableOpacity>
                 </View>
-
                 <View style={styles.fieldColumn}>
                   <Text style={styles.fieldLabel}>Fumeur</Text>
                   <TouchableOpacity
                     style={styles.fieldValuePill}
-                    onPress={toggleSmoker}
+                    onPress={() => setActiveModal('smoker')}
                     activeOpacity={0.7}
                     accessibilityLabel="Fumeur"
                     accessibilityRole="button"
@@ -220,53 +275,56 @@ const HealthPage = () => {
                 </View>
               </View>
 
-              <View style={styles.twoColumnRow}>
-                <View style={styles.fieldColumn}>
-                  <Text style={styles.fieldLabel}>Taille (cm) *</Text>
-                  <TextInput
-                    value={health.heightCm === 0 ? '' : String(health.heightCm)}
-                    onChangeText={(val) => handleUpdateField('heightCm', val.replace(/[^0-9]/g, ''))}
-                    keyboardType="numeric"
-                    style={styles.textInputReadonly}
-                  />
+              {/* Antécédents */}
+              <View style={styles.antecedentSection}>
+                <View style={styles.antecedentHeader}>
+                  <Text style={styles.antecedentTitle}>Antécédents familiaux</Text>
+                  <TouchableOpacity
+                    style={styles.addAntecedentBtn}
+                    activeOpacity={0.7}
+                    onPress={() => handleOpenUploadModal('familyHistory')}
+                    accessibilityLabel="Ajouter un antécédent familial"
+                    accessibilityRole="button"
+                  >
+                    <Icon name="add" size={14} color={COLORS.white} />
+                  </TouchableOpacity>
                 </View>
-
-                <View style={styles.fieldColumn}>
-                  <Text style={styles.fieldLabel}>Poids (kg) *</Text>
-                  <TextInput
-                    value={health.weightKg === 0 ? '' : String(health.weightKg)}
-                    onChangeText={(val) => handleUpdateField('weightKg', val.replace(/[^0-9]/g, ''))}
-                    keyboardType="numeric"
-                    style={styles.textInputReadonly}
-                  />
+                <View style={styles.tagsWrap}>
+                  {health.familyHistory.split('\n').filter(Boolean).map((item, idx) => (
+                    <TouchableOpacity
+                      key={`fh-${item}-${idx}`}
+                      style={styles.tag}
+                      onPress={() => {
+                        const items = health.familyHistory.split('\n').filter(Boolean);
+                        items.splice(idx, 1);
+                        handleUpdateField('familyHistory', items.join('\n'));
+                      }}
+                      accessibilityLabel={`Supprimer ${item}`}
+                      accessibilityRole="button"
+                    >
+                      <Text style={styles.tagText}>{item}</Text>
+                      <Text style={styles.tagClose}>×</Text>
+                    </TouchableOpacity>
+                  ))}
+                  {health.familyHistory.split('\n').filter(Boolean).length === 0 && (
+                    <Text style={styles.antecedentEmpty}>Aucun antécédent renseigné</Text>
+                  )}
                 </View>
               </View>
 
-              <Text style={styles.subsectionLabel}>Antecedents familiaux</Text>
-              <View style={styles.inlineRowCard}>
-                <View style={styles.inlineInputLike}>
-                  <TextInput
-                    style={styles.inlineInputLikeText}
-                    value={health.familyHistory}
-                    onChangeText={(val) => handleUpdateField('familyHistory', val)}
-                    placeholder="Saisir..."
-                  />
+              <View style={styles.antecedentSection}>
+                <View style={styles.antecedentHeader}>
+                  <Text style={styles.antecedentTitle}>Antécédents médicaux</Text>
+                  <TouchableOpacity
+                    style={styles.addAntecedentBtn}
+                    activeOpacity={0.7}
+                    onPress={() => handleOpenUploadModal('medicalHistory')}
+                    accessibilityLabel="Ajouter un antécédent médical"
+                    accessibilityRole="button"
+                  >
+                    <Icon name="add" size={14} color={COLORS.white} />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.inlineDivider} />
-                <TouchableOpacity
-                  style={styles.documentButton}
-                  activeOpacity={0.7}
-                  onPress={() => handleOpenUploadModal('familyHistory')}
-                  accessibilityLabel="Ajouter un document pour les antécédents familiaux"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.documentButtonText}>Document</Text>
-                  <Icon name="download-outline" size={13} color={COLORS.text} />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={styles.subsectionLabel}>Antecedents medicaux</Text>
-              <View style={styles.inlineRowCard}>
                 <View style={styles.tagsWrap}>
                   {health.medicalHistory.map((item, idx) => (
                     <TouchableOpacity
@@ -277,58 +335,159 @@ const HealthPage = () => {
                         newList.splice(idx, 1);
                         handleUpdateField('medicalHistory', newList);
                       }}
+                      accessibilityLabel={`Supprimer ${item}`}
+                      accessibilityRole="button"
                     >
                       <Text style={styles.tagText}>{item}</Text>
-                      <Text style={styles.tagClose}>x</Text>
+                      <Text style={styles.tagClose}>×</Text>
                     </TouchableOpacity>
                   ))}
+                  {health.medicalHistory.length === 0 && (
+                    <Text style={styles.antecedentEmpty}>Aucun antécédent renseigné</Text>
+                  )}
                 </View>
-                <View style={styles.inlineDivider} />
-                <TouchableOpacity
-                  style={styles.documentButton}
-                  activeOpacity={0.7}
-                  onPress={() => handleOpenUploadModal('medicalHistory')}
-                  accessibilityLabel="Ajouter un document pour les antécédents médicaux"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.documentButtonText}>Document</Text>
-                  <Icon name="download-outline" size={13} color={COLORS.text} />
-                </TouchableOpacity>
               </View>
 
-              {health.documents.map((file, index) => (
-                <View key={`${file}-${index}`} style={styles.fileRow}>
-                  <Icon name="document-text-outline" size={16} color={COLORS.text} />
-                  <Text style={styles.fileName}>{file}</Text>
-                </View>
-              ))}
+              {/* Documents */}
+              {health.documents.length > 0 && (
+                <>
+                  <View style={styles.sectionDivider} />
+                  <Text style={styles.subsectionLabel}>Documents associés</Text>
+                  {health.documents.map((file, index) => (
+                    <View key={`${file}-${index}`} style={styles.fileRow}>
+                      <Icon name="document-text-outline" size={16} color={COLORS.orange} />
+                      <Text style={styles.fileName}>{file}</Text>
+                    </View>
+                  ))}
+                </>
+              )}
             </View>
           </>
         )}
       </ScrollView>
 
+      {/* ─── Sélecteur Sexe / Fumeur ────────────────────────────────────── */}
+      <Modal
+        visible={activeModal !== null}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setActiveModal(null)}
+      >
+        <TouchableOpacity
+          style={styles.healthModalOverlay}
+          activeOpacity={1}
+          onPress={() => setActiveModal(null)}
+          accessibilityLabel="Fermer"
+          accessibilityRole="button"
+        >
+          <View style={styles.healthModalSheet}>
+            <View style={styles.healthModalHandle} />
+            <Text style={styles.healthModalTitle}>
+              {activeModal === 'sex' ? 'Sexe' : 'Fumeur'}
+            </Text>
+            {(activeModal === 'sex' ? SEX_OPTIONS : SMOKER_OPTIONS).map(option => {
+              const currentValue = activeModal === 'sex' ? health?.sex : health?.smoker;
+              const isSelected = currentValue === option;
+              return (
+                <TouchableOpacity
+                  key={option}
+                  style={[styles.healthModalItem, isSelected && styles.healthModalItemSelected]}
+                  onPress={() => {
+                    if (activeModal) {
+                      handleUpdateField(activeModal, option);
+                    }
+                    setActiveModal(null);
+                  }}
+                  accessibilityLabel={option}
+                  accessibilityRole="button"
+                >
+                  <Text
+                    style={[
+                      styles.healthModalItemText,
+                      isSelected && styles.healthModalItemTextSelected,
+                    ]}
+                  >
+                    {option}
+                  </Text>
+                  {isSelected && (
+                    <Icon name="checkmark" size={18} color={COLORS.orange} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
       <BottomSheetModal
         visible={isUploadModalVisible}
-        onClose={() => setIsUploadModalVisible(false)}
+        onClose={handleCloseModal}
       >
         <View style={styles.uploadModalSheet}>
-          <Text style={styles.uploadModalTitle}>Ajouter un document</Text>
+          <Text style={styles.uploadModalTitle}>Ajouter un antécédent</Text>
           <Text style={styles.uploadModalSubtitle}>
             {uploadTarget === 'familyHistory' ? 'Antécédents familiaux' : 'Antécédents médicaux'}
           </Text>
+
+          {/* Étape 1 — Nom */}
+          <Text style={styles.uploadModalStepLabel}>1. Nom de l'antécédent</Text>
+          <TextInput
+            style={styles.uploadModalNameInput}
+            value={antecedentName}
+            onChangeText={v => setAntecedentName(sanitizeName(v))}
+            placeholder="Ex. Diabète, Hypertension..."
+            placeholderTextColor={COLORS.textLighter}
+            maxLength={MAX_LENGTHS.name}
+            autoFocus
+          />
+
+          {/* Étape 2 — Document (optionnel) */}
+          <Text style={styles.uploadModalStepLabel}>2. Document associé (optionnel)</Text>
+          {selectedFile ? (
+            <View style={styles.uploadModalFileRow}>
+              <Icon name="document-text-outline" size={18} color={COLORS.orange} />
+              <Text style={styles.uploadModalFileSelectedText} numberOfLines={1}>
+                {selectedFile.name}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setSelectedFile(null)}
+                accessibilityLabel="Supprimer le fichier"
+                accessibilityRole="button"
+              >
+                <Icon name="close-circle-outline" size={18} color={COLORS.textLight} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.uploadModalPickBtn}
+              onPress={handlePickDocument}
+              activeOpacity={0.8}
+              accessibilityLabel="Choisir un fichier"
+              accessibilityRole="button"
+            >
+              <Icon name="document-attach-outline" size={20} color={COLORS.white} />
+              <Text style={styles.uploadModalPickBtnText}>Choisir un fichier</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Étape 3 — Valider */}
           <TouchableOpacity
-            style={styles.uploadModalPickBtn}
-            onPress={handlePickDocument}
+            style={[
+              styles.uploadModalValidateBtn,
+              !antecedentName.trim() && styles.uploadModalValidateBtnDisabled,
+            ]}
+            onPress={handleValidateAntecedent}
+            disabled={!antecedentName.trim()}
             activeOpacity={0.8}
-            accessibilityLabel="Choisir un fichier"
+            accessibilityLabel="Valider l'antécédent"
             accessibilityRole="button"
           >
-            <Icon name="document-attach-outline" size={20} color={COLORS.white} />
-            <Text style={styles.uploadModalPickBtnText}>Choisir un fichier</Text>
+            <Text style={styles.uploadModalValidateBtnText}>Valider</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.uploadModalCancelBtn}
-            onPress={() => setIsUploadModalVisible(false)}
+            onPress={handleCloseModal}
             activeOpacity={0.7}
             accessibilityLabel="Annuler"
             accessibilityRole="button"

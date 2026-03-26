@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
-import { validatePassword, isValidEmail, ERROR_MESSAGES } from '../../utils/validators';
+import { validatePassword, isValidEmail, ERROR_MESSAGES, sanitizeName, sanitizeEmail, MAX_LENGTHS } from '../../utils/validators';
 
 type Errors = {
   nom?: string; prenom?: string; email?: string;
@@ -23,10 +24,11 @@ type FieldProps = {
   error?: string;
   secure?: boolean;
   keyboard?: 'email-address';
+  maxLen?: number;
   onChangeText: (v: string) => void;
 };
 
-const Field: React.FC<FieldProps> = ({ placeholder, value, error, secure, keyboard, onChangeText }) => (
+const Field: React.FC<FieldProps> = ({ placeholder, value, error, secure, keyboard, maxLen, onChangeText }) => (
   <>
     <TextInput
       style={[s.input, error ? s.inputError : null]}
@@ -35,6 +37,7 @@ const Field: React.FC<FieldProps> = ({ placeholder, value, error, secure, keyboa
       secureTextEntry={secure}
       keyboardType={keyboard}
       autoCapitalize={keyboard === 'email-address' ? 'none' : 'sentences'}
+      maxLength={maxLen}
       value={value}
       onChangeText={onChangeText}
     />
@@ -62,8 +65,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ placeholder, value, error
         value={value}
         onChangeText={onChangeText}
       />
-      <TouchableOpacity onPress={onToggle}>
-        <Text style={s.eyeToggleText}>{show ? 'Cacher' : 'Voir'}</Text>
+      <TouchableOpacity onPress={onToggle} accessibilityLabel={show ? 'Masquer le mot de passe' : 'Afficher le mot de passe'} accessibilityRole="button">
+        <Icon name={show ? 'eye-off-outline' : 'eye-outline'} size={20} color={COLORS.textLight} />
       </TouchableOpacity>
     </View>
     {error && <Text style={s.errorText}>⊙ {error}</Text>}
@@ -129,9 +132,9 @@ const RegisterStep1Page = () => {
           <Text style={s.cardSubtitle}>*Champs obligatoires</Text>
 
           {/* Champs identité et email */}
-          <Field placeholder="Nom *"    value={form.nom}    error={errors.nom}    onChangeText={v => { setForm({ ...form, nom: v });    clearError('nom'); }} />
-          <Field placeholder="Prénom *" value={form.prenom} error={errors.prenom} onChangeText={v => { setForm({ ...form, prenom: v }); clearError('prenom'); }} />
-          <Field placeholder="Email *"  value={form.email}  error={errors.email}  keyboard="email-address" onChangeText={v => { setForm({ ...form, email: v }); clearError('email'); }} />
+          <Field placeholder="Nom *"    value={form.nom}    error={errors.nom}    maxLen={MAX_LENGTHS.name}  onChangeText={v => { setForm({ ...form, nom: sanitizeName(v) });    clearError('nom'); }} />
+          <Field placeholder="Prénom *" value={form.prenom} error={errors.prenom} maxLen={MAX_LENGTHS.name}  onChangeText={v => { setForm({ ...form, prenom: sanitizeName(v) }); clearError('prenom'); }} />
+          <Field placeholder="Email *"  value={form.email}  error={errors.email}  keyboard="email-address" maxLen={MAX_LENGTHS.email} onChangeText={v => { setForm({ ...form, email: sanitizeEmail(v) }); clearError('email'); }} />
 
           {/* Mots de passe */}
           <PasswordField placeholder="Mot de passe *"               value={form.motDePasse}   error={errors.motDePasse}   show={showPassword} onToggle={() => setShowPassword(!showPassword)} onChangeText={v => { setForm({ ...form, motDePasse: v });   clearError('motDePasse'); }} />

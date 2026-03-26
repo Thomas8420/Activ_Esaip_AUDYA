@@ -15,6 +15,7 @@ import DropdownIcon from '../../assets/images/dropdown.svg';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
+import { sanitizeName, sanitizePhone, sanitizeZipCode, sanitizeEmail, sanitizeText } from '../../utils/validators';
 
 const COUNTRIES = ['France', 'Belgique', 'Suisse', 'Luxembourg', 'Canada'];
 
@@ -122,7 +123,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Nom *"
             placeholderTextColor="#999"
             value={lastName}
-            onChangeText={setLastName}
+            onChangeText={v => setLastName(sanitizeName(v))}
+            maxLength={100}
           />
 
           {/* Prénom * */}
@@ -131,7 +133,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Prénom *"
             placeholderTextColor="#999"
             value={firstName}
-            onChangeText={setFirstName}
+            onChangeText={v => setFirstName(sanitizeName(v))}
+            maxLength={100}
           />
 
           {/* Adresse * */}
@@ -140,7 +143,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Adresse *"
             placeholderTextColor="#999"
             value={address}
-            onChangeText={setAddress}
+            onChangeText={v => setAddress(v.replace(/[<>]/g, ''))}
+            maxLength={200}
           />
 
           {/* Complément d'adresse */}
@@ -149,7 +153,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Complément d'adresse"
             placeholderTextColor="#999"
             value={addressComplement}
-            onChangeText={setAddressComplement}
+            onChangeText={v => setAddressComplement(v.replace(/[<>]/g, ''))}
+            maxLength={200}
           />
 
           {/* Code postal */}
@@ -158,8 +163,9 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Code postal"
             placeholderTextColor="#999"
             value={zipCode}
-            onChangeText={setZipCode}
-            keyboardType="number-pad"
+            onChangeText={v => setZipCode(sanitizeZipCode(v))}
+            keyboardType="default"
+            maxLength={20}
           />
 
           {/* Ville * */}
@@ -168,7 +174,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Ville *"
             placeholderTextColor="#999"
             value={city}
-            onChangeText={setCity}
+            onChangeText={v => setCity(sanitizeName(v))}
+            maxLength={100}
           />
 
           {/* Pays * */}
@@ -209,9 +216,10 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="E-mail"
             placeholderTextColor="#999"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={v => setEmail(sanitizeEmail(v))}
             keyboardType="email-address"
             autoCapitalize="none"
+            maxLength={254}
           />
 
           {/* Téléphone professionnel */}
@@ -220,8 +228,9 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Téléphone professionnel"
             placeholderTextColor="#999"
             value={proPhone}
-            onChangeText={setProPhone}
+            onChangeText={v => setProPhone(sanitizePhone(v))}
             keyboardType="phone-pad"
+            maxLength={20}
           />
 
           {/* Téléphone mobile */}
@@ -230,8 +239,9 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Téléphone mobile"
             placeholderTextColor="#999"
             value={mobilePhone}
-            onChangeText={setMobilePhone}
+            onChangeText={v => setMobilePhone(sanitizePhone(v))}
             keyboardType="phone-pad"
+            maxLength={20}
           />
 
           {/* Note personnalisée */}
@@ -243,8 +253,9 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Votre note (optionnel)"
             placeholderTextColor="#999"
             value={note}
-            onChangeText={setNote}
+            onChangeText={v => setNote(sanitizeText(v))}
             multiline
+            maxLength={500}
           />
 
           {/* Checkbox consentement */}

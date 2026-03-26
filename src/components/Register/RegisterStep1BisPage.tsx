@@ -8,7 +8,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
-import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
 import { maskEmail } from '../../utils/validators';
@@ -18,10 +17,8 @@ import { resendVerificationEmail } from '../../services/registerService';
  * Étape 1 bis : E-mail de vérification
  * Attend que l'utilisateur clique sur le lien reçu par email avant de progresser.
  * "Renvoyer l'email" appelle uniquement l'API — ne navigue plus automatiquement.
- * "J'ai vérifié mon email" est le seul chemin vers l'étape suivante.
  */
 const RegisterStep1BisPage = () => {
-  const { navigateTo } = useNavigation();
   const { registerData } = useRegister();
   const [resendFeedback, setResendFeedback] = useState('');
 
@@ -33,10 +30,6 @@ const RegisterStep1BisPage = () => {
     } catch {
       setResendFeedback('Une erreur est survenue. Veuillez réessayer.');
     }
-  };
-
-  const handleContinue = () => {
-    navigateTo('register-step2');
   };
 
   const maskedEmail = maskEmail(registerData.email);
@@ -53,17 +46,14 @@ const RegisterStep1BisPage = () => {
         <View style={s.card}>
 
           {/* Icône @ */}
-          <View style={s.atContainer}>
-            <Text style={s.atIcon}>@</Text>
-          </View>
+          <Text style={[s.atIcon, { alignSelf: 'center', marginBottom: 20 }]}>@</Text>
 
           <Text style={s.cardTitle}>E-mail de vérification</Text>
 
           <Text style={s.emailDescription}>
-            Un e-mail de vérification a été envoyé
-            {maskedEmail ? ` à ${maskedEmail}` : ''}.
-            {'\n'}Cliquez sur le lien dans cet e-mail pour confirmer votre adresse, puis appuyez sur le bouton ci-dessous.
-            {'\n\n'}Si vous n'avez pas reçu l'e-mail, vérifiez vos spams.
+            Un e-mail de vérification a été envoyé{maskedEmail ? ` à ${maskedEmail}` : ''}.
+            {'\n'}Cliquez sur le lien dans cet e-mail pour confirmer votre adresse.
+            {'\n\n'}Si vous n'avez pas reçu l'e-mail, vérifiez vos spams ou renvoyez-le.
           </Text>
 
           {resendFeedback ? (
@@ -79,16 +69,6 @@ const RegisterStep1BisPage = () => {
           >
             {({ pressed }) => (
               <Text style={[s.btnOutlineText, pressed && s.btnOutlineTextPressed]}>Renvoyer l'email</Text>
-            )}
-          </Pressable>
-
-          {/* Bouton continuer — seul chemin vers l'étape 2 */}
-          <Pressable
-            style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed, { marginTop: 12 }]}
-            onPress={handleContinue}
-          >
-            {({ pressed }) => (
-              <Text style={[s.btnPrimaryText, pressed && s.btnPrimaryTextPressed]}>J'ai vérifié mon email</Text>
             )}
           </Pressable>
 

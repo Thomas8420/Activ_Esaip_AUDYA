@@ -420,6 +420,7 @@ const SettingsPage = () => {
                   onChangeText={setNewPassword}
                   autoCapitalize="none"
                   autoComplete="new-password"
+                  maxLength={128}
                   testID="newPasswordInput"
                 />
                 <TouchableOpacity
@@ -445,6 +446,7 @@ const SettingsPage = () => {
                   onChangeText={setConfirmPassword}
                   autoCapitalize="none"
                   autoComplete="new-password"
+                  maxLength={128}
                   testID="confirmPasswordInput"
                 />
                 <TouchableOpacity
@@ -468,7 +470,7 @@ const SettingsPage = () => {
 
               <TouchableOpacity
                 style={[
-                  styles.outlineButton,
+                  styles.ctaPrimary,
                   (!canChangePassword || isChangingPassword) &&
                     styles.outlineButtonDisabled,
                 ]}
@@ -479,7 +481,7 @@ const SettingsPage = () => {
               >
                 <Text
                   style={[
-                    styles.outlineButtonText,
+                    styles.ctaPrimaryText,
                     (!canChangePassword || isChangingPassword) &&
                       styles.outlineButtonTextDisabled,
                   ]}
@@ -494,12 +496,12 @@ const SettingsPage = () => {
               <Text style={styles.sectionTitle}>{t('settings.account')}</Text>
 
               <TouchableOpacity
-                style={styles.dangerButton}
+                style={styles.ctaSecondary}
                 onPress={() => setShowDeleteModal(true)}
                 activeOpacity={0.7}
                 testID="deleteAccountButton"
               >
-                <Text style={styles.dangerButtonText}>{t('settings.account.delete')}</Text>
+                <Text style={styles.ctaSecondaryText}>{t('settings.account.delete')}</Text>
               </TouchableOpacity>
             </View>
 

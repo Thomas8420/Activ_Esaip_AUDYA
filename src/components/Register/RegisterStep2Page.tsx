@@ -9,6 +9,7 @@ import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
+import { sanitizeName, sanitizePhone, sanitizeZipCode, stripXSS, MAX_LENGTHS } from '../../utils/validators';
 
 const MAX_PHOTO_SIZE_MB = 3;
 
@@ -63,7 +64,7 @@ const RegisterStep2Page = () => {
 
   const [form, setForm] = useState({
     genre: 'homme' as 'homme' | 'femme',
-    dateNaissance: '', nom: '', prenom: '', numeroSecu: '',
+    dateNaissance: '', nom: registerData.nom ?? '', prenom: registerData.prenom ?? '', numeroSecu: '',
     adresse: '', complement: '', codePostal: '', ville: '',
     pays: '', telephoneFixe: '', telephoneMobile: '',
     email: registerData.email,
@@ -156,27 +157,27 @@ const RegisterStep2Page = () => {
           {errors.dateNaissance && <Text style={s.errorText}>⊙ {errors.dateNaissance}</Text>}
 
           {/* Champs identité */}
-          <Field        placeholder="Nom *"                          value={form.nom}        error={errors.nom}        onChange={v => { setForm({ ...form, nom: v });        clearError('nom'); }} />
-          <Field     placeholder="Prénom *"                       value={form.prenom}     error={errors.prenom}     onChange={v => { setForm({ ...form, prenom: v });     clearError('prenom'); }} />
+          <Field        placeholder="Nom *"                          value={form.nom}        error={errors.nom}        maxLen={MAX_LENGTHS.name}    onChange={v => { setForm({ ...form, nom: sanitizeName(v) });        clearError('nom'); }} />
+          <Field     placeholder="Prénom *"                       value={form.prenom}     error={errors.prenom}     maxLen={MAX_LENGTHS.name}    onChange={v => { setForm({ ...form, prenom: sanitizeName(v) });     clearError('prenom'); }} />
           <Field placeholder="Numéro de sécurité sociale *"   value={form.numeroSecu} error={errors.numeroSecu} keyboard="numeric" maxLen={13} secure onChange={v => { setForm({ ...form, numeroSecu: v }); clearError('numeroSecu'); }} />
-          <Field    placeholder="Adresse *"                      value={form.adresse}    error={errors.adresse}    onChange={v => { setForm({ ...form, adresse: v });    clearError('adresse'); }} />
+          <Field    placeholder="Adresse *"                      value={form.adresse}    error={errors.adresse}    maxLen={MAX_LENGTHS.address} onChange={v => { setForm({ ...form, adresse: stripXSS(v) });    clearError('adresse'); }} />
 
           {/* Champs optionnels */}
-          <TextInput style={s.input} placeholder="Complément d'adresse" placeholderTextColor={COLORS.textLight} value={form.complement}  onChangeText={v => setForm({ ...form, complement: v })} />
-          <TextInput style={s.input} placeholder="Code postal"          placeholderTextColor={COLORS.textLight} keyboardType="numeric" value={form.codePostal}  onChangeText={v => setForm({ ...form, codePostal: v })} />
+          <TextInput style={s.input} placeholder="Complément d'adresse" placeholderTextColor={COLORS.textLight} maxLength={MAX_LENGTHS.address} value={form.complement}  onChangeText={v => setForm({ ...form, complement: stripXSS(v) })} />
+          <TextInput style={s.input} placeholder="Code postal"          placeholderTextColor={COLORS.textLight} maxLength={MAX_LENGTHS.zipCode} value={form.codePostal}  onChangeText={v => setForm({ ...form, codePostal: sanitizeZipCode(v) })} />
 
-          <Field placeholder="Ville *" value={form.ville} error={errors.ville} onChange={v => { setForm({ ...form, ville: v }); clearError('ville'); }} />
+          <Field placeholder="Ville *" value={form.ville} error={errors.ville} maxLen={MAX_LENGTHS.city} onChange={v => { setForm({ ...form, ville: sanitizeName(v) }); clearError('ville'); }} />
 
           {/* Pays — dropdown */}
           <TouchableOpacity style={[s.inputRow, errors.pays ? s.inputError : null]} onPress={() => { setPaysModal(true); clearError('pays'); }} activeOpacity={0.7}>
             <Text style={[s.inputRowText, { color: form.pays ? COLORS.text : COLORS.textLight }]}>{form.pays || 'Pays *'}</Text>
-            <Text style={{ fontSize: 14, color: COLORS.textLight }}>▼</Text>
+            <Icon name="chevron-down" size={16} color={COLORS.textLight} />
           </TouchableOpacity>
           {errors.pays && <Text style={s.errorText}>⊙ {errors.pays}</Text>}
 
           {/* Téléphones */}
-          <TextInput style={s.input} placeholder="Téléphone fixe" placeholderTextColor={COLORS.textLight} keyboardType="phone-pad" value={form.telephoneFixe} onChangeText={v => setForm({ ...form, telephoneFixe: v })} />
-          <Field placeholder="Téléphone mobile *" value={form.telephoneMobile} error={errors.telephoneMobile} keyboard="phone-pad" onChange={v => { setForm({ ...form, telephoneMobile: v }); clearError('telephoneMobile'); }} />
+          <TextInput style={s.input} placeholder="Téléphone fixe" placeholderTextColor={COLORS.textLight} keyboardType="phone-pad" maxLength={MAX_LENGTHS.phone} value={form.telephoneFixe} onChangeText={v => setForm({ ...form, telephoneFixe: sanitizePhone(v) })} />
+          <Field placeholder="Téléphone mobile *" value={form.telephoneMobile} error={errors.telephoneMobile} keyboard="phone-pad" maxLen={MAX_LENGTHS.phone} onChange={v => { setForm({ ...form, telephoneMobile: sanitizePhone(v) }); clearError('telephoneMobile'); }} />
 
           {/* Email pré-rempli depuis l'étape 1 */}
           <TextInput style={s.inputPrefilled} value={form.email} editable={false} />

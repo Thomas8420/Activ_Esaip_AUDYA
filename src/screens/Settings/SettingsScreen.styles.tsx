@@ -217,15 +217,43 @@ export const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: COLORS.orange,
-    borderRadius: 20,
-    paddingVertical: 16,
+    borderRadius: 30,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 8,
   },
   saveButtonText: {
     fontFamily: FONT_SEMIBOLD,
-    fontSize: 15,
+    fontSize: 16,
     color: COLORS.white,
+  },
+
+  // ── CTA Styles ─────────────────────────────────────────────────────────────
+  ctaPrimary: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 30,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  ctaPrimaryText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
+    color: COLORS.white,
+  },
+  ctaSecondary: {
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+    borderRadius: 30,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  ctaSecondaryText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
+    color: COLORS.orange,
   },
 
   // ── Delete Confirmation Modal ──────────────────────────────────────────────
@@ -261,20 +289,21 @@ export const styles = StyleSheet.create({
   modalCancelButton: {
     flex: 1,
     paddingVertical: 14,
-    borderRadius: 20,
+    borderRadius: 30,
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+    backgroundColor: COLORS.white,
   },
   modalCancelText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 14,
-    color: COLORS.textLight,
+    color: COLORS.orange,
   },
   modalConfirmButton: {
     flex: 1,
     paddingVertical: 14,
-    borderRadius: 20,
+    borderRadius: 30,
     alignItems: 'center',
     backgroundColor: COLORS.orange,
   },

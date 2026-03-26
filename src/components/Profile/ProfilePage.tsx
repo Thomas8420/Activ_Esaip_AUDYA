@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Modal,
   ScrollView,
   StatusBar,
   Text,
@@ -30,6 +31,14 @@ import {
   uploadProfilePhoto,
   USE_PROFILE_API,
 } from '../../services/profileService';
+import {
+  sanitizeName,
+  sanitizePhone,
+  sanitizeZipCode,
+  sanitizeEmail,
+  sanitizeDate,
+  MAX_LENGTHS,
+} from '../../utils/validators';
 
 // ─── Mock Data (remove once API is ready) ────────────────────────────────────
 const MOCK_PROFILE: PatientProfile = {
@@ -49,11 +58,22 @@ const MOCK_PROFILE: PatientProfile = {
   profilePictureUrl: null,
 };
 
-
 /** Taille max autorisée pour la photo (3 Mo) */
 const MAX_PHOTO_SIZE_MB = 3;
 
-// ─── QR Code placeholder ─────────────────────────────────────────────────────
+// ─── Listes dropdown ──────────────────────────────────────────────────────────
+const PAYS_OPTIONS = [
+  'France', 'Belgique', 'Suisse', 'Canada', 'Luxembourg', 'Maroc',
+  'Algérie', 'Tunisie', 'Espagne', 'Italie', 'Allemagne', 'Portugal',
+  'États-Unis', 'Royaume-Uni', 'Autre',
+];
+
+const PROFESSION_OPTIONS = [
+  'Salarié', 'Fonctionnaire', 'Profession libérale', 'Artisan / Commerçant',
+  'Agriculteur', 'Retraité', 'Étudiant', 'Sans emploi', "Chef d'entreprise", 'Autre',
+];
+
+// ─── QR Code placeholder ──────────────────────────────────────────────────────
 /**
  * Représentation visuelle d'un QR code.
  * À remplacer par react-native-qrcode-svg lorsque l'API fournira l'URL de partage.
@@ -109,11 +129,79 @@ const EditIcon = () => (
   </Svg>
 );
 
+// ─── Sous-composants Dropdown au niveau module ─────────────────────────────────
+// Déclarés HORS du corps de ProfilePage pour éviter le démontage/remontage
+// à chaque re-render (anti-pattern clavier décrit dans CLAUDE.md).
+
+type DropdownTriggerProps = {
+  value: string;
+  placeholder: string;
+  onOpen: () => void;
+  testID?: string;
+};
+
+const DropdownTrigger = ({ value, placeholder, onOpen, testID }: DropdownTriggerProps) => (
+  <TouchableOpacity
+    style={styles.dropdownTrigger}
+    onPress={onOpen}
+    activeOpacity={0.7}
+    accessibilityRole="button"
+    testID={testID}
+  >
+    <Text
+      style={value ? styles.dropdownTriggerText : styles.dropdownTriggerPlaceholder}
+      numberOfLines={1}
+    >
+      {value || placeholder}
+    </Text>
+    <Icon name="chevron-down" size={16} color={COLORS.textLighter} />
+  </TouchableOpacity>
+);
+
+type DropdownModalProps = {
+  visible: boolean;
+  title: string;
+  options: string[];
+  selected: string;
+  onSelect: (v: string) => void;
+  onClose: () => void;
+};
+
+const DropdownModal = ({ visible, title, options, selected, onSelect, onClose }: DropdownModalProps) => (
+  <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <TouchableOpacity style={styles.modalOverlay} onPress={onClose} activeOpacity={1}>
+      <View style={styles.modalSheet}>
+        <View style={styles.modalHandle} />
+        <Text style={styles.modalTitle}>{title}</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {options.map(option => (
+            <TouchableOpacity
+              key={option}
+              style={[styles.modalItem, selected === option && styles.modalItemSelected]}
+              onPress={() => { onSelect(option); onClose(); }}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.modalItemText, selected === option && styles.modalItemTextSelected]}>
+                {option}
+              </Text>
+              {selected === option && (
+                <Text style={{ color: COLORS.orange }}>✓</Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    </TouchableOpacity>
+  </Modal>
+);
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * Page Mon Profil : informations personnelles du patient.
+ * ProfilePage — Informations personnelles du patient.
  * Affiche le QR code de partage, la photo de profil (modifiable) et les champs éditables.
+ * Inclut des dropdowns pour Pays et Profession, et 3 champs supplémentaires :
+ * téléphone mobile, téléphone fixe, profession (locaux — à brancher API si besoin).
  *
  * Suit le pattern USE_API défini dans CLAUDE.md.
  */
@@ -124,10 +212,21 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
+  // ── Champs locaux non présents dans PatientProfile ────────────────────────
+  // TODO: ajouter telephone, telephoneFixe, profession à PatientProfile et profileService
+  //       quand le backend expose ces champs dans GET/PATCH /api/patient/profile
+  const [telephone, setTelephone] = useState('');
+  const [telephoneFixe, setTelephoneFixe] = useState('');
+  const [profession, setProfession] = useState('');
+
   // ── Photo state ──────────────────────────────────────────────────────────────
   /** URI locale de la photo sélectionnée (non encore uploadée) */
   const [localPhotoUri, setLocalPhotoUri] = useState<string | null>(null);
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
+
+  // ── Dropdown state ───────────────────────────────────────────────────────────
+  const [isPaysModalVisible, setIsPaysModalVisible] = useState(false);
+  const [isProfessionModalVisible, setIsProfessionModalVisible] = useState(false);
 
   // ── Load on mount ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -310,6 +409,8 @@ const ProfilePage = () => {
                     ]}
                     onPress={() => updateField('gender', 'homme')}
                     activeOpacity={0.7}
+                    accessibilityLabel="Homme"
+                    accessibilityRole="button"
                     testID="genderHomme"
                   >
                     <Text
@@ -328,6 +429,8 @@ const ProfilePage = () => {
                     ]}
                     onPress={() => updateField('gender', 'femme')}
                     activeOpacity={0.7}
+                    accessibilityLabel="Femme"
+                    accessibilityRole="button"
                     testID="genderFemme"
                   >
                     <Text
@@ -348,10 +451,11 @@ const ProfilePage = () => {
                 <TextInput
                   style={styles.fieldInput}
                   value={profile.birthDate}
-                  onChangeText={v => updateField('birthDate', v)}
+                  onChangeText={v => updateField('birthDate', sanitizeDate(v))}
                   placeholder="JJ/MM/AAAA"
                   placeholderTextColor={COLORS.textLighter}
                   keyboardType="numeric"
+                  maxLength={10}
                   testID="birthDateInput"
                 />
               </View>
@@ -363,10 +467,11 @@ const ProfilePage = () => {
                   <TextInput
                     style={styles.fieldInput}
                     value={profile.lastName}
-                    onChangeText={v => updateField('lastName', v)}
+                    onChangeText={v => updateField('lastName', sanitizeName(v))}
                     placeholder="Nom"
                     placeholderTextColor={COLORS.textLighter}
                     autoCapitalize="words"
+                    maxLength={MAX_LENGTHS.name}
                     testID="lastNameInput"
                   />
                 </View>
@@ -375,27 +480,14 @@ const ProfilePage = () => {
                   <TextInput
                     style={styles.fieldInput}
                     value={profile.firstName}
-                    onChangeText={v => updateField('firstName', v)}
+                    onChangeText={v => updateField('firstName', sanitizeName(v))}
                     placeholder="Prénom"
                     placeholderTextColor={COLORS.textLighter}
                     autoCapitalize="words"
+                    maxLength={MAX_LENGTHS.name}
                     testID="firstNameInput"
                   />
                 </View>
-              </View>
-
-              {/* Téléphone */}
-              <View style={styles.fieldWrapper}>
-                <Text style={styles.fieldLabel}>Téléphone</Text>
-                <TextInput
-                  style={styles.fieldInput}
-                  value={profile.phone}
-                  onChangeText={v => updateField('phone', v)}
-                  placeholder="Téléphone"
-                  placeholderTextColor={COLORS.textLighter}
-                  keyboardType="phone-pad"
-                  testID="phoneInput"
-                />
               </View>
 
               {/* Adresse */}
@@ -404,10 +496,11 @@ const ProfilePage = () => {
                 <TextInput
                   style={styles.fieldInput}
                   value={profile.address}
-                  onChangeText={v => updateField('address', v)}
+                  onChangeText={v => updateField('address', v.replace(/[<>]/g, ''))}
                   placeholder="Adresse"
                   placeholderTextColor={COLORS.textLighter}
                   autoCapitalize="words"
+                  maxLength={MAX_LENGTHS.address}
                   testID="addressInput"
                 />
               </View>
@@ -418,10 +511,11 @@ const ProfilePage = () => {
                 <TextInput
                   style={styles.fieldInput}
                   value={profile.addressComplement}
-                  onChangeText={v => updateField('addressComplement', v)}
+                  onChangeText={v => updateField('addressComplement', v.replace(/[<>]/g, ''))}
                   placeholder="Bâtiment, appartement…"
                   placeholderTextColor={COLORS.textLighter}
                   autoCapitalize="words"
+                  maxLength={MAX_LENGTHS.address}
                   testID="addressComplementInput"
                 />
               </View>
@@ -433,10 +527,10 @@ const ProfilePage = () => {
                   <TextInput
                     style={styles.fieldInput}
                     value={profile.zipCode}
-                    onChangeText={v => updateField('zipCode', v)}
+                    onChangeText={v => updateField('zipCode', sanitizeZipCode(v))}
                     placeholder="00000"
                     placeholderTextColor={COLORS.textLighter}
-                    keyboardType="numeric"
+                    maxLength={MAX_LENGTHS.zipCode}
                     testID="zipCodeInput"
                   />
                 </View>
@@ -445,26 +539,54 @@ const ProfilePage = () => {
                   <TextInput
                     style={styles.fieldInput}
                     value={profile.city}
-                    onChangeText={v => updateField('city', v)}
+                    onChangeText={v => updateField('city', sanitizeName(v))}
                     placeholder="Ville"
                     placeholderTextColor={COLORS.textLighter}
                     autoCapitalize="words"
+                    maxLength={MAX_LENGTHS.city}
                     testID="cityInput"
                   />
                 </View>
               </View>
 
-              {/* Pays */}
+              {/* Pays — Dropdown */}
               <View style={styles.fieldWrapper}>
                 <Text style={styles.fieldLabel}>Pays</Text>
+                <DropdownTrigger
+                  value={profile.country}
+                  placeholder="Sélectionner un pays"
+                  onOpen={() => setIsPaysModalVisible(true)}
+                  testID="countryDropdown"
+                />
+              </View>
+
+              {/* Téléphone mobile */}
+              <View style={styles.fieldWrapper}>
+                <Text style={styles.fieldLabel}>Téléphone</Text>
                 <TextInput
                   style={styles.fieldInput}
-                  value={profile.country}
-                  onChangeText={v => updateField('country', v)}
-                  placeholder="Pays"
+                  value={telephone}
+                  onChangeText={v => setTelephone(sanitizePhone(v))}
+                  placeholder="Téléphone mobile"
                   placeholderTextColor={COLORS.textLighter}
-                  autoCapitalize="words"
-                  testID="countryInput"
+                  keyboardType="phone-pad"
+                  maxLength={MAX_LENGTHS.phone}
+                  testID="telephoneInput"
+                />
+              </View>
+
+              {/* Téléphone fixe */}
+              <View style={styles.fieldWrapper}>
+                <Text style={styles.fieldLabel}>Téléphone fixe</Text>
+                <TextInput
+                  style={styles.fieldInput}
+                  value={telephoneFixe}
+                  onChangeText={v => setTelephoneFixe(sanitizePhone(v))}
+                  placeholder="Téléphone fixe"
+                  placeholderTextColor={COLORS.textLighter}
+                  keyboardType="phone-pad"
+                  maxLength={MAX_LENGTHS.phone}
+                  testID="telephoneFixeInput"
                 />
               </View>
 
@@ -474,11 +596,23 @@ const ProfilePage = () => {
                 <TextInput
                   style={styles.fieldInput}
                   value={profile.phoneFax}
-                  onChangeText={v => updateField('phoneFax', v)}
+                  onChangeText={v => updateField('phoneFax', sanitizePhone(v))}
                   placeholder="Fax"
                   placeholderTextColor={COLORS.textLighter}
                   keyboardType="phone-pad"
+                  maxLength={MAX_LENGTHS.phone}
                   testID="phoneFaxInput"
+                />
+              </View>
+
+              {/* Profession — Dropdown */}
+              <View style={styles.fieldWrapper}>
+                <Text style={styles.fieldLabel}>Profession</Text>
+                <DropdownTrigger
+                  value={profession}
+                  placeholder="Sélectionner une profession"
+                  onOpen={() => setIsProfessionModalVisible(true)}
+                  testID="professionDropdown"
                 />
               </View>
 
@@ -488,23 +622,26 @@ const ProfilePage = () => {
                 <TextInput
                   style={styles.fieldInput}
                   value={profile.email}
-                  onChangeText={v => updateField('email', v)}
+                  onChangeText={v => updateField('email', sanitizeEmail(v))}
                   placeholder="email@exemple.com"
                   placeholderTextColor={COLORS.textLighter}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoComplete="email"
+                  maxLength={MAX_LENGTHS.email}
                   testID="emailInput"
                 />
               </View>
             </View>
 
-            {/* ── Enregistrer ── */}
+            {/* ── Enregistrer (CTA 1) ── */}
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => { void handleSave(); }}
               disabled={isSaving}
               activeOpacity={0.8}
+              accessibilityLabel="Enregistrer les modifications"
+              accessibilityRole="button"
               testID="saveProfileButton"
             >
               <Text style={styles.saveButtonText}>
@@ -515,6 +652,7 @@ const ProfilePage = () => {
         )}
       </ScrollView>
 
+      {/* ── Modal photo ── */}
       <BottomSheetModal
         visible={isPhotoModalVisible}
         onClose={() => setIsPhotoModalVisible(false)}
@@ -552,6 +690,26 @@ const ProfilePage = () => {
           </TouchableOpacity>
         </View>
       </BottomSheetModal>
+
+      {/* ── Dropdown Pays ── */}
+      <DropdownModal
+        visible={isPaysModalVisible}
+        title="Pays"
+        options={PAYS_OPTIONS}
+        selected={profile?.country ?? ''}
+        onSelect={v => { if (profile) { updateField('country', v); } }}
+        onClose={() => setIsPaysModalVisible(false)}
+      />
+
+      {/* ── Dropdown Profession ── */}
+      <DropdownModal
+        visible={isProfessionModalVisible}
+        title="Profession"
+        options={PROFESSION_OPTIONS}
+        selected={profession}
+        onSelect={setProfession}
+        onClose={() => setIsProfessionModalVisible(false)}
+      />
 
       <BottomNav />
     </SafeAreaView>

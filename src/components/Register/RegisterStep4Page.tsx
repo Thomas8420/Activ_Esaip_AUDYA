@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
+import { sanitizeText, sanitizeNumeric, MAX_LENGTHS } from '../../utils/validators';
 
 const OPTIONS_PROFESSION = [
   'Cadres et professions intellectuelles supérieures', 'Professions intermédiaires',
@@ -14,13 +16,18 @@ const OPTIONS_PROFESSION = [
 ];
 
 // Champs texte optionnels de la page
-const CHAMPS_OPTIONNELS = [
-  { key: 'antecedentsFamiliaux',    placeholder: 'Antécédents familiaux' },
-  { key: 'antecedentsMedicaux',     placeholder: 'Antécédents médicaux' },
-  { key: 'antecedentsChirurgicaux', placeholder: 'Antécédents chirurgicaux' },
-  { key: 'traitementEnCours',       placeholder: 'Traitement médical en cours' },
-  { key: 'allergies',               placeholder: 'Allergies connues' },
-  { key: 'activitePhysique',        placeholder: "Nombre d'heures d'activité physique", numeric: true },
+const CHAMPS_OPTIONNELS: Array<{
+  key: string;
+  placeholder: string;
+  numeric?: boolean;
+  maxLen: number;
+}> = [
+  { key: 'antecedentsFamiliaux',    placeholder: 'Antécédents familiaux',                  maxLen: MAX_LENGTHS.text },
+  { key: 'antecedentsMedicaux',     placeholder: 'Antécédents médicaux',                   maxLen: MAX_LENGTHS.text },
+  { key: 'antecedentsChirurgicaux', placeholder: 'Antécédents chirurgicaux',               maxLen: MAX_LENGTHS.text },
+  { key: 'traitementEnCours',       placeholder: 'Traitement médical en cours',            maxLen: MAX_LENGTHS.text },
+  { key: 'allergies',               placeholder: 'Allergies connues',                      maxLen: MAX_LENGTHS.text },
+  { key: 'activitePhysique',        placeholder: "Nombre d'heures d'activité physique",   maxLen: 3, numeric: true },
 ];
 
 type Errors = { taille?: string; poids?: string };
@@ -70,7 +77,7 @@ const RegisterStep4Page = () => {
             <Text style={[s.inputRowText, { color: Boolean(form.profession) ? COLORS.text : COLORS.textLight }]}>
               {form.profession || 'Cadres et professions intellect...'}
             </Text>
-            <Text style={{ fontSize: 14, color: COLORS.textLight }}>▼</Text>
+            <Icon name="chevron-down" size={16} color={COLORS.textLight} />
           </TouchableOpacity>
 
           {/* Fumeur — case verte centrée */}
@@ -83,27 +90,28 @@ const RegisterStep4Page = () => {
 
           {/* Taille et poids — champs obligatoires */}
           <TextInput style={[s.input, errors.taille ? s.inputError : null]} placeholder="Votre taille (cm) *"
-            placeholderTextColor={COLORS.textLight} keyboardType="numeric" value={form.taille}
-            onChangeText={v => { setForm({ ...form, taille: v }); clearError('taille'); }} />
+            placeholderTextColor={COLORS.textLight} keyboardType="numeric" maxLength={3} value={form.taille}
+            onChangeText={v => { setForm({ ...form, taille: sanitizeNumeric(v) }); clearError('taille'); }} />
           {errors.taille && <Text style={s.errorText}>⊙ {errors.taille}</Text>}
 
           <TextInput style={[s.input, errors.poids ? s.inputError : null]} placeholder="Votre poids (kg) *"
-            placeholderTextColor={COLORS.textLight} keyboardType="numeric" value={form.poids}
-            onChangeText={v => { setForm({ ...form, poids: v }); clearError('poids'); }} />
+            placeholderTextColor={COLORS.textLight} keyboardType="numeric" maxLength={3} value={form.poids}
+            onChangeText={v => { setForm({ ...form, poids: sanitizeNumeric(v) }); clearError('poids'); }} />
           {errors.poids && <Text style={s.errorText}>⊙ {errors.poids}</Text>}
 
           {/* Champs optionnels générés dynamiquement */}
-          {CHAMPS_OPTIONNELS.map(({ key, placeholder, numeric }) => (
+          {CHAMPS_OPTIONNELS.map(({ key, placeholder, numeric, maxLen }) => (
             <TextInput key={key} style={s.input} placeholder={placeholder} placeholderTextColor={COLORS.textLight}
-              keyboardType={Boolean(numeric) ? 'numeric' : 'default'}
+              keyboardType={numeric ? 'numeric' : 'default'}
+              maxLength={maxLen}
               value={form[key as keyof typeof form] as string}
-              onChangeText={v => setForm({ ...form, [key]: v })} />
+              onChangeText={v => setForm({ ...form, [key]: numeric ? sanitizeNumeric(v) : sanitizeText(v) })} />
           ))}
 
           {/* Remarques — champ multilignes */}
           <TextInput style={[s.input, { minHeight: 80, textAlignVertical: 'top' }]} placeholder="Remarques"
-            placeholderTextColor={COLORS.textLight} multiline value={form.remarques}
-            onChangeText={v => setForm({ ...form, remarques: v })} />
+            placeholderTextColor={COLORS.textLight} multiline maxLength={MAX_LENGTHS.text} value={form.remarques}
+            onChangeText={v => setForm({ ...form, remarques: sanitizeText(v) })} />
 
           {/* Bouton suivant */}
           <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]}

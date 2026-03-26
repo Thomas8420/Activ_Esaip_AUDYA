@@ -318,16 +318,6 @@ export const registerStyles = StyleSheet.create({
   },
 
   // ── Icône @ (étape 1bis) ──
-  atContainer: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: COLORS.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
   atIcon: {
     fontSize: 48,
     color: COLORS.textLight,
@@ -349,14 +339,6 @@ export const registerStyles = StyleSheet.create({
   btnPrimaryPressed: {
     backgroundColor: COLORS.white,
     borderColor: COLORS.orange,
-  },
-
-  // ── Toggle mot de passe ──
-  eyeToggleText: {
-    fontFamily: FONT_REGULAR,
-    fontSize: 12,
-    color: COLORS.orange,
-    paddingHorizontal: 4,
   },
 
   // ── Bouton outline (blanc + contour orange) ──

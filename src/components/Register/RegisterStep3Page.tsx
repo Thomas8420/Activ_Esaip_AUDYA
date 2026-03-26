@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
@@ -24,6 +25,8 @@ const QUESTIONS_OUI_NON = [
   { label: '7. Avez-vous des acouphènes ?',                                      title: 'Avez-vous des acouphènes ?' },
   { label: '8. Portez-vous des lunettes ?',                                      title: 'Portez-vous des lunettes ?' },
   { label: '9. Avez-vous des difficultés à manipuler les petits objets ?',       title: 'Difficultés à manipuler les petits objets ?' },
+  { label: '11. Avez-vous déjà consulté un ORL ?',                               title: 'Avez-vous déjà consulté un ORL ?' },
+  { label: '12. Avez-vous des antécédents familiaux de surdité ?',               title: 'Antécédents familiaux de surdité ?' },
 ];
 
 type ModalConfig = { visible: boolean; title: string; options: string[]; value: string; onSelect: (v: string) => void };
@@ -39,7 +42,7 @@ const Dropdown = ({ label, value, placeholder, onOpen }: DropdownProps) => (
     <Text style={s.questionText}>{label}</Text>
     <TouchableOpacity style={s.inputRow} onPress={onOpen} activeOpacity={0.7}>
       <Text style={[s.inputRowText, { color: value ? COLORS.text : COLORS.textLight }]}>{value || placeholder}</Text>
-      <Text style={{ color: COLORS.textLight }}>▼</Text>
+      <Icon name="chevron-down" size={16} color={COLORS.textLight} />
     </TouchableOpacity>
   </View>
 );
@@ -65,12 +68,11 @@ const CheckboxGroup = ({ label, list, onToggle }: CheckboxGroupProps) => (
 const RegisterStep3Page = () => {
   const { navigateTo } = useNavigation();
 
-  // États des réponses (q2..q9 groupés, q10 et q10b séparés)
+  // États des réponses (q2..q9, q11, q12 groupés ; q10 situations difficiles)
   const [q1, setQ1]   = useState('');
   const [q3, setQ3]   = useState('');
-  const [q10, setQ10]   = useState<string[]>([]);
-  const [q10b, setQ10b] = useState<string[]>([]);
-  const [ouiNon, setOuiNon] = useState<string[]>(new Array(7).fill(''));
+  const [q10, setQ10] = useState<string[]>([]);
+  const [ouiNon, setOuiNon] = useState<string[]>(new Array(9).fill(''));
 
   const [modal, setModal] = useState<ModalConfig>({ visible: false, title: '', options: [], value: '', onSelect: () => {} });
 
@@ -78,8 +80,8 @@ const RegisterStep3Page = () => {
     setModal({ visible: true, title, options, value, onSelect });
   const closeModal = () => setModal(prev => ({ ...prev, visible: false }));
 
-  const toggleSituation = (list: string[], setList: (v: string[]) => void, item: string) =>
-    setList(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
+  const toggleSituation = (item: string) =>
+    setQ10(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
 
   return (
     <SafeAreaView style={s.safeArea} edges={['top']}>
@@ -124,9 +126,8 @@ const RegisterStep3Page = () => {
           <Dropdown label="3. Comment votre surdité a-t-elle évolué ?" value={q3} placeholder="Progressivement, lentement"
             onOpen={() => openModal('Comment a évolué votre surdité ?', OPTIONS_Q3, q3, setQ3)} />
 
-          {/* Q10 et Q10 bis — situations difficiles (cases vertes) */}
-          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10} onToggle={item => toggleSituation(q10, setQ10, item)} />
-          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10b} onToggle={item => toggleSituation(q10b, setQ10b, item)} />
+          {/* Q10 — situations difficiles (cases vertes) */}
+          <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10} onToggle={toggleSituation} />
 
           {/* Bouton valider */}
           <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]} onPress={() => navigateTo('register-step4')}>

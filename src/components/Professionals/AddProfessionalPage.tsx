@@ -14,6 +14,7 @@ import DropdownIcon from '../../assets/images/dropdown.svg';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
+import { sanitizeName, sanitizeZipCode } from '../../utils/validators';
 
 interface SearchResult {
   id: string;
@@ -117,7 +118,8 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             placeholder="Nom"
             placeholderTextColor="#999"
             value={lastName}
-            onChangeText={setLastName}
+            onChangeText={v => setLastName(sanitizeName(v))}
+            maxLength={100}
           />
 
           {/* Prénom */}
@@ -126,7 +128,8 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             placeholder="Prénom"
             placeholderTextColor="#999"
             value={firstName}
-            onChangeText={setFirstName}
+            onChangeText={v => setFirstName(sanitizeName(v))}
+            maxLength={100}
           />
 
           {/* Code postal */}
@@ -135,8 +138,9 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             placeholder="Code postal"
             placeholderTextColor="#999"
             value={zipCode}
-            onChangeText={setZipCode}
-            keyboardType="number-pad"
+            onChangeText={v => setZipCode(sanitizeZipCode(v))}
+            keyboardType="default"
+            maxLength={20}
           />
 
           {/* Ville */}
@@ -145,7 +149,8 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             placeholder="Ville"
             placeholderTextColor="#999"
             value={city}
-            onChangeText={setCity}
+            onChangeText={v => setCity(sanitizeName(v))}
+            maxLength={100}
           />
 
           {/* Bouton Rechercher */}

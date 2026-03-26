@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
+import { sanitizeName, sanitizeZipCode, MAX_LENGTHS } from '../../utils/validators';
 
 const OPTIONS_SPECIALITE = [
   'Médecin généraliste', 'ORL (Oto-Rhino-Laryngologiste)', 'Audioprothésiste',
@@ -96,20 +98,21 @@ const RegisterStep5Page = () => {
             <Text style={[s.inputRowText, { color: form.specialite ? COLORS.text : COLORS.textLight }]}>
               {form.specialite || 'Spécialité'}
             </Text>
-            <Text style={{ fontSize: 14, color: COLORS.textLight }}>▼</Text>
+            <Icon name="chevron-down" size={16} color={COLORS.textLight} />
           </TouchableOpacity>
 
           {/* Champs optionnels */}
-          <TextInput style={s.input} placeholder="Nom" placeholderTextColor={COLORS.textLight} value={form.nom} onChangeText={v => setForm({ ...form, nom: v })} />
-          <TextInput style={s.input} placeholder="Prénom" placeholderTextColor={COLORS.textLight} value={form.prenom} onChangeText={v => setForm({ ...form, prenom: v })} />
-          <TextInput style={s.input} placeholder="Code postal" placeholderTextColor={COLORS.textLight} keyboardType="numeric" value={form.codePostal} onChangeText={v => setForm({ ...form, codePostal: v })} />
+          <TextInput style={s.input} placeholder="Nom" placeholderTextColor={COLORS.textLight} maxLength={MAX_LENGTHS.name} value={form.nom} onChangeText={v => setForm({ ...form, nom: sanitizeName(v) })} />
+          <TextInput style={s.input} placeholder="Prénom" placeholderTextColor={COLORS.textLight} maxLength={MAX_LENGTHS.name} value={form.prenom} onChangeText={v => setForm({ ...form, prenom: sanitizeName(v) })} />
+          <TextInput style={s.input} placeholder="Code postal" placeholderTextColor={COLORS.textLight} maxLength={MAX_LENGTHS.zipCode} value={form.codePostal} onChangeText={v => setForm({ ...form, codePostal: sanitizeZipCode(v) })} />
 
           {/* Ville — obligatoire */}
           <TextInput
             style={[s.input, errors.ville ? s.inputError : null]}
             placeholder="Ville *" placeholderTextColor={COLORS.textLight}
+            maxLength={MAX_LENGTHS.city}
             value={form.ville}
-            onChangeText={v => { setForm({ ...form, ville: v }); clearError('ville'); }}
+            onChangeText={v => { setForm({ ...form, ville: sanitizeName(v) }); clearError('ville'); }}
           />
           {errors.ville && <Text style={s.errorText}>⊙ {errors.ville}</Text>}
 

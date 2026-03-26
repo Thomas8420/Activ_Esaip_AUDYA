@@ -30,6 +30,7 @@ import {
 } from '../../services/messagingService';
 import { useNavigation, SelectedConversation } from '../../context/NavigationContext';
 import { BASE_URL } from '../../services/api';
+import { sanitizeText, MAX_LENGTHS } from '../../utils/validators';
 
 const POLL_INTERVAL_MS = 10_000;
 
@@ -421,11 +422,12 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
           <TextInput
             style={styles.textInput}
             value={inputText}
-            onChangeText={setInputText}
+            onChangeText={v => setInputText(sanitizeText(v))}
             placeholder="Saisir votre message…"
             placeholderTextColor={COLORS.textLighter}
             multiline
             returnKeyType="default"
+            maxLength={MAX_LENGTHS.message}
             testID="messageInput"
           />
 
