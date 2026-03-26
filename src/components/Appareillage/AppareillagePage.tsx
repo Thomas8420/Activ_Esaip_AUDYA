@@ -1,6 +1,6 @@
 // src/components/Appareillage/AppareillagePage.tsx
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
@@ -147,13 +147,20 @@ const AppareillagePage = () => {
                   </View>
 
                   {/* Bouton téléchargement */}
-                  <TouchableOpacity
-                    style={styles.downloadButton}
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.downloadButton,
+                      pressed && styles.downloadButtonPressed,
+                    ]}
                     accessibilityLabel={t('device.download')}
                     accessibilityRole="button"
                   >
-                    <Text style={styles.downloadButtonText}>{t('device.download')}</Text>
-                  </TouchableOpacity>
+                    {({ pressed }) => (
+                      <Text style={[styles.downloadButtonText, pressed && styles.downloadButtonTextPressed]}>
+                        {t('device.download')}
+                      </Text>
+                    )}
+                  </Pressable>
 
                 </View>
               )}
@@ -298,16 +305,22 @@ const styles = StyleSheet.create({
   },
   downloadButton: {
     marginTop: 20,
-    backgroundColor: COLORS.white,
-    borderWidth: 2,
-    borderColor: COLORS.orange,
+    backgroundColor: COLORS.orange,
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
   },
+  downloadButtonPressed: {
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+  },
   downloadButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
+    color: COLORS.white,
+  },
+  downloadButtonTextPressed: {
     color: COLORS.orange,
   },
 });

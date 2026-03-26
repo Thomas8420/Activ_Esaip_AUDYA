@@ -6,6 +6,7 @@ import {
   Modal,
   ScrollView,
   StatusBar,
+  Pressable,
   Text,
   TextInput,
   TouchableOpacity,
@@ -635,19 +636,23 @@ const ProfilePage = () => {
             </View>
 
             {/* ── Enregistrer (CTA 1) ── */}
-            <TouchableOpacity
-              style={styles.saveButton}
+            <Pressable
+              style={({ pressed }) => [
+                styles.saveButton,
+                pressed && !isSaving && styles.saveButtonPressed,
+              ]}
               onPress={() => { void handleSave(); }}
               disabled={isSaving}
-              activeOpacity={0.8}
               accessibilityLabel="Enregistrer les modifications"
               accessibilityRole="button"
               testID="saveProfileButton"
             >
-              <Text style={styles.saveButtonText}>
-                {isSaving ? 'Enregistrement…' : 'Enregistrer les modifications'}
-              </Text>
-            </TouchableOpacity>
+              {({ pressed }) => (
+                <Text style={[styles.saveButtonText, pressed && !isSaving && styles.saveButtonTextPressed]}>
+                  {isSaving ? 'Enregistrement…' : 'Enregistrer les modifications'}
+                </Text>
+              )}
+            </Pressable>
           </>
         )}
       </ScrollView>

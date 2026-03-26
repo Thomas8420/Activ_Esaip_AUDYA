@@ -195,18 +195,24 @@ export const styles = StyleSheet.create({
 
   // ── Save button (CTA 1) ────────────────────────────────────────────────────
   saveButton: {
-    backgroundColor: COLORS.white,
-    borderWidth: 2,
-    borderColor: COLORS.orange,
+    backgroundColor: COLORS.orange,
     borderRadius: 30,
     height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
   },
+  saveButtonPressed: {
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+  },
   saveButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 15,
+    color: COLORS.white,
+  },
+  saveButtonTextPressed: {
     color: COLORS.orange,
   },
 

@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
   },
   outlineButtonDisabled: {
     borderColor: COLORS.border,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.border,
   },
   outlineButtonText: {
     fontFamily: FONT_SEMIBOLD,
@@ -235,37 +235,51 @@ export const styles = StyleSheet.create({
     color: COLORS.danger,
   },
   saveButton: {
-    backgroundColor: COLORS.white,
-    borderWidth: 2,
-    borderColor: COLORS.orange,
+    backgroundColor: COLORS.orange,
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 8,
   },
+  saveButtonPressed: {
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+  },
   saveButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
+    color: COLORS.white,
+  },
+  saveButtonTextPressed: {
     color: COLORS.orange,
   },
 
   // ── CTA Styles ─────────────────────────────────────────────────────────────
   ctaPrimary: {
-    backgroundColor: COLORS.white,
-    borderWidth: 2,
-    borderColor: COLORS.orange,
+    backgroundColor: COLORS.orange,
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 8,
   },
+  ctaPrimaryPressed: {
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+  },
   ctaPrimaryText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
+    color: COLORS.white,
+  },
+  ctaPrimaryTextPressed: {
     color: COLORS.orange,
   },
   ctaSecondary: {
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
@@ -274,7 +288,7 @@ export const styles = StyleSheet.create({
   ctaSecondaryText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
-    color: COLORS.white,
+    color: COLORS.orange,
   },
 
   // ── Delete Confirmation Modal ──────────────────────────────────────────────

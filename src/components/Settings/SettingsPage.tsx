@@ -497,27 +497,28 @@ const SettingsPage = () => {
                 </Text>
               )}
 
-              <TouchableOpacity
-                style={[
+              <Pressable
+                style={({ pressed }) => [
                   styles.ctaPrimary,
-                  (!canChangePassword || isChangingPassword) &&
-                    styles.outlineButtonDisabled,
+                  pressed && !(!canChangePassword || isChangingPassword) && styles.ctaPrimaryPressed,
+                  (!canChangePassword || isChangingPassword) && styles.outlineButtonDisabled,
                 ]}
                 onPress={handleChangePassword}
                 disabled={!canChangePassword || isChangingPassword}
-                activeOpacity={0.7}
                 testID="changePasswordButton"
               >
-                <Text
-                  style={[
-                    styles.ctaPrimaryText,
-                    (!canChangePassword || isChangingPassword) &&
-                      styles.outlineButtonTextDisabled,
-                  ]}
-                >
-                  {isChangingPassword ? t('settings.password.changing') : t('settings.password.change')}
-                </Text>
-              </TouchableOpacity>
+                {({ pressed }) => (
+                  <Text
+                    style={[
+                      styles.ctaPrimaryText,
+                      pressed && !(!canChangePassword || isChangingPassword) && styles.ctaPrimaryTextPressed,
+                      (!canChangePassword || isChangingPassword) && styles.outlineButtonTextDisabled,
+                    ]}
+                  >
+                    {isChangingPassword ? t('settings.password.changing') : t('settings.password.change')}
+                  </Text>
+                )}
+              </Pressable>
             </View>
 
             {/* ── MON COMPTE ── */}
@@ -535,17 +536,21 @@ const SettingsPage = () => {
             </View>
 
             {/* ── Enregistrer les modifications ── */}
-            <TouchableOpacity
-              style={styles.saveButton}
+            <Pressable
+              style={({ pressed }) => [
+                styles.saveButton,
+                pressed && !isSaving && styles.saveButtonPressed,
+              ]}
               onPress={handleSaveSettings}
               disabled={isSaving}
-              activeOpacity={0.8}
               testID="saveSettingsButton"
             >
-              <Text style={styles.saveButtonText}>
-                {isSaving ? t('settings.saving') : t('settings.save')}
-              </Text>
-            </TouchableOpacity>
+              {({ pressed }) => (
+                <Text style={[styles.saveButtonText, pressed && !isSaving && styles.saveButtonTextPressed]}>
+                  {isSaving ? t('settings.saving') : t('settings.save')}
+                </Text>
+              )}
+            </Pressable>
           </>
         )}
       </ScrollView>
