@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Modal,
   ScrollView,
   StatusBar,
   Text,
@@ -367,57 +366,47 @@ const HealthPage = () => {
       </ScrollView>
 
       {/* ─── Sélecteur Sexe / Fumeur ────────────────────────────────────── */}
-      <Modal
+      <BottomSheetModal
         visible={activeModal !== null}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setActiveModal(null)}
+        onClose={() => setActiveModal(null)}
       >
-        <TouchableOpacity
-          style={styles.healthModalOverlay}
-          activeOpacity={1}
-          onPress={() => setActiveModal(null)}
-          accessibilityLabel="Fermer"
-          accessibilityRole="button"
-        >
-          <View style={styles.healthModalSheet}>
-            <View style={styles.healthModalHandle} />
-            <Text style={styles.healthModalTitle}>
-              {activeModal === 'sex' ? 'Sexe' : 'Fumeur'}
-            </Text>
-            {(activeModal === 'sex' ? SEX_OPTIONS : SMOKER_OPTIONS).map(option => {
-              const currentValue = activeModal === 'sex' ? health?.sex : health?.smoker;
-              const isSelected = currentValue === option;
-              return (
-                <TouchableOpacity
-                  key={option}
-                  style={[styles.healthModalItem, isSelected && styles.healthModalItemSelected]}
-                  onPress={() => {
-                    if (activeModal) {
-                      handleUpdateField(activeModal, option);
-                    }
-                    setActiveModal(null);
-                  }}
-                  accessibilityLabel={option}
-                  accessibilityRole="button"
+        <View style={styles.healthModalSheet}>
+          <View style={styles.healthModalHandle} />
+          <Text style={styles.healthModalTitle}>
+            {activeModal === 'sex' ? 'Sexe' : 'Fumeur'}
+          </Text>
+          {(activeModal === 'sex' ? SEX_OPTIONS : SMOKER_OPTIONS).map(option => {
+            const currentValue = activeModal === 'sex' ? health?.sex : health?.smoker;
+            const isSelected = currentValue === option;
+            return (
+              <TouchableOpacity
+                key={option}
+                style={[styles.healthModalItem, isSelected && styles.healthModalItemSelected]}
+                onPress={() => {
+                  if (activeModal) {
+                    handleUpdateField(activeModal, option);
+                  }
+                  setActiveModal(null);
+                }}
+                accessibilityLabel={option}
+                accessibilityRole="button"
+              >
+                <Text
+                  style={[
+                    styles.healthModalItemText,
+                    isSelected && styles.healthModalItemTextSelected,
+                  ]}
                 >
-                  <Text
-                    style={[
-                      styles.healthModalItemText,
-                      isSelected && styles.healthModalItemTextSelected,
-                    ]}
-                  >
-                    {option}
-                  </Text>
-                  {isSelected && (
-                    <Icon name="checkmark" size={18} color={COLORS.orange} />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </TouchableOpacity>
-      </Modal>
+                  {option}
+                </Text>
+                {isSelected && (
+                  <Icon name="checkmark" size={18} color={COLORS.orange} />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </BottomSheetModal>
 
       <BottomSheetModal
         visible={isUploadModalVisible}

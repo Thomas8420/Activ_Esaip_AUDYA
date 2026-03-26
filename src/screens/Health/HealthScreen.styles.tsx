@@ -417,11 +417,6 @@ export const styles = StyleSheet.create({
   },
 
   // ─── Health Field Selector Modal ──────────────────────────────────────────
-  healthModalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
   healthModalSheet: {
     backgroundColor: COLORS.white,
     borderTopLeftRadius: 20,

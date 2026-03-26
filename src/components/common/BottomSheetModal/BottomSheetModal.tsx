@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -21,61 +21,72 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
  * Overlay (fond sombre) et sheet (contenu blanc) s'animent indépendamment :
  * - Overlay : fade-in / fade-out
  * - Sheet   : spring slide-up / timing slide-down
+ * Le composant anime toujours la fermeture, qu'elle soit déclenchée par
+ * l'overlay ou par le parent (passage de visible à false).
  * Les enfants fournissent leur propre style de feuille (borderRadius, padding…).
  */
 const BottomSheetModal = ({ visible, onClose, children }: Props) => {
-  const fadeAnim  = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-
-  const animateIn = useCallback(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 220,
-        useNativeDriver: true,
-      }),
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        damping: 22,
-        stiffness: 180,
-        mass: 0.8,
-        overshootClamping: false,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [fadeAnim, slideAnim]);
-
-  const handleClose = useCallback(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 180,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: SCREEN_HEIGHT,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start(() => onClose());
-  }, [fadeAnim, slideAnim, onClose]);
+  const [mounted, setMounted] = useState(visible);
+  const fadeAnim  = useRef(new Animated.Value(visible ? 1 : 0)).current;
+  const slideAnim = useRef(new Animated.Value(visible ? 0 : SCREEN_HEIGHT)).current;
+  const animRef   = useRef<Animated.CompositeAnimation | null>(null);
 
   useEffect(() => {
-    if (visible) {
-      animateIn();
-    } else {
-      // Réinitialise pour la prochaine ouverture
-      fadeAnim.setValue(0);
-      slideAnim.setValue(SCREEN_HEIGHT);
+    // Stopper toute animation en cours avant d'en lancer une nouvelle
+    if (animRef.current) {
+      animRef.current.stop();
+      animRef.current = null;
     }
-  }, [visible, animateIn, fadeAnim, slideAnim]);
+
+    if (visible) {
+      setMounted(true);
+      animRef.current = Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 220,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          damping: 22,
+          stiffness: 180,
+          mass: 0.8,
+          overshootClamping: false,
+          useNativeDriver: true,
+        }),
+      ]);
+      animRef.current.start(({ finished }) => {
+        if (finished) { animRef.current = null; }
+      });
+    } else {
+      animRef.current = Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 180,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: SCREEN_HEIGHT,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]);
+      animRef.current.start(({ finished }) => {
+        animRef.current = null;
+        // Ne démonter que si l'animation est allée jusqu'au bout
+        if (finished) { setMounted(false); }
+      });
+    }
+  }, [visible, fadeAnim, slideAnim]);
+
+  if (!mounted) { return null; }
 
   return (
     <Modal
-      visible={visible}
+      visible={mounted}
       transparent
       animationType="none"
-      onRequestClose={handleClose}
+      onRequestClose={onClose}
       statusBarTranslucent
     >
       <View style={styles.container}>
@@ -86,7 +97,7 @@ const BottomSheetModal = ({ visible, onClose, children }: Props) => {
         />
 
         {/* Zone de fermeture au tap — absoluteFill, sous le sheet */}
-        <TouchableWithoutFeedback onPress={handleClose}>
+        <TouchableWithoutFeedback onPress={onClose}>
           <View style={StyleSheet.absoluteFillObject} />
         </TouchableWithoutFeedback>
 
