@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
   },
   outlineButtonDisabled: {
     borderColor: COLORS.border,
-    backgroundColor: COLORS.border,
+    backgroundColor: COLORS.offWhite,
   },
   outlineButtonText: {
     fontFamily: FONT_SEMIBOLD,
@@ -235,32 +235,6 @@ export const styles = StyleSheet.create({
     color: COLORS.danger,
   },
   saveButton: {
-    backgroundColor: COLORS.orange,
-    borderRadius: 30,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  saveButtonText: {
-    fontFamily: FONT_SEMIBOLD,
-    fontSize: 16,
-    color: COLORS.white,
-  },
-
-  // ── CTA Styles ─────────────────────────────────────────────────────────────
-  ctaPrimary: {
-    backgroundColor: COLORS.orange,
-    borderRadius: 30,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  ctaPrimaryText: {
-    fontFamily: FONT_SEMIBOLD,
-    fontSize: 16,
-    color: COLORS.white,
-  },
-  ctaSecondary: {
     backgroundColor: COLORS.white,
     borderWidth: 2,
     borderColor: COLORS.orange,
@@ -269,10 +243,38 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
   },
-  ctaSecondaryText: {
+  saveButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
     color: COLORS.orange,
+  },
+
+  // ── CTA Styles ─────────────────────────────────────────────────────────────
+  ctaPrimary: {
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+    borderRadius: 30,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  ctaPrimaryText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
+    color: COLORS.orange,
+  },
+  ctaSecondary: {
+    backgroundColor: COLORS.orange,
+    borderRadius: 30,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  ctaSecondaryText: {
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 16,
+    color: COLORS.white,
   },
 
   // ── Delete Confirmation Modal ──────────────────────────────────────────────

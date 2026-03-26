@@ -195,8 +195,10 @@ export const styles = StyleSheet.create({
 
   // ── Save button (CTA 1) ────────────────────────────────────────────────────
   saveButton: {
-    backgroundColor: COLORS.orange,
-    borderRadius: 22,
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
+    borderRadius: 30,
     height: 48,
     alignItems: 'center',
     justifyContent: 'center',
@@ -205,7 +207,7 @@ export const styles = StyleSheet.create({
   saveButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 15,
-    color: COLORS.white,
+    color: COLORS.orange,
   },
 
   // ── Dropdown trigger ───────────────────────────────────────────────────────

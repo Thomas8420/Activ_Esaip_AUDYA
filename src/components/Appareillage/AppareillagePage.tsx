@@ -298,7 +298,9 @@ const styles = StyleSheet.create({
   },
   downloadButton: {
     marginTop: 20,
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: COLORS.orange,
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
@@ -306,7 +308,7 @@ const styles = StyleSheet.create({
   downloadButtonText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 16,
-    color: COLORS.white,
+    color: COLORS.orange,
   },
 });
 
