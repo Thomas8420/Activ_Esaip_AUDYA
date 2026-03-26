@@ -168,7 +168,7 @@ const CarnetAuditionPage = () => {
             <>
               {viewMode === 'timeline' && <CarnetTimelineView documents={documents} onView={setViewedDoc} />}
               {viewMode === 'grid' && <CarnetGridView documents={documents} />}
-              {viewMode === 'list' && <CarnetListView documents={documents} />}
+              {viewMode === 'list' && <CarnetListView documents={documents} onView={setViewedDoc} />}
             </>
           )}
         </View>
