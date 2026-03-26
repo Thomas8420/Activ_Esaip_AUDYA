@@ -25,6 +25,7 @@ import {
   deleteAccount,
   USE_SETTINGS_API,
 } from '../../services/settingsService';
+import { validatePassword } from '../../utils/validators';
 import { useNavigation } from '../../context/NavigationContext';
 import { useLanguage, Language } from '../../context/LanguageContext';
 import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
@@ -55,6 +56,20 @@ const EyeIcon = ({ visible }: { visible: boolean }) => (
     size={20}
     color={COLORS.textLighter}
   />
+);
+
+// ─── Password Rule (live validation row) ──────────────────────────────────────
+const PasswordRule = ({ met, label }: { met: boolean; label: string }) => (
+  <View style={styles.pwdRuleRow}>
+    <Icon
+      name={met ? 'checkmark-circle' : 'ellipse-outline'}
+      size={14}
+      color={met ? '#2E7D32' : COLORS.textLighter}
+    />
+    <Text style={[styles.pwdRuleText, met && styles.pwdRuleTextValid]}>
+      {label}
+    </Text>
+  </View>
 );
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -123,8 +138,13 @@ const SettingsPage = () => {
   };
 
   const passwordsMatch = newPassword === confirmPassword;
+  const pwdHasMinLength = newPassword.length >= 8;
+  const pwdHasUppercase = /[A-Z]/.test(newPassword);
+  const pwdHasDigit = /\d/.test(newPassword);
+  const pwdHasSpecial = /[^A-Za-z0-9]/.test(newPassword);
+  const isPasswordValid = validatePassword(newPassword) === null;
   const canChangePassword =
-    newPassword.length > 0 && confirmPassword.length > 0 && passwordsMatch;
+    newPassword.length > 0 && confirmPassword.length > 0 && passwordsMatch && isPasswordValid;
   const showPasswordMismatch =
     newPassword.length > 0 && confirmPassword.length > 0 && !passwordsMatch;
 
@@ -435,6 +455,15 @@ const SettingsPage = () => {
                   <EyeIcon visible={showNewPassword} />
                 </TouchableOpacity>
               </View>
+
+              {newPassword.length > 0 && (
+                <View style={styles.pwdRulesContainer}>
+                  <PasswordRule met={pwdHasMinLength} label="8 caractères minimum" />
+                  <PasswordRule met={pwdHasUppercase} label="1 lettre majuscule" />
+                  <PasswordRule met={pwdHasDigit} label="1 chiffre" />
+                  <PasswordRule met={pwdHasSpecial} label="1 caractère spécial" />
+                </View>
+              )}
 
               <View style={styles.passwordInputWrapper}>
                 <TextInput

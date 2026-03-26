@@ -182,6 +182,24 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: -6,
   },
+  pwdRulesContainer: {
+    marginTop: -4,
+    marginBottom: 12,
+    gap: 5,
+  },
+  pwdRuleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  pwdRuleText: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: COLORS.textLighter,
+  },
+  pwdRuleTextValid: {
+    color: '#2E7D32',
+  },
 
   // ── Buttons ────────────────────────────────────────────────────────────────
   outlineButton: {
