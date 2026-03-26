@@ -174,7 +174,7 @@ const HealthPage = () => {
             <View style={styles.summaryCard}>
               <Text style={styles.summaryTopTitle}>{t('screen.health')}</Text>
 
-              {/* Identité + adresse + IMC aligné sur toute la hauteur */}
+              {/* Identité + adresse */}
               <View style={styles.summaryIdentityRow}>
                 <View style={styles.summaryAvatar}>
                   <Text style={styles.summaryAvatarText}>
@@ -198,19 +198,21 @@ const HealthPage = () => {
                     </Text>
                   </View>
                 </View>
+              </View>
+
+              <View style={styles.summaryDivider} />
+
+              {/* QR Code + IMC côte à côte */}
+              <View style={styles.summaryBottomRow}>
+                <View style={styles.qrCodeContainer}>
+                  <QrCode width={110} height={110} />
+                </View>
                 <View style={styles.bmiBlock}>
                   <View style={styles.bmiCircle}>
                     <Text style={styles.bmiValue}>{bmiValue}</Text>
                   </View>
                   <Text style={styles.bmiLabel}>Mon IMC</Text>
                 </View>
-              </View>
-
-              <View style={styles.summaryDivider} />
-
-              {/* QR Code */}
-              <View style={styles.qrCodeContainer}>
-                <QrCode width={110} height={110} />
               </View>
             </View>
 

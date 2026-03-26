@@ -128,34 +128,38 @@ export const styles = StyleSheet.create({
     backgroundColor: '#EBEBEB',
     marginBottom: 16,
   },
+  summaryBottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingVertical: 4,
+  },
   bmiBlock: {
     alignItems: 'center',
-    gap: 6,
-    marginLeft: 12,
+    gap: 8,
   },
   bmiCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 84,
+    height: 84,
+    borderRadius: 42,
     backgroundColor: COLORS.yellow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   bmiValue: {
     fontFamily: FONT_BOLD,
-    fontSize: 16,
+    fontSize: 22,
     color: COLORS.text,
   },
   bmiLabel: {
     fontFamily: FONT_SEMIBOLD,
-    fontSize: 11,
+    fontSize: 13,
     color: COLORS.textLight,
     textAlign: 'center',
   },
   qrCodeContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
   },
 
   sectionCard: {
