@@ -329,12 +329,11 @@ const MessagingPage = () => {
   }, []);
 
   // ── Filtre EN LIGNE ──────────────────────────────────────────────────────────
-  const { onlineContactIds, displayed } = useMemo(() => {
+  const displayed = useMemo(() => {
     const ids = new Set(contacts.filter(c => c.status === 'online').map(c => c.id));
-    const list = onlineOnly
+    return onlineOnly
       ? conversations.filter(c => ids.has(c.correspondentId))
       : conversations;
-    return { onlineContactIds: ids, displayed: list };
   }, [contacts, conversations, onlineOnly]);
 
   // ── Nouveau message ──────────────────────────────────────────────────────────

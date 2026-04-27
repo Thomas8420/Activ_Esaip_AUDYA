@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StatusBar, Text, View } from 'react-native';
 import CTA1 from '../common/Button/CTA1';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';

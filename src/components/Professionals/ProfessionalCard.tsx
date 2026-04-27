@@ -24,7 +24,7 @@ interface ProfessionalCardProps {
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   professional,
   onToggleFavorite,
-  onResendInvitation,
+  onResendInvitation: _onResendInvitation,
   onViewProfile,
   onMessage,
 }) => {

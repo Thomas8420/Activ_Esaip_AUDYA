@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AppareilDetails } from './AppareillagePage';
-import { COLORS, FONT_BOLD, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
+import { COLORS, FONT_BOLD, FONT_REGULAR } from '../../screens/Home/HomeScreen.styles';
 
 // Importe tes SVGs ici quand tu les auras !
 import OreilleDroiteIcon from '../../assets/images/oreille-droite.svg';
@@ -15,7 +15,7 @@ interface DeviceCardProps {
   readonly dotColor: string;
 }
 
-const DeviceCard: React.FC<DeviceCardProps> = ({ side, data, dotColor }) => {
+const DeviceCard: React.FC<DeviceCardProps> = ({ side, data, dotColor: _dotColor }) => {
   const { t } = useLanguage();
   return (
     <View style={styles.card}>

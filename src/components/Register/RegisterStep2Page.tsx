@@ -51,15 +51,6 @@ const Field = ({ placeholder, value, error, keyboard, maxLen, secure, onChange }
   </>
 );
 
-// Item de modal — défini EN DEHORS du composant
-type ModalItemProps = { value: string; selected: boolean; onPress: () => void };
-const ModalItem = ({ value, selected, onPress }: ModalItemProps) => (
-  <TouchableOpacity style={[s.modalItem, selected && s.modalItemSelected]} onPress={onPress} activeOpacity={0.7}>
-    <Text style={[s.modalItemText, selected && s.modalItemTextSelected]}>{value}</Text>
-    {selected && <Text style={{ color: COLORS.orange }}>✓</Text>}
-  </TouchableOpacity>
-);
-
 const RegisterStep2Page = () => {
   const { navigateTo } = useNavigation();
   const { registerData } = useRegister();

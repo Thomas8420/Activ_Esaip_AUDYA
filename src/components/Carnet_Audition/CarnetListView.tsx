@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AuditionDocument } from '../../services/carnetauditionService';
-import { COLORS, FONT_REGULAR, FONT_SEMIBOLD, FONT_BOLD } from '../../screens/Home/HomeScreen.styles';
+import { COLORS, FONT_REGULAR, FONT_SEMIBOLD } from '../../screens/Home/HomeScreen.styles';
 
 interface Props {
   documents: AuditionDocument[];

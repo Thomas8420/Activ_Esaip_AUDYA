@@ -127,6 +127,10 @@ const AgendaDayViewPage: React.FC<AgendaDayViewPageProps> = ({ date: initialDate
       }, 300);
       return () => clearTimeout(id);
     }
+    // nowTop / showCurrentLine sont volontairement omis : le scroll initial ne
+    // doit se déclencher qu'au premier rendu (isLoading → false), pas à chaque
+    // tick de la ligne "maintenant".
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   const dayEvents = events.filter(e => e.start.startsWith(currentDate));

@@ -53,7 +53,7 @@ const MOCK_AUTO_REPLIES: string[] = [
 let mockReplyIndex = 0;
 
 /** Retourne une réponse mock cyclique */
-export function getMockReply(userMessage: string): ChatbotMessage {
+export function getMockReply(_userMessage: string): ChatbotMessage {
   const reply = MOCK_AUTO_REPLIES[mockReplyIndex % MOCK_AUTO_REPLIES.length];
   mockReplyIndex++;
   return {

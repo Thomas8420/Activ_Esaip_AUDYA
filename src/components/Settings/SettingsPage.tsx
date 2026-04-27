@@ -126,6 +126,8 @@ const SettingsPage = () => {
       }
     };
     load();
+    // t() ne doit pas relancer le fetch au changement de langue.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Helpers ─────────────────────────────────────────────────────────────────

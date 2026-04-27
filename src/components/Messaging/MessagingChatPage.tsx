@@ -18,7 +18,7 @@ let Clipboard: { setString: (text: string) => void } | null = null;
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   Clipboard = require('@react-native-clipboard/clipboard').default;
-} catch (_) {
+} catch {
   // Module natif absent : la fonction copier sera silencieusement désactivée
 }
 import { SafeAreaView } from 'react-native-safe-area-context';
