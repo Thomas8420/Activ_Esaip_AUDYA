@@ -121,6 +121,30 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
 
+  // ── Message row (outer container par item) ─────────────────────────────────
+  messageRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
+  },
+  messageRowMe: {
+    justifyContent: 'flex-end',
+  },
+  messageRowThem: {
+    justifyContent: 'flex-start',
+  },
+
+  // ── Copy icon (apparaît au long-press) ────────────────────────────────────
+  copyIconBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(0,0,0,0.10)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+
   // ── Message bubble ─────────────────────────────────────────────────────────
   messageBubbleWrapper: {
     maxWidth: '78%',

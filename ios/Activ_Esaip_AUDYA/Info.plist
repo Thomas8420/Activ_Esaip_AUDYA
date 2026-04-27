@@ -35,6 +35,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Utilisé pour prendre une photo de profil</string>
+	<key>NSPasteboardUsageDescription</key>
+	<string>Utilisé pour coller du texte dans les champs de saisie</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSPhotoLibraryUsageDescription</key>

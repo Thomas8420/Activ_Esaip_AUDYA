@@ -28,6 +28,10 @@ export interface SelectedConversation {
   correspondentZip: string;
   status: 'pending' | 'blocked' | 'finished';
   isOnline?: boolean;
+  /** PJ pré-remplie depuis la modal "Nouveau message" */
+  initialAttachment?: { uri: string; name: string; type: string };
+  /** Texte pré-rempli depuis la modal "Nouveau message" */
+  initialMessage?: string;
 }
 
 /**

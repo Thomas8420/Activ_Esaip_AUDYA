@@ -41,6 +41,13 @@ export const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
+  titleComposeBtn: {
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
 
   // ── Filter row ─────────────────────────────────────────────────────────────
   filterRow: {

@@ -12,6 +12,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+// Clipboard : module natif — nécessite `bundle exec pod install` + rebuild iOS
+// Le require conditionnel évite le crash si le pod n'est pas encore lié.
+let Clipboard: { setString: (text: string) => void } | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  Clipboard = require('@react-native-clipboard/clipboard').default;
+} catch (_) {
+  // Module natif absent : la fonction copier sera silencieusement désactivée
+}
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -42,6 +51,18 @@ const SendIcon = () => (
 
 const DocIcon = () => (
   <Icon name="document-outline" size={16} color={COLORS.white} />
+);
+
+// Déclaré au niveau module — évite le démontage/remontage à chaque re-render (CLAUDE.md)
+const CopyIconBtn = ({ onPress }: { onPress: () => void }) => (
+  <TouchableOpacity
+    style={styles.copyIconBtn}
+    onPress={onPress}
+    accessibilityLabel="Copier le message"
+    accessibilityRole="button"
+  >
+    <Icon name="copy-outline" size={15} color={COLORS.textLight} />
+  </TouchableOpacity>
 );
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -93,8 +114,11 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [inputText, setInputText] = useState('');
-  const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
+  const [inputText, setInputText] = useState(conversation.initialMessage ?? '');
+  const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>(
+    conversation.initialAttachment ? [conversation.initialAttachment] : [],
+  );
+  const [selectedMsgId, setSelectedMsgId] = useState<number | null>(null);
 
   /** ID de conversation (peut être null si nouvelle conversation) */
   const conversationIdRef = useRef<number | null>(conversation.id);
@@ -257,51 +281,73 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
     }
   };
 
+  // ── Copie d'un message ──────────────────────────────────────────────────────
+  const handleCopyMessage = useCallback((text: string) => {
+    Clipboard?.setString(text);
+    setSelectedMsgId(null);
+  }, []);
+
   // ── Render d'un message ──────────────────────────────────────────────────────
   const renderMessage = useCallback(({ item }: { item: Message }) => {
     const isMe = item.isMe;
+    const isSelected = selectedMsgId === item.id;
+    const copyable = !!item.text;
+
     return (
-      <View
-        style={[
-          styles.messageBubbleWrapper,
-          isMe ? styles.messageBubbleWrapperMe : styles.messageBubbleWrapperThem,
-        ]}
+      <TouchableOpacity
+        style={[styles.messageRow, isMe ? styles.messageRowMe : styles.messageRowThem]}
+        onLongPress={() => { if (copyable) { setSelectedMsgId(item.id); } }}
+        onPress={() => { if (isSelected) { setSelectedMsgId(null); } }}
+        delayLongPress={300}
+        activeOpacity={0.95}
         testID={`msg-${item.id}`}
       >
-        {!isMe && (
-          <Text style={[styles.messageSenderName, { color: isAdmin(item.userName) ? COLORS.msgAdmin : COLORS.msgPro }]}>
-            {item.userName}
-          </Text>
+        {/* Icône copier — gauche pour mes messages */}
+        {isMe && isSelected && copyable && (
+          <CopyIconBtn onPress={() => handleCopyMessage(item.text)} />
         )}
-        <View style={[styles.messageBubble, bubbleStyle(item)]}>
-          {!!item.text && (
-            <Text style={styles.messageBubbleText}>{item.text}</Text>
+
+        <View style={[styles.messageBubbleWrapper, isMe ? styles.messageBubbleWrapperMe : styles.messageBubbleWrapperThem]}>
+          {!isMe && (
+            <Text style={[styles.messageSenderName, { color: isAdmin(item.userName) ? COLORS.msgAdmin : COLORS.msgPro }]}>
+              {item.userName}
+            </Text>
           )}
-          {/* Pièces jointes reçues */}
-          {item.files.length > 0 && (
-            <View style={styles.attachmentRow}>
-              {item.files.map(file => (
-                isImageFile(file.name) ? (
-                  <Image
-                    key={file.id}
-                    source={{ uri: USE_MESSAGING_API ? `${BASE_URL}${file.url}` : file.url }}
-                    style={styles.attachmentImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View key={file.id} style={styles.attachmentDoc}>
-                    <DocIcon />
-                    <Text style={styles.attachmentDocText} numberOfLines={1}>{file.name}</Text>
-                  </View>
-                )
-              ))}
-            </View>
-          )}
-          <Text style={styles.messageTime}>{item.timeText}</Text>
+          <View style={[styles.messageBubble, bubbleStyle(item)]}>
+            {!!item.text && (
+              <Text style={styles.messageBubbleText}>{item.text}</Text>
+            )}
+            {/* Pièces jointes reçues */}
+            {item.files.length > 0 && (
+              <View style={styles.attachmentRow}>
+                {item.files.map(file => (
+                  isImageFile(file.name) ? (
+                    <Image
+                      key={file.id}
+                      source={{ uri: USE_MESSAGING_API ? `${BASE_URL}${file.url}` : file.url }}
+                      style={styles.attachmentImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View key={file.id} style={styles.attachmentDoc}>
+                      <DocIcon />
+                      <Text style={styles.attachmentDocText} numberOfLines={1}>{file.name}</Text>
+                    </View>
+                  )
+                ))}
+              </View>
+            )}
+            <Text style={styles.messageTime}>{item.timeText}</Text>
+          </View>
         </View>
-      </View>
+
+        {/* Icône copier — droite pour les messages des autres */}
+        {!isMe && isSelected && copyable && (
+          <CopyIconBtn onPress={() => handleCopyMessage(item.text)} />
+        )}
+      </TouchableOpacity>
     );
-  }, []);
+  }, [selectedMsgId, handleCopyMessage]);
 
   // ── Localisation ─────────────────────────────────────────────────────────────
   const hasLocation = Boolean(conversation.correspondentZip || conversation.correspondentCity);
@@ -375,10 +421,12 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
             data={messages}
             keyExtractor={item => String(item.id)}
             renderItem={renderMessage}
+            extraData={selectedMsgId}
             style={styles.messagesList}
             contentContainerStyle={styles.messagesContent}
             onContentSizeChange={scrollToBottom}
             onLayout={scrollToBottom}
+            onScrollBeginDrag={() => setSelectedMsgId(null)}
             showsVerticalScrollIndicator={false}
             testID="messagesList"
           />
