@@ -23,11 +23,20 @@ type AuthScreen =
  * Utilise un état local au lieu de React Navigation (cohérent avec le
  * système de navigation custom du projet).
  */
-/** Extrait le token de réinitialisation depuis une URL deep link. */
+/**
+ * Extrait le token de réinitialisation depuis un deep link.
+ * Sécurité : valide d'abord scheme + host (audya://reset-password) avant de
+ * lire le token. Sans ce contrôle, n'importe quelle URL portant `?token=…`
+ * (intent hostile, phishing) déclencherait l'écran de reset avec un token
+ * choisi par l'attaquant.
+ * Le token est borné à un alphabet/longueur restreints pour éviter d'avaler
+ * une payload XSS en cas de log futur.
+ */
 function parseResetToken(url: string | null): string {
   if (!url) return '';
   try {
-    const match = /[?&]token=([^&]+)/.exec(url);
+    if (!/^audya:\/\/reset-password\b/i.test(url)) return '';
+    const match = /[?&]token=([A-Za-z0-9._~+-]{20,256})(?:&|$)/.exec(url);
     return match ? decodeURIComponent(match[1]) : '';
   } catch {
     return '';

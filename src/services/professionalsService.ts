@@ -80,7 +80,7 @@ export async function fetchMyProfessionals(): Promise<Professional[]> {
  * POST /patient/professionals/select-id/{professional_id}
  */
 export async function addProfessional(professionalId: string): Promise<void> {
-  await apiFetch(`/patient/professionals/select-id/${professionalId}`, {
+  await apiFetch(`/patient/professionals/select-id/${encodeURIComponent(professionalId)}`, {
     method: 'POST',
   });
 }

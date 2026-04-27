@@ -109,15 +109,25 @@ function mapContact(raw: ContactApiResponse): Contact {
   };
 }
 
+/**
+ * Mapping défensif — l'app ne fait pas confiance à la shape backend.
+ * Tout champ manquant est défaullté à une valeur sûre plutôt que de propager
+ * un crash en aval (TypeError sur `.map`/`.length`).
+ */
 export function mapMessage(raw: MessageApiResponse): Message {
+  const files = Array.isArray(raw?.files) ? raw.files : [];
   return {
-    id: raw.id,
-    isMe: raw.me,
-    userName: raw.user_name,
-    text: raw.textcontent,
-    timeText: raw.timetext,
-    createdAt: raw.created_at,
-    files: raw.files.map(f => ({ id: f.id, name: f.name, url: f.url })),
+    id: Number(raw?.id) || 0,
+    isMe: Boolean(raw?.me),
+    userName: String(raw?.user_name ?? ''),
+    text: String(raw?.textcontent ?? ''),
+    timeText: String(raw?.timetext ?? ''),
+    createdAt: String(raw?.created_at ?? ''),
+    files: files.map(f => ({
+      id: Number(f?.id) || 0,
+      name: String(f?.name ?? ''),
+      url: String(f?.url ?? ''),
+    })),
   };
 }
 
@@ -197,9 +207,10 @@ export async function fetchMessages(
   conversationId: number,
   lastId?: number,
 ): Promise<Message[]> {
+  const safeId = encodeURIComponent(String(conversationId));
   const url = lastId == null
-    ? `/ajaxchat/getmessages/${conversationId}`
-    : `/ajaxchat/getmessages/${conversationId}?lastid=${lastId}`;
+    ? `/ajaxchat/getmessages/${safeId}`
+    : `/ajaxchat/getmessages/${safeId}?lastid=${encodeURIComponent(String(lastId))}`;
   const raw = await apiFetch<{ messages: MessageApiResponse[] }>(url);
   return raw.messages.map(mapMessage);
 }
@@ -272,7 +283,7 @@ export async function setConversationStatus(
   conversationId: number,
   status: 'pending' | 'blocked' | 'finished',
 ): Promise<void> {
-  await apiFetch(`/ajaxchat/setconversationstatus/${conversationId}`, {
+  await apiFetch(`/ajaxchat/setconversationstatus/${encodeURIComponent(String(conversationId))}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ conversation_status: status }).toString(),

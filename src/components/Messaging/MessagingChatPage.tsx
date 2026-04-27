@@ -53,6 +53,23 @@ const DocIcon = () => (
   <Icon name="document-outline" size={16} color={COLORS.white} />
 );
 
+/**
+ * Construit l'URI d'une pièce jointe en empêchant le serveur de fournir une
+ * URL absolue arbitraire (potentielle exfiltration : cookies, IP via tracking
+ * pixel). Si file.url ne commence pas par "/", on le considère hostile et on
+ * retourne une chaîne vide → l'Image ne charge rien.
+ */
+function buildAttachmentUri(rawUrl: string): string {
+  if (!USE_MESSAGING_API) {
+    // Mode mock : l'URL vient des fixtures locales, on lui fait confiance.
+    return rawUrl;
+  }
+  if (!rawUrl || !rawUrl.startsWith('/')) {
+    return '';
+  }
+  return `${BASE_URL}${rawUrl}`;
+}
+
 // ─── Validation des pièces jointes ───────────────────────────────────────────
 // Allow-list MIME + plafond taille — barrière côté client. Le serveur reste
 // l'autorité pour la validation finale.
@@ -354,7 +371,7 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
                   isImageFile(file.name) ? (
                     <Image
                       key={file.id}
-                      source={{ uri: USE_MESSAGING_API ? `${BASE_URL}${file.url}` : file.url }}
+                      source={{ uri: buildAttachmentUri(file.url) }}
                       style={styles.attachmentImage}
                       resizeMode="cover"
                     />
