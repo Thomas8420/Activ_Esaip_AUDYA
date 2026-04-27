@@ -35,33 +35,44 @@ export const maskEmail = (email: string): string => {
 /**
  * Valide la complexité d'un mot de passe.
  * Retourne un message d'erreur ou null si le mot de passe est valide.
- * Règles : >= 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial.
+ * Règles ANSSI 2024 (données de santé) : >= 12 caractères, 1 majuscule, 1 chiffre,
+ * 1 caractère spécial.
  */
 export const validatePassword = (password: string): string | null => {
   if (!password) return ERROR_MESSAGES.PASSWORD_REQUIRED;
-  if (password.length < 8) return ERROR_MESSAGES.PASSWORD_TOO_SHORT;
+  if (password.length < 12) return ERROR_MESSAGES.PASSWORD_TOO_SHORT;
   if (!/[A-Z]/.test(password)) return 'Le mot de passe doit contenir au moins une majuscule';
   if (!/\d/.test(password)) return 'Le mot de passe doit contenir au moins un chiffre';
   if (!/[^A-Za-z0-9]/.test(password)) return 'Le mot de passe doit contenir au moins un caractère spécial';
   return null;
 };
 
+/**
+ * Valide un numéro de sécurité sociale français (15 chiffres : 13 NIR + 2 clé).
+ * Retourne true si le format est valide. La validation de la clé Luhn-like
+ * doit être faite côté backend (97 - (NIR mod 97) = clé).
+ */
+export const isValidNumeroSecu = (value: string): boolean =>
+  /^\d{15}$/.test(value);
+
 export const ERROR_MESSAGES = {
   EMAIL_REQUIRED: "L'email est requis",
   EMAIL_INVALID: 'Veuillez utiliser une adresse Gmail, Outlook, Orange, Yahoo ou similaire',
   PASSWORD_REQUIRED: 'Le mot de passe est requis', // NOSONAR
-  PASSWORD_TOO_SHORT: 'Minimum 8 caractères', // NOSONAR
+  PASSWORD_TOO_SHORT: 'Minimum 12 caractères', // NOSONAR
   PASSWORD_MISMATCH: 'Les mots de passe ne correspondent pas', // NOSONAR
 };
 
 // ─── Sanitisation des entrées utilisateur ────────────────────────────────────
 
 /**
- * Retire les caractères HTML dangereux (<, >) de tout input texte.
- * Utilisé sur : noms, prénoms, adresses, villes, champs texte libres.
+ * Retire les balises HTML et caractères dangereux susceptibles de servir à du
+ * stored XSS si la donnée est ré-affichée dans une interface web (back-office
+ * professionnel par exemple). Le client RN n'évalue pas le HTML, mais cette
+ * sanitisation protège les consommateurs en aval.
  */
 export const stripXSS = (value: string): string =>
-  value.replace(/[<>]/g, '');
+  value.replace(/<[^>]*>/g, '').replace(/[<>"`]/g, '');
 
 /**
  * Sanitise un champ nom/prénom/ville.

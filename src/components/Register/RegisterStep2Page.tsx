@@ -92,7 +92,7 @@ const RegisterStep2Page = () => {
     if (!form.telephoneMobile.trim()) e.telephoneMobile = 'Veuillez remplir ce champ !';
     if (!form.profession.trim())      e.profession      = 'Veuillez remplir ce champ !';
     if (!form.numeroSecu.trim())      e.numeroSecu      = 'Veuillez remplir ce champ !';
-    else if (!/^\d{13}$/.test(form.numeroSecu.trim())) e.numeroSecu = 'Le numéro doit être composé de 13 chiffres';
+    else if (!/^\d{15}$/.test(form.numeroSecu.trim())) e.numeroSecu = 'Le numéro de sécurité sociale doit comporter 15 chiffres';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -160,7 +160,7 @@ const RegisterStep2Page = () => {
           {/* Champs identité */}
           <Field        placeholder="Nom *"                          value={form.nom}        error={errors.nom}        maxLen={MAX_LENGTHS.name}    onChange={v => { setForm({ ...form, nom: sanitizeName(v) });        clearError('nom'); }} />
           <Field     placeholder="Prénom *"                       value={form.prenom}     error={errors.prenom}     maxLen={MAX_LENGTHS.name}    onChange={v => { setForm({ ...form, prenom: sanitizeName(v) });     clearError('prenom'); }} />
-          <Field placeholder="Numéro de sécurité sociale *"   value={form.numeroSecu} error={errors.numeroSecu} keyboard="numeric" maxLen={13} secure onChange={v => { setForm({ ...form, numeroSecu: v }); clearError('numeroSecu'); }} />
+          <Field placeholder="Numéro de sécurité sociale *"   value={form.numeroSecu} error={errors.numeroSecu} keyboard="numeric" maxLen={15} secure onChange={v => { setForm({ ...form, numeroSecu: v.replace(/[^0-9]/g, '') }); clearError('numeroSecu'); }} />
           <Field    placeholder="Adresse *"                      value={form.adresse}    error={errors.adresse}    maxLen={MAX_LENGTHS.address} onChange={v => { setForm({ ...form, adresse: stripXSS(v) });    clearError('adresse'); }} />
 
           {/* Champs optionnels */}
