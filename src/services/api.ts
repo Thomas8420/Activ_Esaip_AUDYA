@@ -7,6 +7,11 @@ export const BASE_URL = __DEV__
   ? 'http://localhost:8000'
   : 'https://api.audya.com';
 
+// Garde-fou : un build release qui pointerait vers du HTTP est refusé au boot.
+if (!__DEV__ && !BASE_URL.startsWith('https://')) {
+  throw new Error('SECURITY: production must use HTTPS for API calls.');
+}
+
 const DEFAULT_HEADERS = {
   Accept: 'application/json',
   'Accept-Language': 'fr',

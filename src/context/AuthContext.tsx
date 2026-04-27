@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pendingEmail, setPendingEmail] = useState('');
 
   const loginFirstFactor = async (
@@ -45,9 +45,13 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   };
 
   const logout = async (): Promise<void> => {
-    await apiLogout();
-    setIsAuthenticated(false);
-    setPendingEmail('');
+    // Le state local est toujours réinitialisé, même si l'appel backend échoue
+    try {
+      await apiLogout();
+    } finally {
+      setIsAuthenticated(false);
+      setPendingEmail('');
+    }
   };
 
   const value = useMemo(
