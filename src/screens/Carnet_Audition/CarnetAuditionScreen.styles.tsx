@@ -77,6 +77,8 @@ export const styles = StyleSheet.create({
     top: 42,
     left: 0,
     width: 140,
+    maxHeight: 180,
+    overflow: 'hidden',
     backgroundColor: 'white',
     borderRadius: 15,
     borderWidth: 1,

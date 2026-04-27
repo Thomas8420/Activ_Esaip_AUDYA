@@ -44,13 +44,6 @@ export const CarnetListView: React.FC<Props> = ({ documents, onView }) => (
           </TouchableOpacity>
           <TouchableOpacity
             style={localStyles.actionButton}
-            accessibilityLabel="Télécharger"
-            accessibilityRole="button"
-          >
-            <Icon name="download-outline" size={18} color={COLORS.textLight} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={localStyles.actionButton}
             accessibilityLabel="Supprimer"
             accessibilityRole="button"
           >

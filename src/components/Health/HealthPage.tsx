@@ -231,21 +231,26 @@ const HealthPage = () => {
 
   const handleValidateAntecedent = () => {
     if (!health || !antecedentName.trim()) { return; }
+    const value = antecedentName.trim();
     setHealth(prev => {
       if (!prev) { return prev; }
       const updated = { ...prev };
       if (uploadTarget === 'familyHistory') {
         const items = prev.familyHistory ? prev.familyHistory.split('\n').filter(Boolean) : [];
-        items.push(antecedentName.trim());
-        updated.familyHistory = items.join('\n');
+        if (items.includes(value)) { return prev; }
+        updated.familyHistory = [...items, value].join('\n');
       } else if (uploadTarget === 'surgicalHistory') {
-        updated.surgicalHistory = [...prev.surgicalHistory, antecedentName.trim()];
+        if (prev.surgicalHistory.includes(value)) { return prev; }
+        updated.surgicalHistory = [...prev.surgicalHistory, value];
       } else if (uploadTarget === 'medications') {
-        updated.medications = [...prev.medications, antecedentName.trim()];
+        if (prev.medications.includes(value)) { return prev; }
+        updated.medications = [...prev.medications, value];
       } else if (uploadTarget === 'allergies') {
-        updated.allergies = [...prev.allergies, antecedentName.trim()];
+        if (prev.allergies.includes(value)) { return prev; }
+        updated.allergies = [...prev.allergies, value];
       } else {
-        updated.medicalHistory = [...prev.medicalHistory, antecedentName.trim()];
+        if (prev.medicalHistory.includes(value)) { return prev; }
+        updated.medicalHistory = [...prev.medicalHistory, value];
       }
       if (selectedFile) {
         updated.documents = [...prev.documents, selectedFile.name];
@@ -254,6 +259,17 @@ const HealthPage = () => {
     });
     handleCloseModal();
   };
+
+  const alreadySelectedItems = useMemo((): string[] => {
+    if (!health || !uploadTarget) { return []; }
+    if (uploadTarget === 'familyHistory') {
+      return health.familyHistory ? health.familyHistory.split('\n').filter(Boolean) : [];
+    }
+    if (uploadTarget === 'surgicalHistory') { return health.surgicalHistory; }
+    if (uploadTarget === 'medications') { return health.medications; }
+    if (uploadTarget === 'allergies') { return health.allergies; }
+    return health.medicalHistory;
+  }, [health, uploadTarget]);
 
   const bmiValue = useMemo(() => {
     if (!health) {
@@ -640,6 +656,7 @@ const HealthPage = () => {
               </View>
               <ScrollView style={styles.uploadModalOptionsList} nestedScrollEnabled>
                 {getOptionsForTarget(uploadTarget)
+                  .filter(opt => !alreadySelectedItems.includes(opt))
                   .filter(opt => opt.toLowerCase().includes(antecedentSearch.toLowerCase()))
                   .map(opt => (
                     <TouchableOpacity

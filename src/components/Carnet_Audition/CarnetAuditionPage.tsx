@@ -6,6 +6,8 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Pressable,
+  StyleSheet,
   ActivityIndicator,
   Alert,
   StatusBar,
@@ -19,11 +21,11 @@ import DocumentPicker, { types as DocumentTypes } from 'react-native-document-pi
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
 import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
+import SelectModal from '../common/SelectModal/SelectModal';
 import CTA1 from '../common/Button/CTA1';
 import { COLORS } from '../../screens/Home/HomeScreen.styles';
 import { useLanguage } from '../../context/LanguageContext';
 import CTA4 from '../common/Button/CTA4';
-import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 
 // Vues déportées
 import { CarnetTimelineView } from './CarnetTimelineView';
@@ -141,25 +143,20 @@ const CarnetAuditionPage = () => {
             <View style={[styles.rowBottom, { zIndex: 1000 }]}>
               <View>
                 <TouchableOpacity style={styles.dropdown} onPress={() => setDropdownOpen(!dropdownOpen)}>
-                  <Text style={styles.dropdownText}>{selectedFilter}</Text>
+                  <Text style={[styles.dropdownText, { maxWidth: 68 }]} numberOfLines={1} ellipsizeMode="tail">{selectedFilter}</Text>
                   <View style={styles.dropdownArrowBg}>
                     <DropdownIcon width={10} height={10} fill="white" />
                   </View>
                 </TouchableOpacity>
 
-                <AnimatedDropdown visible={dropdownOpen} absolute>
-                  <View style={styles.dropdownList}>
-                    {FILTER_OPTIONS.map((opt) => (
-                      <TouchableOpacity
-                        key={opt}
-                        style={styles.dropdownItem}
-                        onPress={() => { setSelectedFilter(opt); setDropdownOpen(false); }}
-                      >
-                        <Text style={styles.dropdownItemText}>{opt}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </AnimatedDropdown>
+                <SelectModal
+                  visible={dropdownOpen}
+                  onClose={() => setDropdownOpen(false)}
+                  title="Type de document"
+                  options={FILTER_OPTIONS}
+                  value={selectedFilter}
+                  onSelect={setSelectedFilter}
+                />
               </View>
 
               <CTA1
@@ -194,7 +191,7 @@ const CarnetAuditionPage = () => {
             <Text style={styles.inputLabel}>Type de document</Text>
             <TouchableOpacity
               style={[styles.input, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 48 }]}
-              onPress={() => setIsCategoryPickerOpen(v => !v)}
+              onPress={() => setIsCategoryPickerOpen(true)}
               activeOpacity={0.7}
               accessibilityRole="button"
               accessibilityLabel="Sélectionner un type de document"
@@ -202,24 +199,16 @@ const CarnetAuditionPage = () => {
               <Text style={{ fontSize: 13, color: docCategory ? '#2D2D2D' : '#999', fontFamily: 'Montserrat-Regular', flex: 1 }}>
                 {docCategory || 'Ex: Ordonnance, CR...'}
               </Text>
-              <Icon name={isCategoryPickerOpen ? 'chevron-up' : 'chevron-down'} size={16} color="#999" />
+              <Icon name="chevron-down" size={16} color="#999" />
             </TouchableOpacity>
-            {isCategoryPickerOpen && (
-              <ScrollView style={{ maxHeight: 180, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 8, marginBottom: 12 }} nestedScrollEnabled>
-                {FILTER_OPTIONS.filter(o => o !== 'Tout').map(opt => (
-                  <TouchableOpacity
-                    key={opt}
-                    style={{ paddingVertical: 10, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}
-                    onPress={() => { setDocCategory(opt); setIsCategoryPickerOpen(false); }}
-                    activeOpacity={0.7}
-                    accessibilityRole="button"
-                    accessibilityLabel={opt}
-                  >
-                    <Text style={{ fontSize: 13, color: '#2D2D2D', fontFamily: 'Montserrat-Regular' }}>{opt}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            )}
+            <SelectModal
+              visible={isCategoryPickerOpen}
+              onClose={() => setIsCategoryPickerOpen(false)}
+              title="Type de document"
+              options={FILTER_OPTIONS.filter(o => o !== 'Tout')}
+              value={docCategory}
+              onSelect={setDocCategory}
+            />
 
             <TouchableOpacity
               style={styles.uploadButtonModal}
@@ -291,17 +280,19 @@ const CarnetAuditionPage = () => {
                 </View>
 
                 <View style={styles.viewActionsSection}>
-                  <Text style={styles.viewActionsLabel}>ACTIONS</Text>
                   <View style={styles.viewBigActionsRow}>
-                    <TouchableOpacity style={styles.viewBigActionButton} accessibilityLabel="Voir" accessibilityRole="button">
-                      <Icon name="eye-outline" size={26} color={COLORS.textLight} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.viewBigActionButton} accessibilityLabel="Télécharger" accessibilityRole="button">
-                      <Icon name="download-outline" size={26} color={COLORS.textLight} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.viewBigActionButton} accessibilityLabel="Supprimer" accessibilityRole="button">
-                      <Icon name="trash-outline" size={26} color={COLORS.textLight} />
-                    </TouchableOpacity>
+                    <CTA1
+                      label="Télécharger"
+                      style={{ flex: 1, height: 40, paddingVertical: 0 }}
+                      textStyle={{ fontSize: 12 }}
+                    />
+                    <Pressable
+                      style={[modalBtnStyles.base, modalBtnStyles.delete]}
+                      accessibilityRole="button"
+                      accessibilityLabel="Supprimer"
+                    >
+                      <Text style={[modalBtnStyles.text, modalBtnStyles.deleteText]}>Supprimer</Text>
+                    </Pressable>
                   </View>
                 </View>
               </View>
@@ -314,5 +305,27 @@ const CarnetAuditionPage = () => {
     </SafeAreaView>
   );
 };
+
+const modalBtnStyles = StyleSheet.create({
+  base: {
+    flex: 1,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  delete: {
+    backgroundColor: '#C8D6E1',
+  },
+  text: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  deleteText: {
+    color: '#172A4F',
+  },
+});
 
 export default CarnetAuditionPage;

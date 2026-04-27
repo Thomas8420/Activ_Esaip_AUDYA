@@ -64,11 +64,12 @@ export const stripXSS = (value: string): string =>
   value.replace(/[<>]/g, '');
 
 /**
- * Sanitise un champ nom/prénom.
- * Retire <, > (XSS). Autorise lettres, chiffres, espaces, tirets, apostrophes, accents.
+ * Sanitise un champ nom/prénom/ville.
+ * Autorise uniquement : lettres (Latin + accents Western Europe), espaces, tirets, apostrophes.
+ * Bloque : chiffres, <, > et tout autre caractère spécial (protection XSS + cohérence métier).
  */
 export const sanitizeName = (value: string): string =>
-  value.replace(/[<>]/g, '');
+  value.replace(/[^a-zA-ZÀ-ÖØ-öø-ÿœŒ\s'\-]/g, '');
 
 /**
  * Sanitise un champ texte libre (messages, notes, antécédents).
@@ -86,12 +87,12 @@ export const sanitizePhone = (value: string): string =>
   value.replace(/[^0-9+\-\s().#*]/g, '');
 
 /**
- * Sanitise un code postal (international).
- * Autorise : lettres, chiffres, espaces, tirets (UK: SW1A 1AA, FR: 75001, etc.)
- * Bloque : <, >, &, ", ', ;, /, \
+ * Sanitise un code postal (France + pays francophones).
+ * Autorise : chiffres uniquement (FR: 75001, BE: 1000, CH: 8001, LU: 1234).
+ * Bloque : lettres et tout autre caractère — protection XSS + cohérence métier.
  */
 export const sanitizeZipCode = (value: string): string =>
-  value.replace(/[^a-zA-Z0-9\s\-]/g, '');
+  value.replace(/[^0-9]/g, '');
 
 /**
  * Sanitise un champ purement numérique (taille en cm, poids en kg, heures).
