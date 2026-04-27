@@ -10,12 +10,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
-import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
 import DropdownIcon from '../../assets/images/dropdown.svg';
+import SelectModal from '../common/SelectModal/SelectModal';
 import NavBar from '../common/NavBar/NavBar';
+import CTA1 from '../common/Button/CTA1';
 import BottomNav from '../common/BottomNav/BottomNav';
 import { SPECIALTIES } from '../../constants';
-import { sanitizeName, sanitizePhone, sanitizeZipCode, sanitizeEmail, sanitizeText } from '../../utils/validators';
+import { sanitizeName, sanitizePhone, sanitizeZipCode, sanitizeEmail, sanitizeText, stripXSS } from '../../utils/validators';
 
 const COUNTRIES = ['France', 'Belgique', 'Suisse', 'Luxembourg', 'Canada'];
 
@@ -75,47 +76,36 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             <Text style={styles.formCardTitle}>
               FICHE DE VOTRE{'\n'}PROFESSIONNEL
             </Text>
-            <TouchableOpacity
-              style={styles.formBackButton}
+            <CTA1
+              label="Revenir à la liste"
               onPress={onBack}
-              accessibilityLabel="Revenir à la liste"
-              accessibilityRole="button"
-            >
-              <Text style={styles.formBackButtonText}>Revenir à la liste</Text>
-            </TouchableOpacity>
+              style={{ paddingVertical: 8, paddingHorizontal: 16, minWidth: 0 }}
+              textStyle={{ fontSize: 13 }}
+            />
           </View>
 
           {/* Spécialité * */}
-          <View style={styles.formDropdownWrapper}>
-            <TouchableOpacity
-              style={styles.formDropdownButton}
-              onPress={() => { setSpecialtyOpen(!specialtyOpen); setCountryOpen(false); }}
-              accessibilityLabel={specialty || 'Spécialité'}
-              accessibilityRole="button"
-            >
-              <Text style={[styles.formDropdownText, specialty ? styles.formDropdownTextSelected : null]}>
-                {specialty || 'Spécialité *'}
-              </Text>
-              <View style={styles.dropdownArrowBg}>
-                <DropdownIcon width={10} height={10} fill="white" />
-              </View>
-            </TouchableOpacity>
-            <AnimatedDropdown visible={specialtyOpen}>
-              <View style={styles.formDropdownMenu}>
-                {SPECIALTIES.map(s => (
-                  <TouchableOpacity
-                    key={s}
-                    style={styles.formDropdownItem}
-                    onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
-                    accessibilityLabel={s}
-                    accessibilityRole="button"
-                  >
-                    <Text style={styles.formDropdownItemText}>{s}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </AnimatedDropdown>
-          </View>
+          <TouchableOpacity
+            style={styles.formDropdownButton}
+            onPress={() => setSpecialtyOpen(true)}
+            accessibilityLabel={specialty || 'Spécialité'}
+            accessibilityRole="button"
+          >
+            <Text style={[styles.formDropdownText, specialty ? styles.formDropdownTextSelected : null]}>
+              {specialty || 'Spécialité *'}
+            </Text>
+            <View style={styles.dropdownArrowBg}>
+              <DropdownIcon width={10} height={10} fill="white" />
+            </View>
+          </TouchableOpacity>
+          <SelectModal
+            visible={specialtyOpen}
+            onClose={() => setSpecialtyOpen(false)}
+            title="Spécialité"
+            options={SPECIALTIES}
+            value={specialty}
+            onSelect={setSpecialty}
+          />
 
           {/* Nom * */}
           <TextInput
@@ -143,7 +133,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Adresse *"
             placeholderTextColor="#999"
             value={address}
-            onChangeText={v => setAddress(v.replace(/[<>]/g, ''))}
+            onChangeText={v => setAddress(stripXSS(v))}
             maxLength={200}
           />
 
@@ -153,7 +143,7 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholder="Complément d'adresse"
             placeholderTextColor="#999"
             value={addressComplement}
-            onChangeText={v => setAddressComplement(v.replace(/[<>]/g, ''))}
+            onChangeText={v => setAddressComplement(stripXSS(v))}
             maxLength={200}
           />
 
@@ -164,8 +154,8 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
             placeholderTextColor="#999"
             value={zipCode}
             onChangeText={v => setZipCode(sanitizeZipCode(v))}
-            keyboardType="default"
-            maxLength={20}
+            keyboardType="number-pad"
+            maxLength={10}
           />
 
           {/* Ville * */}
@@ -179,36 +169,27 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           />
 
           {/* Pays * */}
-          <View style={styles.formDropdownWrapper}>
-            <TouchableOpacity
-              style={styles.formDropdownButton}
-              onPress={() => { setCountryOpen(!countryOpen); setSpecialtyOpen(false); }}
-              accessibilityLabel={country || 'Pays'}
-              accessibilityRole="button"
-            >
-              <Text style={[styles.formDropdownText, country ? styles.formDropdownTextSelected : null]}>
-                {country || 'Pays *'}
-              </Text>
-              <View style={styles.dropdownArrowBg}>
-                <DropdownIcon width={10} height={10} fill="white" />
-              </View>
-            </TouchableOpacity>
-            <AnimatedDropdown visible={countryOpen}>
-              <View style={styles.formDropdownMenu}>
-                {COUNTRIES.map(c => (
-                  <TouchableOpacity
-                    key={c}
-                    style={styles.formDropdownItem}
-                    onPress={() => { setCountry(c); setCountryOpen(false); }}
-                    accessibilityLabel={c}
-                    accessibilityRole="button"
-                  >
-                    <Text style={styles.formDropdownItemText}>{c}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </AnimatedDropdown>
-          </View>
+          <TouchableOpacity
+            style={styles.formDropdownButton}
+            onPress={() => setCountryOpen(true)}
+            accessibilityLabel={country || 'Pays'}
+            accessibilityRole="button"
+          >
+            <Text style={[styles.formDropdownText, country ? styles.formDropdownTextSelected : null]}>
+              {country || 'Pays *'}
+            </Text>
+            <View style={styles.dropdownArrowBg}>
+              <DropdownIcon width={10} height={10} fill="white" />
+            </View>
+          </TouchableOpacity>
+          <SelectModal
+            visible={countryOpen}
+            onClose={() => setCountryOpen(false)}
+            title="Pays"
+            options={COUNTRIES}
+            value={country}
+            onSelect={setCountry}
+          />
 
           {/* E-mail */}
           <TextInput
@@ -276,15 +257,13 @@ const InviteProfessionalPage: React.FC<InviteProfessionalPageProps> = ({ onBack 
           </TouchableOpacity>
 
           {/* Bouton envoyer */}
-          <TouchableOpacity
-            style={[styles.formSubmitButton, !isFormValid && styles.formSubmitButtonDisabled]}
+          <CTA1
+            label="Envoyer l'invitation"
             onPress={handleSubmit}
             disabled={!isFormValid}
-            accessibilityLabel="Envoyer l'invitation"
-            accessibilityRole="button"
-          >
-            <Text style={styles.formSubmitButtonText}>Envoyer l'invitation</Text>
-          </TouchableOpacity>
+            style={{ paddingVertical: 14, marginTop: 8, minWidth: 0 }}
+            textStyle={{ fontSize: 14 }}
+          />
         </View>
       </ScrollView>
       <BottomNav />

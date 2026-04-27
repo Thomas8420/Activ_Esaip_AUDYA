@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import CTA1 from '../common/Button/CTA1';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
@@ -67,9 +68,12 @@ const ProfessionalProfilePage: React.FC<ProfessionalProfilePageProps> = ({
           {/* En-tête : titre + bouton Retour */}
           <View style={styles.profileCardHeader}>
             <Text style={styles.profileCardTitle}>MON PROFESSIONNEL</Text>
-            <TouchableOpacity style={styles.profileBackButton} onPress={onBack}>
-              <Text style={styles.profileBackButtonText}>Retour</Text>
-            </TouchableOpacity>
+            <CTA1
+              label="Retour"
+              onPress={onBack}
+              style={{ paddingVertical: 8, paddingHorizontal: 20, minWidth: 0 }}
+              textStyle={{ fontSize: 14 }}
+            />
           </View>
 
           {/* Avatar */}
@@ -93,14 +97,12 @@ const ProfessionalProfilePage: React.FC<ProfessionalProfilePageProps> = ({
           ))}
 
           {/* Bouton messagerie */}
-          <TouchableOpacity
-            style={styles.profileMessageButton}
+          <CTA1
+            label="Envoyer un message"
             onPress={handleSendMessage}
-            activeOpacity={0.8}
-            accessibilityLabel="Envoyer un message"
-          >
-            <Text style={styles.profileMessageButtonText}>Envoyer un message</Text>
-          </TouchableOpacity>
+            style={{ paddingVertical: 12, paddingHorizontal: 24, marginTop: 24, minWidth: 0 }}
+            textStyle={{ fontSize: 15 }}
+          />
         </View>
       </ScrollView>
       <BottomNav />

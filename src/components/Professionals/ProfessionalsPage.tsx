@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import CTA1 from '../common/Button/CTA1';
 import ProfessionalsFilters, { Filters } from './ProfessionalsFilters';
 import ProfessionalCard from './ProfessionalCard';
 import ProfessionalListRow from './ProfessionalListRow';
@@ -323,17 +324,15 @@ const ProfessionalsPage = () => {
                 <Text style={styles.pendingDetailValue}>{pendingModalPro.phone}</Text>
               </View>
 
-              <TouchableOpacity
-                style={styles.pendingResendButton}
+              <CTA1
+                label="Renvoyer l'invitation"
                 onPress={() => {
                   handleResendInvitation(pendingModalPro.id);
                   setPendingModalPro(null);
                 }}
-                accessibilityLabel="Renvoyer l'invitation"
-                accessibilityRole="button"
-              >
-                <Text style={styles.pendingResendButtonText}>Renvoyer l'invitation</Text>
-              </TouchableOpacity>
+                style={{ paddingVertical: 14, marginTop: 20, minWidth: 0 }}
+                textStyle={{ fontSize: 14 }}
+              />
             </View>
           </View>
         </Modal>

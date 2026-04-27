@@ -7,6 +7,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
 import { Professional } from '../../services/professionalsService';
+import CTA1 from '../common/Button/CTA1';
 
 interface ProfessionalCardProps {
   professional: Professional;
@@ -89,16 +90,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         >
           <Text style={styles.actionButtonText}>Message</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.actionButtonPrimary]}
+        <CTA1
+          label="Voir la fiche"
           onPress={onViewProfile}
-          accessibilityLabel={`Voir la fiche de ${professional.firstName} ${professional.lastName}`}
-          accessibilityRole="button"
-        >
-          <Text style={[styles.actionButtonText, styles.actionButtonTextPrimary]}>
-            Voir la fiche
-          </Text>
-        </TouchableOpacity>
+          style={{ flex: 1, paddingVertical: 12, minWidth: 0 }}
+          textStyle={{ fontSize: 14 }}
+        />
       </View>
 
     </View>

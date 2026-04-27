@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DropdownIcon from '../../assets/images/dropdown.svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../screens/Professionals/ProfessionalsScreen.styles';
-import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
-import DropdownIcon from '../../assets/images/dropdown.svg';
+import SelectModal from '../common/SelectModal/SelectModal';
 import NavBar from '../common/NavBar/NavBar';
 import BottomNav from '../common/BottomNav/BottomNav';
+import CTA1 from '../common/Button/CTA1';
 import { SPECIALTIES } from '../../constants';
 import { sanitizeName, sanitizeZipCode } from '../../utils/validators';
 
@@ -65,52 +66,37 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             <Text style={styles.formCardTitle}>
               AJOUTER UN PROFESSIONNEL{'\n'}DE SANTÉ
             </Text>
-            <TouchableOpacity style={styles.formBackButton} onPress={onBack}>
-              <Text style={styles.formBackButtonText}>Retour</Text>
-            </TouchableOpacity>
+            <CTA1
+              label="Retour"
+              onPress={onBack}
+              style={{ paddingVertical: 8, paddingHorizontal: 16, minWidth: 0 }}
+              textStyle={{ fontSize: 13 }}
+            />
           </View>
 
           {/* Titre section */}
           <Text style={styles.formSectionTitle}>Recherche</Text>
 
           {/* Spécialité (dropdown) */}
-          <View style={styles.formDropdownWrapper}>
-            <TouchableOpacity
-              style={styles.formDropdownButton}
-              onPress={() => setSpecialtyOpen(!specialtyOpen)}
-            >
-              <Text
-                style={[
-                  styles.formDropdownText,
-                  specialty ? styles.formDropdownTextSelected : null,
-                ]}
-              >
-                {specialty || 'Spécialité'}
-              </Text>
-              <View style={styles.dropdownArrowBg}>
-                <DropdownIcon width={10} height={10} fill="white" />
-              </View>
-            </TouchableOpacity>
-            <AnimatedDropdown visible={specialtyOpen}>
-              <View style={styles.formDropdownMenu}>
-                <TouchableOpacity
-                  style={styles.formDropdownItem}
-                  onPress={() => { setSpecialty(''); setSpecialtyOpen(false); }}
-                >
-                  <Text style={styles.formDropdownItemText}>Toutes</Text>
-                </TouchableOpacity>
-                {SPECIALTIES.map(s => (
-                  <TouchableOpacity
-                    key={s}
-                    style={styles.formDropdownItem}
-                    onPress={() => { setSpecialty(s); setSpecialtyOpen(false); }}
-                  >
-                    <Text style={styles.formDropdownItemText}>{s}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </AnimatedDropdown>
-          </View>
+          <TouchableOpacity
+            style={styles.formDropdownButton}
+            onPress={() => setSpecialtyOpen(true)}
+          >
+            <Text style={[styles.formDropdownText, specialty ? styles.formDropdownTextSelected : null]}>
+              {specialty || 'Spécialité'}
+            </Text>
+            <View style={styles.dropdownArrowBg}>
+              <DropdownIcon width={10} height={10} fill="white" />
+            </View>
+          </TouchableOpacity>
+          <SelectModal
+            visible={specialtyOpen}
+            onClose={() => setSpecialtyOpen(false)}
+            title="Spécialité"
+            options={['Toutes', ...SPECIALTIES]}
+            value={specialty || 'Toutes'}
+            onSelect={v => setSpecialty(v === 'Toutes' ? '' : v)}
+          />
 
           {/* Nom */}
           <TextInput
@@ -139,8 +125,8 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
             placeholderTextColor="#999"
             value={zipCode}
             onChangeText={v => setZipCode(sanitizeZipCode(v))}
-            keyboardType="default"
-            maxLength={20}
+            keyboardType="number-pad"
+            maxLength={10}
           />
 
           {/* Ville */}
@@ -154,9 +140,12 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
           />
 
           {/* Bouton Rechercher */}
-          <TouchableOpacity style={styles.formSearchButton} onPress={handleSearch}>
-            <Text style={styles.formSearchButtonText}>Rechercher</Text>
-          </TouchableOpacity>
+          <CTA1
+            label="Rechercher"
+            onPress={handleSearch}
+            style={{ paddingVertical: 14, marginTop: 4, marginBottom: 20, minWidth: 0 }}
+            textStyle={{ fontSize: 14 }}
+          />
 
           {/* Résultats de recherche */}
           {searchResults !== null && (
@@ -176,9 +165,11 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
                           {result.specialty}
                         </Text>
                       </View>
-                      <TouchableOpacity style={styles.formSearchResultAddButton}>
-                        <Text style={styles.formSearchResultAddButtonText}>Ajouter</Text>
-                      </TouchableOpacity>
+                      <CTA1
+                        label="Ajouter"
+                        style={{ paddingVertical: 6, paddingHorizontal: 14, borderRadius: 14, minWidth: 0 }}
+                        textStyle={{ fontSize: 12 }}
+                      />
                     </View>
                   ))}
                 </>

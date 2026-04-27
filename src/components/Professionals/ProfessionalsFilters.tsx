@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { styles, COLORS } from '../../screens/Professionals/ProfessionalsScreen.styles';
-import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
+import SelectModal from '../common/SelectModal/SelectModal';
+import CTA1 from '../common/Button/CTA1';
 import DropdownIcon from '../../assets/images/dropdown.svg';
 export interface Filters {
   searchQuery: string;
@@ -117,66 +118,44 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
       {/* Ligne 1: Nombre d'items + Spécialité */}
       <View style={styles.filterRow}>
         {/* Dropdown: Nombre d'items à afficher */}
-        <View style={[styles.filterDropdownWrapper, { marginRight: 8 }]}>
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => setItemsPerPageOpen(!itemsPerPageOpen)}
-          >
-            <Text style={styles.filterButtonText}>{filters.itemsPerPage} items</Text>
-            <View style={styles.dropdownArrowBg}>
-              <DropdownIcon width={10} height={10} fill="white" />
-            </View>
-          </TouchableOpacity>
-          <AnimatedDropdown visible={itemsPerPageOpen} absolute>
-            <View style={styles.filterDropdownMenuOverlay}>
-              {itemsPerPageOptions.map(option => (
-                <TouchableOpacity
-                  key={option}
-                  onPress={() => handleItemsPerPageChange(option)}
-                  style={styles.filterDropdownItem}
-                >
-                  <Text style={styles.filterButtonText}>{option}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </AnimatedDropdown>
-        </View>
+        <TouchableOpacity
+          style={[styles.filterButton, { marginRight: 8 }]}
+          onPress={() => setItemsPerPageOpen(true)}
+        >
+          <Text style={styles.filterButtonText}>{filters.itemsPerPage} items</Text>
+          <View style={styles.dropdownArrowBg}>
+            <DropdownIcon width={10} height={10} fill="white" />
+          </View>
+        </TouchableOpacity>
+        <SelectModal
+          visible={itemsPerPageOpen}
+          onClose={() => setItemsPerPageOpen(false)}
+          title="Afficher par page"
+          options={itemsPerPageOptions.map(String)}
+          value={String(filters.itemsPerPage)}
+          onSelect={v => handleItemsPerPageChange(Number(v))}
+        />
 
         {/* Dropdown: Spécialité */}
-        <View style={styles.filterDropdownWrapper}>
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => setSpecialtyOpen(!specialtyOpen)}
-          >
-            <Text style={styles.filterButtonText}>
-              {filters.specialty || 'Spécialité'}
-            </Text>
-            <View style={styles.dropdownArrowBg}>
-              <DropdownIcon width={10} height={10} fill="white" />
-            </View>
-          </TouchableOpacity>
-          <AnimatedDropdown visible={specialtyOpen} absolute>
-            <View style={[styles.filterDropdownMenuOverlay, { maxHeight: 200 }]}>
-              <TouchableOpacity
-                onPress={() => handleSpecialtyChange('')}
-                style={styles.filterDropdownItem}
-              >
-                <Text style={styles.filterButtonText}>Tous</Text>
-              </TouchableOpacity>
-              <ScrollView style={{ maxHeight: 150 }}>
-                {specialties.map(specialty => (
-                  <TouchableOpacity
-                    key={specialty}
-                    onPress={() => handleSpecialtyChange(specialty)}
-                    style={styles.filterDropdownItem}
-                  >
-                    <Text style={styles.filterButtonText}>{specialty}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          </AnimatedDropdown>
-        </View>
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setSpecialtyOpen(true)}
+        >
+          <Text style={styles.filterButtonText}>
+            {filters.specialty || 'Spécialité'}
+          </Text>
+          <View style={styles.dropdownArrowBg}>
+            <DropdownIcon width={10} height={10} fill="white" />
+          </View>
+        </TouchableOpacity>
+        <SelectModal
+          visible={specialtyOpen}
+          onClose={() => setSpecialtyOpen(false)}
+          title="Spécialité"
+          options={['Tous', ...specialties]}
+          value={filters.specialty || 'Tous'}
+          onSelect={v => handleSpecialtyChange(v === 'Tous' ? '' : v)}
+        />
       </View>
 
       {/* Ligne 2: Code Postal + Ville */}
@@ -199,11 +178,12 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
       </View>
 
       {/* Bouton Ajouter un professionnel */}
-      <TouchableOpacity style={styles.addProfessionalButton} onPress={onAddProfessional}>
-        <Text style={styles.addProfessionalButtonText}>
-          Ajouter un{'\n'}professionnel de santé
-        </Text>
-      </TouchableOpacity>
+      <CTA1
+        label={`Ajouter un\nprofessionnel de santé`}
+        onPress={onAddProfessional}
+        style={{ paddingVertical: 12, paddingHorizontal: 16, marginTop: 12, minWidth: 0 }}
+        textStyle={{ fontSize: 14 }}
+      />
     </View>
   );
 };

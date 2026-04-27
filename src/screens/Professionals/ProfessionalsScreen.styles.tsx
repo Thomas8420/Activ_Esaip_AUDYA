@@ -691,6 +691,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
