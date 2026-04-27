@@ -53,6 +53,22 @@ const DocIcon = () => (
   <Icon name="document-outline" size={16} color={COLORS.white} />
 );
 
+// ─── Validation des pièces jointes ───────────────────────────────────────────
+// Allow-list MIME + plafond taille — barrière côté client. Le serveur reste
+// l'autorité pour la validation finale.
+const MAX_ATTACHMENT_MB = 10;
+const ALLOWED_ATTACHMENT_MIME = /^(image\/(png|jpe?g|gif|webp|heic|heif)|application\/pdf|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|text\/plain)$/i;
+
+function validateAttachment(type: string | undefined | null, sizeBytes?: number): string | null {
+  if (!type || !ALLOWED_ATTACHMENT_MIME.test(type)) {
+    return 'Type de fichier non autorisé.';
+  }
+  if (sizeBytes !== undefined && sizeBytes > MAX_ATTACHMENT_MB * 1024 * 1024) {
+    return `Fichier trop volumineux (${MAX_ATTACHMENT_MB} Mo max).`;
+  }
+  return null;
+}
+
 // Déclaré au niveau module — évite le démontage/remontage à chaque re-render (CLAUDE.md)
 const CopyIconBtn = ({ onPress }: { onPress: () => void }) => (
   <TouchableOpacity
@@ -191,12 +207,19 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
           return;
         }
         const assets = response.assets ?? [];
-        const newAttachments: PendingAttachment[] = assets.map(a => ({
-          uri: a.uri ?? '',
-          name: a.fileName ?? 'image.jpg',
-          type: a.type ?? 'image/jpeg',
-        }));
-        setPendingAttachments(prev => [...prev, ...newAttachments]);
+        const accepted: PendingAttachment[] = [];
+        for (const a of assets) {
+          const reason = validateAttachment(a.type, a.fileSize);
+          if (reason) { Alert.alert('Pièce jointe refusée', reason); continue; }
+          accepted.push({
+            uri: a.uri ?? '',
+            name: a.fileName ?? 'image.jpg',
+            type: a.type ?? 'image/jpeg',
+          });
+        }
+        if (accepted.length > 0) {
+          setPendingAttachments(prev => [...prev, ...accepted]);
+        }
       },
     );
   };
@@ -205,15 +228,22 @@ const MessagingChatPage: React.FC<MessagingChatPageProps> = ({ conversation }) =
   const pickDocument = async () => {
     try {
       const results = await DocumentPicker.pick({
-        type: [DocumentTypes.pdf, DocumentTypes.doc, DocumentTypes.docx, DocumentTypes.plainText, DocumentTypes.images],
+        type: [DocumentTypes.pdf, DocumentTypes.docx, DocumentTypes.plainText, DocumentTypes.images],
         allowMultiSelection: true,
       });
-      const newAttachments: PendingAttachment[] = results.map(r => ({
-        uri: r.uri,
-        name: r.name ?? 'document',
-        type: r.type ?? 'application/octet-stream',
-      }));
-      setPendingAttachments(prev => [...prev, ...newAttachments]);
+      const accepted: PendingAttachment[] = [];
+      for (const r of results) {
+        const reason = validateAttachment(r.type, r.size ?? undefined);
+        if (reason) { Alert.alert('Pièce jointe refusée', reason); continue; }
+        accepted.push({
+          uri: r.uri,
+          name: r.name ?? 'document',
+          type: r.type ?? 'application/octet-stream',
+        });
+      }
+      if (accepted.length > 0) {
+        setPendingAttachments(prev => [...prev, ...accepted]);
+      }
     } catch (err) {
       if (!DocumentPicker.isCancel(err)) {
         Alert.alert('Erreur', 'Impossible de sélectionner le document.');

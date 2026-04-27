@@ -61,6 +61,7 @@ const MOCK_PROFILE: PatientProfile = {
 
 /** Taille max autorisée pour la photo (3 Mo) */
 const MAX_PHOTO_SIZE_MB = 3;
+const ALLOWED_PHOTO_MIME = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'];
 
 // ─── Listes dropdown ──────────────────────────────────────────────────────────
 const PAYS_OPTIONS = [
@@ -257,6 +258,10 @@ const ProfilePage = () => {
     }
     const asset = response.assets?.[0];
     if (!asset?.uri) {
+      return;
+    }
+    if (!asset.type || !ALLOWED_PHOTO_MIME.includes(asset.type.toLowerCase())) {
+      Alert.alert('Format non supporté', 'Veuillez choisir une image JPEG, PNG ou HEIC.');
       return;
     }
     const sizeMB = (asset.fileSize ?? 0) / (1024 * 1024);

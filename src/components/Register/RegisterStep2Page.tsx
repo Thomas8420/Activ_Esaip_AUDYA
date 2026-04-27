@@ -13,6 +13,7 @@ import Bubbles from '../../components/Bubbles';
 import { sanitizeName, sanitizePhone, sanitizeZipCode, stripXSS, MAX_LENGTHS } from '../../utils/validators';
 
 const MAX_PHOTO_SIZE_MB = 3;
+const ALLOWED_PHOTO_MIME = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'];
 
 const PAYS = [
   'France', 'Belgique', 'Suisse', 'Luxembourg', 'Canada',
@@ -102,6 +103,10 @@ const RegisterStep2Page = () => {
     if (response.didCancel || response.errorCode) return;
     const asset = response.assets?.[0];
     if (!asset?.uri) return;
+    if (!asset.type || !ALLOWED_PHOTO_MIME.includes(asset.type.toLowerCase())) {
+      Alert.alert('Format non supporté', 'Veuillez choisir une image JPEG, PNG ou HEIC.');
+      return;
+    }
     const sizeMB = (asset.fileSize ?? 0) / (1024 * 1024);
     if (sizeMB > MAX_PHOTO_SIZE_MB) {
       Alert.alert('Fichier trop lourd', `La photo ne doit pas dépasser ${MAX_PHOTO_SIZE_MB} Mo.`);

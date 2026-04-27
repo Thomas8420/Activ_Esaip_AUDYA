@@ -46,6 +46,20 @@ function initials(name: string): string {
     .join('');
 }
 
+// ─── Validation pièce jointe (allow-list MIME + plafond taille) ─────────────
+const NEW_MSG_MAX_ATTACHMENT_MB = 10;
+const NEW_MSG_ALLOWED_MIME = /^(image\/(png|jpe?g|gif|webp|heic|heif)|application\/pdf|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|text\/plain)$/i;
+
+function validateNewMessageAttachment(type: string | undefined | null, sizeBytes?: number): string | null {
+  if (!type || !NEW_MSG_ALLOWED_MIME.test(type)) {
+    return 'Type de fichier non autorisé.';
+  }
+  if (sizeBytes !== undefined && sizeBytes > NEW_MSG_MAX_ATTACHMENT_MB * 1024 * 1024) {
+    return `Fichier trop volumineux (${NEW_MSG_MAX_ATTACHMENT_MB} Mo max).`;
+  }
+  return null;
+}
+
 // ─── Sujets prédéfinis (niveau module) ───────────────────────────────────────
 
 const SUBJECT_OPTIONS = [
@@ -99,10 +113,15 @@ const NewMessageModal = ({ visible, contacts, onClose, onCompose }: NewMessageMo
   const handlePickDocument = async () => {
     try {
       const results = await DocumentPicker.pick({
-        type: [DocumentTypes.allFiles],
+        type: [DocumentTypes.pdf, DocumentTypes.docx, DocumentTypes.plainText, DocumentTypes.images],
         allowMultiSelection: false,
       });
       const r = results[0];
+      const reason = validateNewMessageAttachment(r.type, r.size ?? undefined);
+      if (reason) {
+        Alert.alert('Pièce jointe refusée', reason);
+        return;
+      }
       setAttachment({ uri: r.uri, name: r.name ?? 'fichier', type: r.type ?? 'application/octet-stream' });
     } catch (err) {
       if (!DocumentPicker.isCancel(err)) {
