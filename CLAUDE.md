@@ -492,29 +492,18 @@ Routeur stack maison — **pas de React Navigation**. Toutes les fonctions de na
 
 ### Type Screen (union complète)
 ```typescript
-// État actuel dans NavigationContext.tsx (app authentifiée)
-type Screen =
-  | 'home'
-  | 'health'
-  | 'professionals'
-  | 'professional-profile'
-  | 'add-professional'
-  | 'invite-professional'
-  | 'settings'
-  | 'my-profile'
-  | 'messaging'
-  | 'messaging-chat'
-  | 'agenda'
-  | 'agenda-day'
-  | 'agenda-form'
-  | 'questionnaire'
-  | 'questionnaire-detail'
-  | 'news';
-
-// ⚠️ DETTE TECHNIQUE : les Screen suivants sont utilisés dans le code
-// mais pas encore dans l'union (erreurs TS pré-existantes non bloquantes) :
-// 'carnet-audition', 'appareillage'
-// 'register-step1' à 'register-success' (contexte NavigationProvider séparé dans RegisterFlow)
+// État actuel dans NavigationContext.tsx — couvre toutes les routes utilisées
+// (app authentifiée + flux inscription via RegisterFlow).
+export type Screen =
+  | 'home' | 'health' | 'professionals' | 'professional-profile' | 'add-professional' | 'invite-professional'
+  | 'settings' | 'my-profile'
+  | 'messaging' | 'messaging-chat'
+  | 'agenda' | 'agenda-day' | 'agenda-form'
+  | 'carnet-audition' | 'appareillage'
+  | 'questionnaire' | 'questionnaire-detail'
+  | 'news'
+  | 'register-step1' | 'register-step1bis' | 'register-step2' | 'register-step3'
+  | 'register-step4' | 'register-step5' | 'register-success';
 ```
 
 ### NavigationProvider — prop `initialScreen`
@@ -734,12 +723,12 @@ export function MessagingChatPage({ onBack }: Props) { ... }
 - Format JSON de `GET /api/patient/professionals` à confirmer avec le backend
 
 #### Frontend — dettes techniques
-- `'carnet-audition'` et `'appareillage'` absents de l'union `Screen` → erreurs TS pré-existantes
-- `register-step1` à `register-success` absents de `Screen` (contexte RegisterFlow séparé) → idem
 - Bouton "Renvoyer l'invitation" (`ProfessionalsPage.tsx`) — appel API manquant
 - Handlers notification dans `NavBar.tsx` (cloche)
-- Déconnexion effective (clear cookies session) dans `NavBar.tsx` dropdown
+- Déconnexion effective (clear cookies session via `@react-native-cookies/cookies`) dans `AuthContext.logout` — actuellement le state local est reset mais le cookie HTTP persiste tant que le serveur n'invalide pas la session
 - `questionnaireService.ts` : persistence session module-level → remplacer par `@react-native-async-storage/async-storage` pour persistance inter-sessions
+- Cert pinning sur `api.audya.com` (lib `react-native-ssl-pinning`) — recommandé pour les données de santé
+- Suppression mock patient (`Roger Duroc`, etc.) gating derrière `__DEV__` ou retrait quand `USE_*_API=true`
 
 #### Register (frontend)
 - Brancher les vrais appels API dans chaque étape (tous les `TODO: appel API`)
