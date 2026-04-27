@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
+import SelectModal from '../common/SelectModal/SelectModal';
 import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
@@ -204,17 +205,14 @@ const RegisterStep2Page = () => {
       </ScrollView>
 
       {/* Modal sélection pays */}
-      <Modal visible={paysModal} transparent animationType="slide" onRequestClose={() => setPaysModal(false)} accessibilityViewIsModal={true}>
-        <TouchableOpacity style={s.modalOverlay} onPress={() => setPaysModal(false)} activeOpacity={1}>
-          <View style={s.modalSheet}>
-            <View style={s.modalHandle} />
-            <Text style={s.modalTitle}>Choisir un pays</Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {PAYS.map(p => <ModalItem key={p} value={p} selected={form.pays === p} onPress={() => { setForm({ ...form, pays: p }); setPaysModal(false); }} />)}
-            </ScrollView>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <SelectModal
+        visible={paysModal}
+        onClose={() => setPaysModal(false)}
+        title="Choisir un pays"
+        options={PAYS}
+        value={form.pays}
+        onSelect={p => setForm({ ...form, pays: p })}
+      />
 
       {/* Modal source photo */}
       <BottomSheetModal visible={photoModal} onClose={() => setPhotoModal(false)}>

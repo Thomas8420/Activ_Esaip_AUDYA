@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
+import SelectModal from '../common/SelectModal/SelectModal';
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
 import { sanitizeText, sanitizeNumeric, MAX_LENGTHS } from '../../utils/validators';
@@ -122,23 +123,14 @@ const RegisterStep4Page = () => {
       </ScrollView>
 
       {/* Modal sélection profession */}
-      <Modal visible={showModal} transparent animationType="slide" onRequestClose={() => setShowModal(false)} accessibilityViewIsModal={true}>
-        <TouchableOpacity style={s.modalOverlay} onPress={() => setShowModal(false)} activeOpacity={1}>
-          <View style={s.modalSheet}>
-            <View style={s.modalHandle} />
-            <Text style={s.modalTitle}>Catégorie socio-professionnelle</Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {OPTIONS_PROFESSION.map(option => (
-                <TouchableOpacity key={option} style={[s.modalItem, form.profession === option && s.modalItemSelected]}
-                  onPress={() => { setForm({ ...form, profession: option }); setShowModal(false); }} activeOpacity={0.7}>
-                  <Text style={[s.modalItemText, form.profession === option && s.modalItemTextSelected]}>{option}</Text>
-                  {form.profession === option && <Text style={{ color: COLORS.orange }}>✓</Text>}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <SelectModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        title="Catégorie socio-professionnelle"
+        options={OPTIONS_PROFESSION}
+        value={form.profession}
+        onSelect={v => setForm({ ...form, profession: v })}
+      />
     </SafeAreaView>
   );
 };

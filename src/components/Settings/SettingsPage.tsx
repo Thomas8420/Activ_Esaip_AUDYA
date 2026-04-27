@@ -28,7 +28,8 @@ import {
 import { validatePassword } from '../../utils/validators';
 import { useNavigation } from '../../context/NavigationContext';
 import { useLanguage, Language } from '../../context/LanguageContext';
-import AnimatedDropdown from '../common/AnimatedDropdown/AnimatedDropdown';
+import SelectModal from '../common/SelectModal/SelectModal';
+import DropdownIcon from '../../assets/images/dropdown.svg';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 /**
@@ -230,97 +231,48 @@ const SettingsPage = () => {
                 <View style={styles.prefDropdownWrapper}>
                   <Text style={styles.prefDropdownLabel}>{t('settings.language')}</Text>
                   <TouchableOpacity
-                    style={[
-                      styles.prefDropdownButton,
-                      langOpen && styles.prefDropdownButtonOpen,
-                    ]}
-                    onPress={() => {
-                      setLangOpen(v => !v);
-                      setDateOpen(false);
-                      setTimeOpen(false);
-                    }}
+                    style={styles.prefDropdownButton}
+                    onPress={() => setLangOpen(true)}
                     activeOpacity={0.7}
                     testID="langDropdown"
                   >
                     <Text style={styles.prefDropdownValue}>{settings.language}</Text>
-                    <Text style={styles.prefDropdownChevron}>▼</Text>
-                  </TouchableOpacity>
-                  <AnimatedDropdown visible={langOpen} absolute>
-                    <View style={styles.prefDropdownMenu}>
-                      {LANGUAGE_OPTIONS.map((opt, i) => (
-                        <TouchableOpacity
-                          key={opt}
-                          style={[
-                            styles.prefDropdownItem,
-                            i === LANGUAGE_OPTIONS.length - 1 && styles.prefDropdownItemLast,
-                          ]}
-                          onPress={() => {
-                            updateSetting('language', opt);
-                            setLanguage(opt);
-                            setLangOpen(false);
-                          }}
-                          activeOpacity={0.7}
-                        >
-                          <Text
-                            style={[
-                              styles.prefDropdownItemText,
-                              settings.language === opt && styles.prefDropdownItemTextActive,
-                            ]}
-                          >
-                            {opt}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                    <View style={styles.dropdownArrowBg}>
+                      <DropdownIcon width={10} height={10} fill="white" />
                     </View>
-                  </AnimatedDropdown>
+                  </TouchableOpacity>
+                  <SelectModal
+                    visible={langOpen}
+                    onClose={() => setLangOpen(false)}
+                    title={t('settings.language')}
+                    options={LANGUAGE_OPTIONS}
+                    value={settings.language}
+                    onSelect={v => { updateSetting('language', v as Language); setLanguage(v as Language); }}
+                  />
                 </View>
 
                 {/* Dropdown Format date */}
                 <View style={styles.prefDropdownWrapper}>
                   <Text style={styles.prefDropdownLabel}>{t('settings.date')}</Text>
                   <TouchableOpacity
-                    style={[
-                      styles.prefDropdownButton,
-                      dateOpen && styles.prefDropdownButtonOpen,
-                    ]}
-                    onPress={() => {
-                      setDateOpen(v => !v);
-                      setLangOpen(false);
-                      setTimeOpen(false);
-                    }}
+                    style={styles.prefDropdownButton}
+                    onPress={() => setDateOpen(true)}
                     activeOpacity={0.7}
                     testID="dateDropdown"
                   >
                     <Text style={styles.prefDropdownValue}>{settings.dateFormat}</Text>
-                    <Text style={styles.prefDropdownChevron}>▼</Text>
-                  </TouchableOpacity>
-                  <AnimatedDropdown visible={dateOpen} absolute>
-                    <View style={styles.prefDropdownMenu}>
-                      {DATE_FORMAT_OPTIONS.map((opt, i) => (
-                        <TouchableOpacity
-                          key={opt}
-                          style={[
-                            styles.prefDropdownItem,
-                            i === DATE_FORMAT_OPTIONS.length - 1 && styles.prefDropdownItemLast,
-                          ]}
-                          onPress={() => {
-                            updateSetting('dateFormat', opt);
-                            setDateOpen(false);
-                          }}
-                          activeOpacity={0.7}
-                        >
-                          <Text
-                            style={[
-                              styles.prefDropdownItemText,
-                              settings.dateFormat === opt && styles.prefDropdownItemTextActive,
-                            ]}
-                          >
-                            {opt}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                    <View style={styles.dropdownArrowBg}>
+                      <DropdownIcon width={10} height={10} fill="white" />
                     </View>
-                  </AnimatedDropdown>
+                  </TouchableOpacity>
+                  <SelectModal
+                    visible={dateOpen}
+                    onClose={() => setDateOpen(false)}
+                    title={t('settings.date')}
+                    options={DATE_FORMAT_OPTIONS}
+                    value={settings.dateFormat}
+                    onSelect={v => updateSetting('dateFormat', v)}
+                  />
                 </View>
 
               </View>
@@ -332,48 +284,24 @@ const SettingsPage = () => {
                 <View style={styles.prefDropdownWrapper}>
                   <Text style={styles.prefDropdownLabel}>{t('settings.time')}</Text>
                   <TouchableOpacity
-                    style={[
-                      styles.prefDropdownButton,
-                      timeOpen && styles.prefDropdownButtonOpen,
-                    ]}
-                    onPress={() => {
-                      setTimeOpen(v => !v);
-                      setLangOpen(false);
-                      setDateOpen(false);
-                    }}
+                    style={styles.prefDropdownButton}
+                    onPress={() => setTimeOpen(true)}
                     activeOpacity={0.7}
                     testID="timeDropdown"
                   >
                     <Text style={styles.prefDropdownValue}>{settings.timeFormat}</Text>
-                    <Text style={styles.prefDropdownChevron}>▼</Text>
-                  </TouchableOpacity>
-                  <AnimatedDropdown visible={timeOpen} absolute>
-                    <View style={styles.prefDropdownMenu}>
-                      {TIME_FORMAT_OPTIONS.map((opt, i) => (
-                        <TouchableOpacity
-                          key={opt}
-                          style={[
-                            styles.prefDropdownItem,
-                            i === TIME_FORMAT_OPTIONS.length - 1 && styles.prefDropdownItemLast,
-                          ]}
-                          onPress={() => {
-                            updateSetting('timeFormat', opt);
-                            setTimeOpen(false);
-                          }}
-                          activeOpacity={0.7}
-                        >
-                          <Text
-                            style={[
-                              styles.prefDropdownItemText,
-                              settings.timeFormat === opt && styles.prefDropdownItemTextActive,
-                            ]}
-                          >
-                            {opt}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                    <View style={styles.dropdownArrowBg}>
+                      <DropdownIcon width={10} height={10} fill="white" />
                     </View>
-                  </AnimatedDropdown>
+                  </TouchableOpacity>
+                  <SelectModal
+                    visible={timeOpen}
+                    onClose={() => setTimeOpen(false)}
+                    title={t('settings.time')}
+                    options={TIME_FORMAT_OPTIONS}
+                    value={settings.timeFormat}
+                    onSelect={v => updateSetting('timeFormat', v)}
+                  />
                 </View>
 
                 {/* Spacer : aligne Heure sur la même largeur que Langue et Date */}

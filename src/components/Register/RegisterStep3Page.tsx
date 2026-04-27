@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
+import SelectModal from '../common/SelectModal/SelectModal';
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
 
@@ -137,23 +138,14 @@ const RegisterStep3Page = () => {
       </ScrollView>
 
       {/* Modal générique réutilisé pour toutes les questions */}
-      <Modal visible={modal.visible} transparent animationType="slide" onRequestClose={closeModal}>
-        <TouchableOpacity style={s.modalOverlay} onPress={closeModal} activeOpacity={1}>
-          <View style={s.modalSheet}>
-            <View style={s.modalHandle} />
-            <Text style={s.modalTitle}>{modal.title}</Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {modal.options.map(option => (
-                <TouchableOpacity key={option} style={[s.modalItem, modal.value === option && s.modalItemSelected]}
-                  onPress={() => { modal.onSelect(option); closeModal(); }} activeOpacity={0.7}>
-                  <Text style={[s.modalItemText, modal.value === option && s.modalItemTextSelected]}>{option}</Text>
-                  {modal.value === option && <Text style={{ color: COLORS.orange }}>✓</Text>}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <SelectModal
+        visible={modal.visible}
+        onClose={closeModal}
+        title={modal.title}
+        options={modal.options}
+        value={modal.value}
+        onSelect={v => { modal.onSelect(v); closeModal(); }}
+      />
     </SafeAreaView>
   );
 };

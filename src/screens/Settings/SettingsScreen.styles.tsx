@@ -82,6 +82,14 @@ export const styles = StyleSheet.create({
     color: COLORS.textLighter,
     marginLeft: 2,
   },
+  dropdownArrowBg: {
+    backgroundColor: '#D3D3D3',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   prefDropdownMenu: {
     position: 'absolute',
     top: 62,
