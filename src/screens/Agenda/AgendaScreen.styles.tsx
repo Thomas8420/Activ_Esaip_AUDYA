@@ -460,12 +460,26 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textLighter,
   },
+  dropdownArrowBg: {
+    backgroundColor: '#D3D3D3',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   formTimeRow: {
     flexDirection: 'row',
     gap: 12,
   },
   formTimeField: {
     flex: 1,
+  },
+  formTimeError: {
+    fontFamily: FONT_REGULAR,
+    fontSize: 12,
+    color: '#D32F2F',
+    marginTop: 6,
   },
   saveButton: {
     backgroundColor: COLORS.orange,

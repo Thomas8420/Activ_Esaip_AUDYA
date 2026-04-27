@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
-  Modal,
   Platform,
-  Pressable,
   ScrollView,
   StatusBar,
   Text,
@@ -12,6 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import BottomSheetModal from '../common/BottomSheetModal/BottomSheetModal';
+import DropdownIcon from '../../assets/images/dropdown.svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AgendaEvent,
@@ -70,6 +70,81 @@ function formatDateISO(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
+// ─── TimePicker — constantes et données ──────────────────────────────────────
+
+const HOURS   = Array.from({ length: 17 }, (_, i) => i + 6); // 6..22
+const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+
+/** Hauteur d'un item = styles.pickerItem.height */
+const ITEM_H = 44;
+/**
+ * Padding vertical qui centre l'item sélectionné sur le pickerHighlight (top: 68).
+ * Maths : paddingTop + 0 * ITEM_H = offset 0 → item 0 visible y = paddingTop.
+ * Pour que item 0 soit centré sur highlight (top: 68) : paddingTop = 68.
+ * scrollTo({ y: idx * ITEM_H }) centre alors item idx sur le highlight pour tout idx.
+ */
+const PAD = 68;
+
+// ─── WheelColumn ──────────────────────────────────────────────────────────────
+// Déclaré au niveau module — évite le démontage/remontage à chaque re-render (CLAUDE.md).
+
+interface WheelColumnProps {
+  data:     number[];
+  value:    number;
+  onChange: (v: number) => void;
+}
+
+const WheelColumn: React.FC<WheelColumnProps> = ({ data, value, onChange }) => {
+  const ref = useRef<ScrollView>(null);
+
+  // Scroll programmatique vers la valeur courante (initialisation + tap).
+  // 50 ms de délai pour laisser le layout se stabiliser après un rendu.
+  useEffect(() => {
+    const idx = data.indexOf(value);
+    if (idx < 0) { return; }
+    const timer = setTimeout(() => {
+      ref.current?.scrollTo({ y: idx * ITEM_H, animated: false });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [data, value]);
+
+  const onScrollEnd = (e: { nativeEvent: { contentOffset: { y: number } } }) => {
+    const idx = Math.max(0, Math.min(
+      data.length - 1,
+      Math.round(e.nativeEvent.contentOffset.y / ITEM_H),
+    ));
+    onChange(data[idx]);
+  };
+
+  return (
+    <ScrollView
+      ref={ref}
+      style={styles.pickerColumn}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingVertical: PAD }}
+      snapToInterval={ITEM_H}
+      decelerationRate="fast"
+      onMomentumScrollEnd={onScrollEnd}
+      onScrollEndDrag={onScrollEnd}
+    >
+      {data.map(item => (
+        <TouchableOpacity
+          key={item}
+          style={styles.pickerItem}
+          onPress={() => {
+            onChange(item);
+            ref.current?.scrollTo({ y: data.indexOf(item) * ITEM_H, animated: true });
+          }}
+        >
+          <Text style={[styles.pickerItemText, item === value && styles.pickerItemTextSelected]}>
+            {String(item).padStart(2, '0')}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+};
+
 // ─── TimePicker modal ─────────────────────────────────────────────────────────
 
 interface TimePickerProps {
@@ -80,9 +155,6 @@ interface TimePickerProps {
   onCancel: () => void;
 }
 
-const HOURS   = Array.from({ length: 17 }, (_, i) => i + 6); // 6..22
-const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
-
 const TimePicker: React.FC<TimePickerProps> = ({ visible, title, value, onConfirm, onCancel }) => {
   const initH = Number.parseInt(value.slice(0, 2), 10);
   const initM = Number.parseInt(value.slice(3, 5), 10);
@@ -90,79 +162,35 @@ const TimePicker: React.FC<TimePickerProps> = ({ visible, title, value, onConfir
   const [selMinute, setSelMinute] = useState(MINUTES.includes(initM) ? initM : 0);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
-      <Pressable style={styles.pickerOverlay} onPress={onCancel}>
-        <Pressable onPress={e => e.stopPropagation()}>
-          <View style={styles.pickerContainer}>
-            <Text style={styles.pickerTitle}>{title}</Text>
+    <BottomSheetModal visible={visible} onClose={onCancel}>
+      <View style={styles.pickerContainer}>
+        <Text style={styles.pickerTitle}>{title}</Text>
 
-            <View style={styles.pickerColumns}>
-              {/* Heures */}
-              <ScrollView
-                style={styles.pickerColumn}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.pickerColumnContent}
-              >
-                {HOURS.map(h => (
-                  <TouchableOpacity
-                    key={h}
-                    style={styles.pickerItem}
-                    onPress={() => setSelHour(h)}
-                  >
-                    <Text style={[
-                      styles.pickerItemText,
-                      selHour === h && styles.pickerItemTextSelected,
-                    ]}>
-                      {String(h).padStart(2, '0')}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
+        <View style={styles.pickerColumns}>
+          <WheelColumn data={HOURS}   value={selHour}   onChange={setSelHour}   />
+          <Text style={styles.pickerSeparator}>:</Text>
+          <WheelColumn data={MINUTES} value={selMinute} onChange={setSelMinute} />
+          {/* Barre de sélection — positionnée en absolu sur les deux colonnes */}
+          <View style={styles.pickerHighlight} pointerEvents="none" />
+        </View>
 
-              <Text style={styles.pickerSeparator}>:</Text>
-
-              {/* Minutes */}
-              <ScrollView
-                style={styles.pickerColumn}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.pickerColumnContent}
-              >
-                {MINUTES.map(m => (
-                  <TouchableOpacity
-                    key={m}
-                    style={styles.pickerItem}
-                    onPress={() => setSelMinute(m)}
-                  >
-                    <Text style={[
-                      styles.pickerItemText,
-                      selMinute === m && styles.pickerItemTextSelected,
-                    ]}>
-                      {String(m).padStart(2, '0')}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-
-            <View style={styles.pickerButtons}>
-              <TouchableOpacity style={styles.pickerCancelBtn} onPress={onCancel}>
-                <Text style={styles.pickerCancelBtnText}>Annuler</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.pickerConfirmBtn}
-                onPress={() => {
-                  const time = `${String(selHour).padStart(2, '0')}:${String(selMinute).padStart(2, '0')}`;
-                  onConfirm(time);
-                }}
-                testID="timePickerConfirm"
-              >
-                <Text style={styles.pickerConfirmBtnText}>OK</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Pressable>
-      </Pressable>
-    </Modal>
+        <View style={styles.pickerButtons}>
+          <TouchableOpacity style={styles.pickerCancelBtn} onPress={onCancel}>
+            <Text style={styles.pickerCancelBtnText}>Annuler</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.pickerConfirmBtn}
+            onPress={() => {
+              const time = `${String(selHour).padStart(2, '0')}:${String(selMinute).padStart(2, '0')}`;
+              onConfirm(time);
+            }}
+            testID="timePickerConfirm"
+          >
+            <Text style={styles.pickerConfirmBtnText}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </BottomSheetModal>
   );
 };
 
@@ -194,70 +222,66 @@ const DatePickerModal: React.FC<DatePickerProps> = ({ visible, value, onConfirm,
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
-      <Pressable style={styles.pickerOverlay} onPress={onCancel}>
-        <Pressable onPress={e => e.stopPropagation()}>
-          <View style={styles.datePickerContainer}>
-            <Text style={styles.datePickerTitle}>Choisir une date</Text>
+    <BottomSheetModal visible={visible} onClose={onCancel}>
+      <View style={styles.datePickerContainer}>
+        <Text style={styles.datePickerTitle}>Choisir une date</Text>
 
-            {/* Navigation mois */}
-            <View style={styles.calendarHeader}>
-              <TouchableOpacity style={styles.arrowBtn} onPress={prevMonth}>
-                <Text style={styles.arrowText}>‹</Text>
+        {/* Navigation mois */}
+        <View style={styles.calendarHeader}>
+          <TouchableOpacity style={styles.arrowBtn} onPress={prevMonth}>
+            <Text style={styles.arrowText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.calendarMonthYear}>
+            {MONTHS_FR[pickerMonth]} {pickerYear}
+          </Text>
+          <TouchableOpacity style={styles.arrowBtn} onPress={nextMonth}>
+            <Text style={styles.arrowText}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Jours de la semaine */}
+        <View style={styles.weekRow}>
+          {DAYS_FR.map((d, i) => (
+            <Text key={DAYS_FR_KEYS[i]} style={styles.weekDayLabel}>{d}</Text>
+          ))}
+        </View>
+
+        {/* Grille */}
+        <View style={styles.daysGrid}>
+          {grid.map(cell => {
+            const actuallySelected = !cell.otherMonth && cell.day === pickerDay;
+            const cellKey = `${cell.otherMonth ? 'other' : 'main'}-${cell.day}`;
+            return (
+              <TouchableOpacity
+                key={cellKey}
+                style={[styles.dayCell, { width: DAY_CELL_SIZE, height: DAY_CELL_SIZE }]}
+                onPress={() => { if (!cell.otherMonth) { setPickerDay(cell.day); } }}
+                activeOpacity={cell.otherMonth ? 1 : 0.7}
+              >
+                {actuallySelected && <View style={styles.daySelectedCircle} />}
+                <Text style={[
+                  styles.dayNumber,
+                  cell.otherMonth && styles.dayNumberOtherMonth,
+                  actuallySelected && styles.dayNumberSelected,
+                ]}>
+                  {cell.day}
+                </Text>
               </TouchableOpacity>
-              <Text style={styles.calendarMonthYear}>
-                {MONTHS_FR[pickerMonth]} {pickerYear}
-              </Text>
-              <TouchableOpacity style={styles.arrowBtn} onPress={nextMonth}>
-                <Text style={styles.arrowText}>›</Text>
-              </TouchableOpacity>
-            </View>
+            );
+          })}
+        </View>
 
-            {/* Jours de la semaine */}
-            <View style={styles.weekRow}>
-              {DAYS_FR.map((d, i) => (
-                <Text key={DAYS_FR_KEYS[i]} style={styles.weekDayLabel}>{d}</Text>
-              ))}
-            </View>
-
-            {/* Grille */}
-            <View style={styles.daysGrid}>
-              {grid.map(cell => {
-                const actuallySelected = !cell.otherMonth && cell.day === pickerDay;
-                const cellKey = `${cell.otherMonth ? 'other' : 'main'}-${cell.day}`;
-                return (
-                  <TouchableOpacity
-                    key={cellKey}
-                    style={[styles.dayCell, { width: DAY_CELL_SIZE, height: DAY_CELL_SIZE }]}
-                    onPress={() => { if (!cell.otherMonth) { setPickerDay(cell.day); } }}
-                    activeOpacity={cell.otherMonth ? 1 : 0.7}
-                  >
-                    {actuallySelected && <View style={styles.daySelectedCircle} />}
-                    <Text style={[
-                      styles.dayNumber,
-                      cell.otherMonth && styles.dayNumberOtherMonth,
-                      actuallySelected && styles.dayNumberSelected,
-                    ]}>
-                      {cell.day}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            <TouchableOpacity
-              style={styles.datePickerConfirmBtn}
-              onPress={() => onConfirm(formatDateISO(pickerYear, pickerMonth, pickerDay))}
-              testID="datePickerConfirm"
-            >
-              <Text style={styles.datePickerConfirmBtnText}>
-                Confirmer — {pickerDay} {MONTHS_FR[pickerMonth]} {pickerYear}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Pressable>
-    </Modal>
+        <TouchableOpacity
+          style={styles.datePickerConfirmBtn}
+          onPress={() => onConfirm(formatDateISO(pickerYear, pickerMonth, pickerDay))}
+          testID="datePickerConfirm"
+        >
+          <Text style={styles.datePickerConfirmBtnText}>
+            Confirmer — {pickerDay} {MONTHS_FR[pickerMonth]} {pickerYear}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </BottomSheetModal>
   );
 };
 
@@ -291,6 +315,10 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker,   setShowEndPicker]   = useState(false);
 
+  // ── Validation heures ─────────────────────────────────────────────────
+  // Comparaison lexicographique valide car format "HH:mm" zéro-paddé
+  const timeError = endTime <= startTime;
+
   // ── Sauvegarde ────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!title.trim()) {
@@ -299,6 +327,10 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
     }
     if (!date) {
       Alert.alert('Champ requis', 'La date est obligatoire.');
+      return;
+    }
+    if (timeError) {
+      Alert.alert('Heures incorrectes', "L'heure de fin doit être après l'heure de début.");
       return;
     }
 
@@ -471,7 +503,9 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
                 <Text style={styles.formPickerBtnText}>
                   {date ? formatDateDisplay(date) : 'Choisir une date'}
                 </Text>
-                <Text style={styles.formPickerChevron}>▾</Text>
+                <View style={styles.dropdownArrowBg}>
+                  <DropdownIcon width={10} height={10} fill="white" />
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -480,26 +514,35 @@ const AgendaFormPage: React.FC<AgendaFormPageProps> = ({ event }) => {
               <View style={[styles.formField, styles.formTimeField]}>
                 <Text style={styles.formLabel}>Heure début</Text>
                 <TouchableOpacity
-                  style={styles.formPickerBtn}
+                  style={[styles.formPickerBtn, timeError && { borderColor: '#D32F2F', borderWidth: 1 }]}
                   onPress={() => setShowStartPicker(true)}
                   testID="fieldStartTime"
                 >
                   <Text style={styles.formPickerBtnText}>{startTime}</Text>
-                  <Text style={styles.formPickerChevron}>▾</Text>
+                  <View style={styles.dropdownArrowBg}>
+                    <DropdownIcon width={10} height={10} fill="white" />
+                  </View>
                 </TouchableOpacity>
               </View>
               <View style={[styles.formField, styles.formTimeField]}>
                 <Text style={styles.formLabel}>Heure fin</Text>
                 <TouchableOpacity
-                  style={styles.formPickerBtn}
+                  style={[styles.formPickerBtn, timeError && { borderColor: '#D32F2F', borderWidth: 1 }]}
                   onPress={() => setShowEndPicker(true)}
                   testID="fieldEndTime"
                 >
                   <Text style={styles.formPickerBtnText}>{endTime}</Text>
-                  <Text style={styles.formPickerChevron}>▾</Text>
+                  <View style={styles.dropdownArrowBg}>
+                    <DropdownIcon width={10} height={10} fill="white" />
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
+            {timeError && (
+              <Text style={styles.formTimeError}>
+                L'heure de fin doit être après l'heure de début.
+              </Text>
+            )}
           </View>
 
           {/* ── Notes ── */}
