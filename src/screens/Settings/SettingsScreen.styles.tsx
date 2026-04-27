@@ -350,9 +350,25 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.orange,
   },
+  modalConfirmButtonDisabled: {
+    opacity: 0.45,
+  },
   modalConfirmText: {
     fontFamily: FONT_SEMIBOLD,
     fontSize: 14,
     color: COLORS.white,
+  },
+  deleteConfirmInput: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginTop: 16,
+    marginBottom: 4,
+    fontFamily: FONT_SEMIBOLD,
+    fontSize: 14,
+    color: COLORS.text,
+    textAlign: 'center',
   },
 });

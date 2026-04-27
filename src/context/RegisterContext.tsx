@@ -2,15 +2,25 @@ import React, { createContext, useState, useMemo, useCallback, ReactNode, useCon
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-/** Données collectées à l'étape 1 (identité + mot de passe + CGV) */
+/** Données collectées à l'étape 1 (identité + CGV) */
 interface Step1Data {
   email: string;
   nom: string;
   prenom: string;
-  /** Mot de passe — jamais loggé ni persisté en clair */
-  password: string;
+  /**
+   * Acceptation explicite des CGU + politique de confidentialité.
+   * Accompagnée de cgvAcceptedAt (preuve horodatée) et privacyPolicyVersion
+   * (version du document accepté) pour respecter Art. 7 RGPD.
+   */
   cgvAccepted: boolean;
+  /** ISO-8601 timestamp de l'acceptation. */
+  cgvAcceptedAt: string;
+  /** Version de la politique de confidentialité acceptée. */
+  privacyPolicyVersion: string;
 }
+
+/** Version courante de la politique de confidentialité — bump à chaque changement. */
+export const PRIVACY_POLICY_VERSION = 'v1.0';
 
 /** Données collectées à l'étape 2 (informations personnelles) */
 interface Step2Data {
@@ -71,8 +81,9 @@ const DEFAULT_REGISTER_DATA: RegisterData = {
   email: '',
   nom: '',
   prenom: '',
-  password: '',
   cgvAccepted: false,
+  cgvAcceptedAt: '',
+  privacyPolicyVersion: '',
   // Step 2
   genre: 'homme',
   dateNaissance: '',

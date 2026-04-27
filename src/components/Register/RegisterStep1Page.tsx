@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
 import { registerStyles as s, COLORS } from '../../screens/Register/Register.styles';
 import { useNavigation } from '../../context/NavigationContext';
-import { useRegister } from '../../context/RegisterContext';
+import { useRegister, PRIVACY_POLICY_VERSION } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
 import { validatePassword, isValidEmail, ERROR_MESSAGES, sanitizeName, sanitizeEmail, MAX_LENGTHS } from '../../utils/validators';
+
+const CGU_URL = 'https://audya.com/cgu';
+const PRIVACY_URL = 'https://audya.com/politique-de-confidentialite';
 
 type Errors = {
   nom?: string; prenom?: string; email?: string;
@@ -110,7 +113,16 @@ const RegisterStep1Page = () => {
 
   const handleSubmit = () => {
     if (validate()) {
-      setRegisterData({ email: form.email, nom: form.nom, prenom: form.prenom });
+      // RGPD Art. 7 — preuve du consentement : timestamp + version du document
+      // Ces deux champs DOIVENT être transmis au backend lors de l'inscription.
+      setRegisterData({
+        email: form.email,
+        nom: form.nom,
+        prenom: form.prenom,
+        cgvAccepted: true,
+        cgvAcceptedAt: new Date().toISOString(),
+        privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+      });
       navigateTo('register-step1bis');
     }
   };
@@ -140,12 +152,30 @@ const RegisterStep1Page = () => {
           <PasswordField placeholder="Mot de passe *"               value={form.motDePasse}   error={errors.motDePasse}   show={showPassword} onToggle={() => setShowPassword(!showPassword)} onChangeText={v => { setForm({ ...form, motDePasse: v });   clearError('motDePasse'); }} />
           <PasswordField placeholder="Confirmation du mot de passe *" value={form.confirmation} error={errors.confirmation} show={showConfirm}  onToggle={() => setShowConfirm(!showConfirm)}  onChangeText={v => { setForm({ ...form, confirmation: v }); clearError('confirmation'); }} />
 
-          {/* Acceptation CGV */}
+          {/* Acceptation CGU + politique de confidentialité (RGPD Art. 7) */}
           <Pressable style={s.checkboxRow} onPress={() => { setForm({ ...form, cgv: !form.cgv }); clearError('cgv'); }}>
             <View style={[s.radioCircle, form.cgv && s.radioCircleSelected]}>
               {form.cgv && <View style={s.radioDot} />}
             </View>
-            <Text style={s.checkboxLabel}>J'accepte les CGV - CGU *</Text>
+            <Text style={s.checkboxLabel}>
+              J'accepte les{' '}
+              <Text
+                style={s.linkText}
+                onPress={() => Linking.openURL(CGU_URL)}
+                accessibilityRole="link"
+              >
+                CGU
+              </Text>
+              {' '}et la{' '}
+              <Text
+                style={s.linkText}
+                onPress={() => Linking.openURL(PRIVACY_URL)}
+                accessibilityRole="link"
+              >
+                politique de confidentialité
+              </Text>
+              {' *'}
+            </Text>
           </Pressable>
           {errors.cgv && <Text style={s.errorText}>⊙ {errors.cgv}</Text>}
 

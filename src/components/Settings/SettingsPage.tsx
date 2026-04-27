@@ -106,6 +106,7 @@ const SettingsPage = () => {
 
   // ── Modal state ─────────────────────────────────────────────────────────────
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   // ── Load settings on mount ──────────────────────────────────────────────────
   useEffect(() => {
@@ -187,7 +188,11 @@ const SettingsPage = () => {
   };
 
   const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== t('modal.delete.confirmWord')) {
+      return;
+    }
     setShowDeleteModal(false);
+    setDeleteConfirmText('');
     try {
       if (USE_SETTINGS_API) {
         await deleteAccount();
@@ -490,12 +495,12 @@ const SettingsPage = () => {
         visible={showDeleteModal}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowDeleteModal(false)}
+        onRequestClose={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
       >
         {/* Overlay : ferme le modal au clic en dehors */}
         <Pressable
           style={styles.modalOverlay}
-          onPress={() => setShowDeleteModal(false)}
+          onPress={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
         >
           {/* Carte interne : stoppe la propagation du tap vers l'overlay */}
           <Pressable style={styles.modalCard} onPress={() => {}}>
@@ -503,10 +508,21 @@ const SettingsPage = () => {
               {t('modal.delete.text')}
             </Text>
 
+            <TextInput
+              style={styles.deleteConfirmInput}
+              placeholder={t('modal.delete.confirmPrompt')}
+              placeholderTextColor={COLORS.textLighter}
+              value={deleteConfirmText}
+              onChangeText={setDeleteConfirmText}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              testID="deleteConfirmInput"
+            />
+
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalCancelButton}
-                onPress={() => setShowDeleteModal(false)}
+                onPress={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
                 activeOpacity={0.7}
                 testID="cancelDeleteButton"
               >
@@ -514,8 +530,12 @@ const SettingsPage = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.modalConfirmButton}
+                style={[
+                  styles.modalConfirmButton,
+                  deleteConfirmText !== t('modal.delete.confirmWord') && styles.modalConfirmButtonDisabled,
+                ]}
                 onPress={handleDeleteAccount}
+                disabled={deleteConfirmText !== t('modal.delete.confirmWord')}
                 activeOpacity={0.7}
                 testID="confirmDeleteButton"
               >

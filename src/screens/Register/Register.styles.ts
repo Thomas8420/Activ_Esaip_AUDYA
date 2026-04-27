@@ -236,6 +236,10 @@ export const registerStyles = StyleSheet.create({
     color: COLORS.text,
     flex: 1,
   },
+  linkText: {
+    color: COLORS.orange,
+    textDecorationLine: 'underline',
+  },
 
   // ── Question ──
   questionText: {

@@ -79,9 +79,11 @@ const FR: TranslationMap = {
   'settings.saving':                'Enregistrement…',
 
   // ── Modal suppression compte ───────────────────────────────────────────
-  'modal.delete.text':    'Voulez-vous vraiment supprimer votre compte ?',
-  'modal.delete.cancel':  'Annuler',
-  'modal.delete.confirm': 'Oui',
+  'modal.delete.text':              "Cette action supprimera définitivement votre compte, votre historique médical, vos messages et vos documents. Certaines données pourront être conservées pour répondre aux obligations légales (Code de la santé publique). Cette action est irréversible.",
+  'modal.delete.confirmPrompt':     'Tapez SUPPRIMER pour confirmer',
+  'modal.delete.confirmWord':       'SUPPRIMER',
+  'modal.delete.cancel':            'Annuler',
+  'modal.delete.confirm':           'Supprimer définitivement',
 
   // ── Titres sections pages ──────────────────────────────────────────────
   'health.section.general':        'Informations générales',
@@ -170,9 +172,11 @@ const EN: TranslationMap = {
   'settings.saving':                'Saving…',
 
   // ── Delete modal ───────────────────────────────────────────────────────
-  'modal.delete.text':    'Are you sure you want to delete your account?',
-  'modal.delete.cancel':  'Cancel',
-  'modal.delete.confirm': 'Yes',
+  'modal.delete.text':              'This will permanently delete your account, medical history, messages and documents. Some data may be retained to comply with legal obligations (French Public Health Code). This action is irreversible.',
+  'modal.delete.confirmPrompt':     'Type DELETE to confirm',
+  'modal.delete.confirmWord':       'DELETE',
+  'modal.delete.cancel':            'Cancel',
+  'modal.delete.confirm':           'Permanently delete',
 
   // ── Page section titles ────────────────────────────────────────────────
   'health.section.general':        'General information',
@@ -261,9 +265,11 @@ const ES: TranslationMap = {
   'settings.saving':                'Guardando…',
 
   // ── Modal eliminación ──────────────────────────────────────────────────
-  'modal.delete.text':    '¿Realmente quiere eliminar su cuenta?',
-  'modal.delete.cancel':  'Cancelar',
-  'modal.delete.confirm': 'Sí',
+  'modal.delete.text':              'Esta acción eliminará definitivamente su cuenta, su historial médico, sus mensajes y sus documentos. Algunos datos podrán conservarse para cumplir con obligaciones legales. Esta acción es irreversible.',
+  'modal.delete.confirmPrompt':     'Escriba ELIMINAR para confirmar',
+  'modal.delete.confirmWord':       'ELIMINAR',
+  'modal.delete.cancel':            'Cancelar',
+  'modal.delete.confirm':           'Eliminar definitivamente',
 
   // ── Títulos secciones ──────────────────────────────────────────────────
   'health.section.general':        'Información general',
