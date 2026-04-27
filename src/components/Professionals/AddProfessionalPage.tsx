@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   ScrollView,
   StatusBar,
   Text,
@@ -16,6 +17,7 @@ import BottomNav from '../common/BottomNav/BottomNav';
 import CTA1 from '../common/Button/CTA1';
 import { SPECIALTIES } from '../../constants';
 import { sanitizeName, sanitizeZipCode } from '../../utils/validators';
+import { addProfessional } from '../../services/professionalsService';
 
 interface SearchResult {
   id: string;
@@ -44,6 +46,35 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
   const [zipCode, setZipCode] = useState('');
   const [city, setCity] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);
+
+  /**
+   * Confirmation explicite avant le partage du dossier médical avec un pro
+   * existant. RGPD Art. 9(2)(a) — consentement spécifique requis pour les
+   * données de santé. Sans cette étape, sélectionner un pro depuis les
+   * résultats déclencherait silencieusement un partage complet.
+   */
+  const handleAddWithConsent = (result: SearchResult) => {
+    Alert.alert(
+      'Partage de votre dossier médical',
+      `Vous vous apprêtez à partager votre dossier (antécédents, traitements, allergies, audiométries) avec ${result.firstName} ${result.lastName}. Confirmez-vous ce partage ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Confirmer',
+          style: 'default',
+          onPress: async () => {
+            try {
+              await addProfessional(result.id);
+              Alert.alert('Professionnel ajouté', `${result.firstName} ${result.lastName} a été ajouté à votre équipe de soins.`);
+              onBack();
+            } catch {
+              Alert.alert('Erreur', "L'ajout a échoué. Veuillez réessayer.");
+            }
+          },
+        },
+      ],
+    );
+  };
 
   const handleSearch = () => {
     // TODO: Appel API GET /api/professionals/search?specialty=...&last_name=...
@@ -167,6 +198,7 @@ const AddProfessionalPage: React.FC<AddProfessionalPageProps> = ({
                       </View>
                       <CTA1
                         label="Ajouter"
+                        onPress={() => handleAddWithConsent(result)}
                         style={{ paddingVertical: 6, paddingHorizontal: 14, borderRadius: 14, minWidth: 0 }}
                         textStyle={{ fontSize: 12 }}
                       />
