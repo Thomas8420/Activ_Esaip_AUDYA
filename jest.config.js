@@ -1,6 +1,7 @@
 module.exports = {
   preset: 'react-native',
   setupFiles: ['<rootDir>/jest.setup.js'],
+  testPathIgnorePatterns: ['/node_modules/', '/__tests__/test-utils\\.tsx$'],
   moduleNameMapper: {
     '\\.svg$': '<rootDir>/__mocks__/svg-mock.js',
     'react-native-document-picker': '<rootDir>/__mocks__/react-native-document-picker.js',

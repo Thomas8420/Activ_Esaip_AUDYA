@@ -6,8 +6,8 @@ import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import MessagingPage from '../src/components/Messaging/MessagingPage';
 import MessagingChatPage from '../src/components/Messaging/MessagingChatPage';
-import { NavigationProvider } from '../src/context/NavigationContext';
 import { SelectedConversation } from '../src/context/NavigationContext';
+import { renderWithProviders } from './test-utils';
 
 /** Conversation de test pour MessagingChatPage */
 const MOCK_CONVERSATION: SelectedConversation = {
@@ -24,19 +24,10 @@ const MOCK_CONVERSATION: SelectedConversation = {
 };
 
 /** Helpers de rendu */
-const renderMessagingPage = () =>
-  ReactTestRenderer.create(
-    <NavigationProvider>
-      <MessagingPage />
-    </NavigationProvider>,
-  );
+const renderMessagingPage = () => renderWithProviders(<MessagingPage />);
 
 const renderChatPage = (conv: SelectedConversation = MOCK_CONVERSATION) =>
-  ReactTestRenderer.create(
-    <NavigationProvider>
-      <MessagingChatPage conversation={conv} />
-    </NavigationProvider>,
-  );
+  renderWithProviders(<MessagingChatPage conversation={conv} />);
 
 // ── MessagingPage ──────────────────────────────────────────────────────────────
 
@@ -46,13 +37,13 @@ test('MessagingPage renders without crashing', async () => {
   });
 });
 
-test('MessagingPage displays title "MA MESSAGERIE"', async () => {
+test('MessagingPage displays title "Ma messagerie"', async () => {
   let renderer: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(async () => {
     renderer = renderMessagingPage();
   });
   const text = JSON.stringify(renderer!.toJSON());
-  expect(text).toContain('MA MESSAGERIE');
+  expect(text).toContain('Ma messagerie');
 });
 
 test('MessagingPage displays EN LIGNE filter badge', async () => {
@@ -150,14 +141,16 @@ test('MessagingChatPage renders send button', async () => {
   expect(btn).toBeTruthy();
 });
 
-test('MessagingChatPage renders attach button', async () => {
+test('MessagingChatPage renders attach photo and document buttons', async () => {
+  // Le bouton attach unique a été splitté en deux : photo (galerie/caméra)
+  // et document (DocumentPicker). Vérifie les deux testIDs.
   let renderer: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(async () => {
     renderer = renderChatPage();
   });
   const instance = renderer!.root;
-  const btn = instance.findByProps({ testID: 'attachButton' });
-  expect(btn).toBeTruthy();
+  expect(instance.findByProps({ testID: 'attachPhotoButton' })).toBeTruthy();
+  expect(instance.findByProps({ testID: 'attachDocButton' })).toBeTruthy();
 });
 
 test('MessagingChatPage renders close button', async () => {

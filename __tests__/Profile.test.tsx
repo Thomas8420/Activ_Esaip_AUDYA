@@ -5,17 +5,9 @@
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import ProfilePage from '../src/components/Profile/ProfilePage';
-import { NavigationProvider } from '../src/context/NavigationContext';
+import { renderWithProviders } from './test-utils';
 
-/**
- * Render helper — enveloppe dans NavigationProvider (requis par NavBar et BottomNav)
- */
-const renderProfile = () =>
-  ReactTestRenderer.create(
-    <NavigationProvider>
-      <ProfilePage />
-    </NavigationProvider>,
-  );
+const renderProfile = () => renderWithProviders(<ProfilePage />);
 
 // ── Render ──────────────────────────────────────────────────────────────────
 
@@ -25,13 +17,13 @@ test('ProfilePage renders without crashing', async () => {
   });
 });
 
-test('ProfilePage displays the title "MON PROFIL"', async () => {
+test('ProfilePage displays the title "Mon profil"', async () => {
   let renderer: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(async () => {
     renderer = renderProfile();
   });
   const text = JSON.stringify(renderer!.toJSON());
-  expect(text).toContain('MON PROFIL');
+  expect(text).toContain('Mon profil');
 });
 
 // ── Mock data defaults ───────────────────────────────────────────────────────

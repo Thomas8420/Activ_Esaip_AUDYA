@@ -6,15 +6,30 @@ import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import SettingsPage from '../src/components/Settings/SettingsPage';
 import { NavigationProvider } from '../src/context/NavigationContext';
+import { LanguageProvider } from '../src/context/LanguageContext';
+import { AuthProvider } from '../src/context/AuthContext';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+const SAFE_AREA_METRICS = {
+  frame: { x: 0, y: 0, width: 320, height: 640 },
+  insets: { top: 0, left: 0, right: 0, bottom: 0 },
+};
 
 /**
- * Render helper — enveloppe dans NavigationProvider (requis par NavBar et BottomNav)
+ * Render helper — enveloppe dans tous les providers consommés par NavBar,
+ * BottomNav et SettingsPage (Auth, Language, Navigation, SafeArea).
  */
 const renderSettings = () =>
   ReactTestRenderer.create(
-    <NavigationProvider>
-      <SettingsPage />
-    </NavigationProvider>,
+    <SafeAreaProvider initialMetrics={SAFE_AREA_METRICS}>
+      <AuthProvider>
+        <LanguageProvider>
+          <NavigationProvider>
+            <SettingsPage />
+          </NavigationProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </SafeAreaProvider>,
   );
 
 // ── Render ──────────────────────────────────────────────────────────────────
