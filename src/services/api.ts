@@ -45,6 +45,19 @@ export function getAuthToken(): string | null {
   return inMemoryAuthToken;
 }
 
+// ─── Handler 401 (session expirée) ──────────────────────────────────────────
+// Permet à AuthContext d'enregistrer un callback déclenché dès qu'un 401 tombe
+// sur un endpoint authentifié. Empêche la "session zombie" (token expiré côté
+// backend mais isAuthenticated=true côté mobile). Le handler ne doit PAS faire
+// d'appel réseau — uniquement nettoyer le state local + storage.
+
+type UnauthorizedHandler = () => void;
+let onUnauthorized: UnauthorizedHandler | null = null;
+
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
+  onUnauthorized = handler;
+}
+
 // ─── apiFetch ───────────────────────────────────────────────────────────────
 
 export interface ApiFetchOptions extends RequestInit {
@@ -96,6 +109,18 @@ export async function apiFetch<T>(
   if (__DEV__) {console.log('[api]', response.status, `${BASE_URL}${path}`);}
 
   if (!response.ok) {
+    // 401 sur endpoint authentifié = session invalide côté backend → on
+    // déclenche le handler de logout local avant de propager l'erreur.
+    // skipAuth=true exclut le cas login (401 = identifiants invalides, pas
+    // expiration de session).
+    if (response.status === 401 && !options?.skipAuth && onUnauthorized) {
+      try {
+        onUnauthorized();
+      } catch (handlerErr) {
+        if (__DEV__) {console.warn('[api] unauthorized handler threw:', (handlerErr as Error).message);}
+      }
+    }
+
     const error = await response.json().catch(() => ({} as {message?: string}));
     throw new ApiError(
       response.status,

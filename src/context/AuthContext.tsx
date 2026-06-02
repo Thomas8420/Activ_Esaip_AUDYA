@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import {loginStep1, logout as apiLogout, DEV_SKIP_2FA} from '../services/authService';
-import {setAuthToken} from '../services/api';
+import {setAuthToken, setUnauthorizedHandler} from '../services/api';
 import {
   clearAuthStorage,
   getStoredAuthToken,
@@ -45,6 +45,20 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   const [isHydrating, setIsHydrating] = useState(true);
   const [pendingEmail, setPendingEmail] = useState('');
   const [user, setUser] = useState<StoredUser | null>(null);
+
+  // Handler 401 : si le backend rejette le token (expiration / révocation),
+  // on coupe immédiatement la session locale pour éviter une "session zombie".
+  // Pas d'appel réseau ici (le token est déjà invalide) — uniquement clear local.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      setAuthToken(null);
+      setIsAuthenticated(false);
+      setUser(null);
+      setPendingEmail('');
+      void clearAuthStorage();
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   // Hydratation au démarrage : si un token est persisté dans le Keychain,
   // on restaure la session sans repasser par login.

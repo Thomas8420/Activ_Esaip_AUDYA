@@ -5,7 +5,7 @@
  * du wrapper sans toucher le réseau.
  */
 
-import { apiFetch, ApiError, setAuthToken } from '../../src/services/api';
+import { apiFetch, ApiError, setAuthToken, setUnauthorizedHandler } from '../../src/services/api';
 
 const mockFetch = jest.fn();
 (globalThis as unknown as Record<string, unknown>).fetch = mockFetch;
@@ -16,6 +16,7 @@ const mockFetch = jest.fn();
 beforeEach(() => {
   mockFetch.mockReset();
   setAuthToken(null);
+  setUnauthorizedHandler(null);
 });
 
 // ─── Succès ───────────────────────────────────────────────────────────────────
@@ -132,6 +133,65 @@ test('apiFetch — message générique si la réponse erreur ne contient pas de 
   }
 
   expect((caughtError as ApiError).message).toBe('Une erreur est survenue. Veuillez réessayer.');
+});
+
+// ─── Handler 401 (session zombie) ─────────────────────────────────────────────
+
+test('apiFetch — handler 401 est appelé sur endpoint authentifié', async () => {
+  const handler = jest.fn();
+  setUnauthorizedHandler(handler);
+
+  mockFetch.mockResolvedValueOnce({
+    ok: false,
+    status: 401,
+    json: () => Promise.resolve({ message: 'Unauthenticated.' }),
+  });
+
+  await expect(apiFetch('/protected')).rejects.toMatchObject({ status: 401 });
+  expect(handler).toHaveBeenCalledTimes(1);
+});
+
+test('apiFetch — handler 401 N\'EST PAS appelé sur skipAuth (cas login)', async () => {
+  const handler = jest.fn();
+  setUnauthorizedHandler(handler);
+
+  mockFetch.mockResolvedValueOnce({
+    ok: false,
+    status: 401,
+    json: () => Promise.resolve({ message: 'Identifiants invalides.' }),
+  });
+
+  await expect(apiFetch('/api/auth/login', { skipAuth: true })).rejects.toMatchObject({ status: 401 });
+  expect(handler).not.toHaveBeenCalled();
+});
+
+test('apiFetch — handler 401 ignoré pour les autres statuts', async () => {
+  const handler = jest.fn();
+  setUnauthorizedHandler(handler);
+
+  mockFetch.mockResolvedValueOnce({
+    ok: false,
+    status: 422,
+    json: () => Promise.resolve({ message: 'Validation' }),
+  });
+
+  await expect(apiFetch('/protected')).rejects.toMatchObject({ status: 422 });
+  expect(handler).not.toHaveBeenCalled();
+});
+
+test('apiFetch — une exception du handler 401 n\'empêche pas l\'ApiError de remonter', async () => {
+  setUnauthorizedHandler(() => { throw new Error('handler buggy'); });
+
+  mockFetch.mockResolvedValueOnce({
+    ok: false,
+    status: 401,
+    json: () => Promise.resolve({ message: 'Unauthenticated.' }),
+  });
+
+  // Le console.warn du handler en dev est attendu — on le suppress.
+  const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  await expect(apiFetch('/protected')).rejects.toMatchObject({ status: 401 });
+  spy.mockRestore();
 });
 
 // ─── ApiError ─────────────────────────────────────────────────────────────────
