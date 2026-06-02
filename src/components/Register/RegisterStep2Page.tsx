@@ -11,6 +11,8 @@ import { useNavigation } from '../../context/NavigationContext';
 import { useRegister } from '../../context/RegisterContext';
 import Bubbles from '../../components/Bubbles';
 import { sanitizeName, sanitizePhone, sanitizeZipCode, stripXSS, MAX_LENGTHS } from '../../utils/validators';
+import { submitRegistrationStep2 } from '../../services/registerService';
+import { ApiError } from '../../services/api';
 
 const MAX_PHOTO_SIZE_MB = 3;
 const ALLOWED_PHOTO_MIME = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'];
@@ -114,7 +116,35 @@ const RegisterStep2Page = () => {
     launchCamera({ mediaType: 'photo', quality: 0.8, saveToPhotos: false }, handleImagePickerResponse);
   };
 
-  const handleSubmit = () => { if (validate()) navigateTo('register-step3'); };
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!validate() || submitting) {return;}
+    setSubmitting(true);
+    try {
+      await submitRegistrationStep2({
+        genre: form.genre,
+        dateNaissance: form.dateNaissance,
+        nom: form.nom,
+        prenom: form.prenom,
+        numeroSecu: form.numeroSecu,
+        adresse: form.adresse,
+        complement: form.complement,
+        codePostal: form.codePostal,
+        ville: form.ville,
+        pays: form.pays,
+        telephoneFixe: form.telephoneFixe,
+        telephoneMobile: form.telephoneMobile,
+        profession: form.profession,
+      });
+      navigateTo('register-step3');
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Impossible d\'enregistrer ces informations.';
+      Alert.alert('Erreur', msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView style={s.safeArea} edges={['top']}>

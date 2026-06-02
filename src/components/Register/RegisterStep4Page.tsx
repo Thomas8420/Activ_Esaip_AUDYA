@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
@@ -8,6 +8,8 @@ import SelectModal from '../common/SelectModal/SelectModal';
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
 import { sanitizeText, sanitizeNumeric, MAX_LENGTHS } from '../../utils/validators';
+import { submitRegistrationStep4 } from '../../services/registerService';
+import { ApiError } from '../../services/api';
 
 const OPTIONS_PROFESSION = [
   'Cadres et professions intellectuelles supérieures', 'Professions intermédiaires',
@@ -56,6 +58,34 @@ const RegisterStep4Page = () => {
     if (!form.poids.trim())  e.poids  = 'Veuillez remplir ce champ !';
     setErrors(e);
     return Object.keys(e).length === 0;
+  };
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!validate() || submitting) {return;}
+    setSubmitting(true);
+    try {
+      await submitRegistrationStep4({
+        profession: form.profession,
+        fumeur: form.fumeur,
+        taille: form.taille,
+        poids: form.poids,
+        antecedentsFamiliaux: form.antecedentsFamiliaux,
+        antecedentsMedicaux: form.antecedentsMedicaux,
+        antecedentsChirurgicaux: form.antecedentsChirurgicaux,
+        traitementEnCours: form.traitementEnCours,
+        allergies: form.allergies,
+        activitePhysique: form.activitePhysique,
+        remarques: form.remarques,
+      });
+      navigateTo('register-step5');
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Impossible d\'enregistrer ces informations.';
+      Alert.alert('Erreur', msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -116,7 +146,7 @@ const RegisterStep4Page = () => {
 
           {/* Bouton suivant */}
           <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]}
-            onPress={() => { if (validate()) navigateTo('register-step5'); }}>
+            onPress={handleSubmit} disabled={submitting}>
             {({ pressed }) => <Text style={[s.btnPrimaryText, pressed && s.btnPrimaryTextPressed]}>Suivant</Text>}
           </Pressable>
         </View>

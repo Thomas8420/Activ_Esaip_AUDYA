@@ -10,7 +10,7 @@ L'application mobile React Native AUDYA est actuellement complète côté UI (16
 
 Pour que l'application puisse afficher des données réelles, **chaque écran a besoin d'un ou plusieurs endpoints exposés sous `/api/*` avec authentification Sanctum** (Bearer token). Les routes web existantes (`/patient/*`, `/ajaxchat/*`, etc. qui retournent du HTML ou redirigent vers la page de login) ne sont **pas utilisables** par un client mobile.
 
-Ce document liste les **42 endpoints attendus** (dont 35 déjà consommés par le mobile via les routes web actuelles, et 7 planifiés pour la phase 2), leurs contrats (méthode, URL, request body, response shape) et les contraintes de sécurité associées. Les endpoints marqués `(planifié)` ne sont pas encore appelés par le mobile et correspondent à des écrans dont le branchement est prévu en phase 2.
+Ce document liste les **42 endpoints attendus** (dont 39 déjà consommés par le mobile via les routes web actuelles ou via des stubs en attente du backend, et 3 planifiés pour la phase 2), leurs contrats (méthode, URL, request body, response shape) et les contraintes de sécurité associées. Les endpoints marqués `(planifié)` ne sont pas encore appelés par le mobile et correspondent à des écrans dont le branchement est prévu en phase 2.
 
 ---
 
@@ -880,7 +880,7 @@ Le mobile ne consomme aujourd'hui que `reply`. Un champ optionnel `conversation_
 
 ### Lot 12 - Inscription
 
-> **État du mobile pour ce lot :** seuls les 2 premiers endpoints (`POST /api/register` et `POST /api/register/verify-email`) sont effectivement appelés. Les 4 suivants (patient-info, hearing-survey, medical-info, professional) correspondent aux étapes 2-5 du wizard mobile mais leurs handlers ne contiennent que des TODOs en attente de cette livraison. À implémenter côté mobile en phase 2.
+> **État du mobile pour ce lot :** les 6 endpoints sont désormais branchés côté mobile (les 4 steps 2-5 appellent leurs services respectifs dans `handleSubmit` avec gestion d'erreur). En attente d'activation backend (`USE_REGISTER_API=true` côté mobile sera flippé à la livraison).
 
 #### `POST /api/register`
 Crée un compte patient (étape 1 : identité + mot de passe + CGV).
@@ -909,9 +909,7 @@ Le compte est créé en état `unverified`. L'utilisateur doit cliquer sur le li
 #### `POST /api/register/verify-email`
 Renvoie l'email de vérification (étape 1bis).
 
-État actuel mobile : Content-Type `application/x-www-form-urlencoded` (`email=...`). Cible : JSON. À aligner.
-
-**Request body (cible) :**
+**Request body :**
 ```json
 { "email": "string" }
 ```
@@ -922,14 +920,16 @@ Rate limit recommandé : 3 envois / 5 min / email.
 
 ---
 
-#### `POST /api/register/patient-info` (planifié)
-Soumet les informations personnelles (étape 2). État actuel mobile : aucun appel, TODO dans `RegisterStep2Page.tsx`.
+#### `POST /api/register/patient-info`
+Soumet les informations personnelles (étape 2).
 
 **Request body :**
 ```json
 {
   "genre": "homme" | "femme",
   "date_naissance": "1988-04-11",
+  "nom": "string",
+  "prenom": "string",
   "numero_secu": "string",
   "adresse": "string",
   "complement": "string",
@@ -938,58 +938,79 @@ Soumet les informations personnelles (étape 2). État actuel mobile : aucun app
   "pays": "string",
   "telephone_fixe": "string",
   "telephone_mobile": "string",
-  "profession": "string",
-  "photo_url": "string (optionnel - issu de upload-photo)"
+  "profession": "string"
 }
 ```
 
-> `numero_secu` : RGPD ultra-sensible, chiffrement au repos en DB **obligatoire**.
+**Types et conventions :**
+- `genre` : énumération stricte `"homme" | "femme"` (lowercase).
+- `date_naissance` : format `DD/MM/YYYY` ou ISO 8601 (le mobile saisit en libre, valider côté backend).
+- `numero_secu` : 15 chiffres exactement. RGPD ultra-sensible, **chiffrement au repos en DB obligatoire**.
+- `complement` peut être chaîne vide.
+- La photo n'est PAS envoyée ici : elle sera uploadée séparément via `POST /api/patient/profile/photo` une fois le compte créé.
 
 **Response 200 :** `{ "message": "Informations sauvegardées." }`
 
 ---
 
-#### `POST /api/register/hearing-survey` (planifié)
-Soumet le questionnaire auditif d'inscription (étape 3). État actuel mobile : aucun appel, TODO dans `RegisterStep3Page.tsx`.
+#### `POST /api/register/hearing-survey`
+Soumet le questionnaire auditif d'inscription (étape 3).
 
 **Request body :**
 ```json
 {
   "duree_gene": "string",
-  "oui_non": ["string", "..."],
+  "oui_non": ["Oui", "Non", "Oui", "...", "Non"],
   "evolution_surdite": "string",
-  "situations_difficiles": ["string", "..."],
-  "situations_difficiles_bis": ["string", "..."]
+  "situations_difficiles": ["string", "..."]
 }
 ```
+
+**Types et conventions :**
+- `duree_gene` : string libre parmi un set fixe (ex: "Moins de 6 mois", "1 an", "Plus de 5 ans").
+- `oui_non` : tableau de 9 strings `"Oui" | "Non" | ""`, dans l'ordre des questions Q2 à Q12 (ces 9 questions sont énumérées dans `RegisterStep3Page.tsx`). Une chaîne vide signifie que la question n'a pas été répondue.
+- `evolution_surdite` : string libre (ex: "Progressivement, lentement", "Brutalement").
+- `situations_difficiles` : tableau de strings libres (sous-ensemble d'une liste fixe : restaurant, salles de spectacles, discussions de groupe, télévision, lecture sur les lèvres, extérieur).
 
 **Response 200 :** `{ "message": "Questionnaire sauvegardé." }`
 
 ---
 
-#### `POST /api/register/medical-info` (planifié)
-Soumet les informations médicales (étape 4). État actuel mobile : aucun appel, TODO dans `RegisterStep4Page.tsx`.
+#### `POST /api/register/medical-info`
+Soumet les informations médicales (étape 4).
 
 **Request body :**
 ```json
 {
-  "taille": "string",
-  "poids": "string",
-  "groupe_sanguin": "string",
-  "antecedents": "string",
-  "traitements": "string",
-  "allergies": "string"
+  "profession_csp": "string",
+  "smoker": false,
+  "height_cm": "168",
+  "weight_kg": "63",
+  "family_history": "string",
+  "medical_history": "string",
+  "surgical_history": "string",
+  "current_treatment": "string",
+  "allergies": "string",
+  "physical_activity_hours": "string",
+  "remarks": "string"
 }
 ```
 
-> Données HDS - conformité requise.
+**Types et conventions :**
+- `profession_csp` : catégorie socio-professionnelle, string libre parmi une liste fixe (Cadres, Employés, Retraités, etc.). Différent du champ `profession` du Step 2 qui est un métier.
+- `smoker` : boolean.
+- `height_cm`, `weight_kg` : strings contenant des chiffres uniquement (le mobile envoie en string, à parser côté backend). Obligatoires côté mobile.
+- `family_history`, `medical_history`, `surgical_history`, `current_treatment`, `allergies`, `remarks` : strings libres optionnelles (peuvent être chaînes vides).
+- `physical_activity_hours` : string contenant un nombre d'heures (libellé mobile : "Nombre d'heures d'activité physique"). Max 3 chiffres.
+
+> Données HDS - conformité requise (chiffrement au repos, traçabilité d'accès).
 
 **Response 200 :** `{ "message": "Informations médicales sauvegardées." }`
 
 ---
 
-#### `POST /api/register/professional` (planifié)
-Associe un professionnel de santé pendant l'inscription (étape 5). État actuel mobile : aucun appel, TODO dans `RegisterStep5Page.tsx`.
+#### `POST /api/register/professional`
+Associe un professionnel de santé sélectionné pendant l'inscription (étape 5).
 
 **Request body :**
 ```json
@@ -999,7 +1020,10 @@ Associe un professionnel de santé pendant l'inscription (étape 5). État actue
 }
 ```
 
-`consent_data_share` doit être `true` (RGPD Art. 9).
+**Conventions :**
+- `professional_id` : entier ou string (le mobile envoie l'id tel qu'il est reçu de la route de recherche).
+- `consent_data_share` : doit être `true` (RGPD Art. 9, validation explicite côté mobile par le clic "Je valide").
+- Appel uniquement si l'utilisateur a sélectionné un professionnel dans les résultats de recherche. Sinon, le mobile navigue directement vers l'écran de succès sans appel API.
 
 **Response 200 :** `{ "message": "Professionnel associé." }`
 
@@ -1116,10 +1140,10 @@ Pour étaler la charge backend et permettre des livraisons mobile incrémentales
 | **Phase 5 - Agenda** | Lot 5 (3) | 3 | 1 semaine | Moyenne |
 | **Phase 6 - Notifications & News** | Lot 8 (3) + Lot 10 (1 planifié) | 4 | 0.5 semaine | Basse |
 | **Phase 7 - Chatbot** | Lot 11 (1) | 1 | 0.5 semaine | Basse (dépend de la solution IA choisie) |
-| **Phase 8 - Inscription & reset** | Lot 12 (2 actifs + 4 planifiés) + Lot 13 (2) | 8 | 1.5 semaine | Moyenne (en parallèle des phases 1-2) |
+| **Phase 8 - Inscription & reset** | Lot 12 (6) + Lot 13 (2) | 8 | 1.5 semaine | Moyenne (en parallèle des phases 1-2) |
 | **TOTAL** | | **42 endpoints** | **8 à 10 semaines** | |
 
-**Note sur le découpage actif vs planifié :** sur les 42 endpoints, 35 sont consommés aujourd'hui par le mobile (via les routes web actuelles à remplacer par les routes API REST cibles). Les 7 marqués `(planifié)` correspondent à des écrans dont le branchement mobile est prévu en phase 2 ; ils peuvent être livrés en dernier sans bloquer le mobile.
+**Note sur le découpage actif vs planifié :** sur les 42 endpoints, 39 sont consommés aujourd'hui par le mobile (via les routes web actuelles à remplacer par les routes API REST cibles, ou via des stubs en attente du backend pour les 4 nouvelles routes register). Les 3 marqués `(planifié)` correspondent à des écrans (recherche de professionnel, invitation de professionnel, actualités) dont le branchement mobile est prévu en phase 2 ; ils peuvent être livrés en dernier sans bloquer le mobile.
 
 **Total estimé : 8 à 10 semaines** selon la disponibilité de l'équipe backend et la profondeur des tests.
 

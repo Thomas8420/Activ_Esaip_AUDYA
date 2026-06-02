@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
@@ -7,6 +7,8 @@ import { registerStyles as s, COLORS } from '../../screens/Register/Register.sty
 import SelectModal from '../common/SelectModal/SelectModal';
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
+import { submitRegistrationStep3 } from '../../services/registerService';
+import { ApiError } from '../../services/api';
 
 // Options des dropdowns
 const OUI_NON = ['Oui', 'Non'];
@@ -84,6 +86,27 @@ const RegisterStep3Page = () => {
   const toggleSituation = (item: string) =>
     setQ10(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
 
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (submitting) {return;}
+    setSubmitting(true);
+    try {
+      await submitRegistrationStep3({
+        dureeGene: q1,
+        ouiNon,
+        evolutionSurdite: q3,
+        situationsDifficiles: q10,
+      });
+      navigateTo('register-step4');
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Impossible d\'enregistrer le questionnaire.';
+      Alert.alert('Erreur', msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <SafeAreaView style={s.safeArea} edges={['top']}>
       <Bubbles />
@@ -131,7 +154,7 @@ const RegisterStep3Page = () => {
           <CheckboxGroup label="10. Dans quelles situations votre audition vous cause-t-elle le plus de difficultés ou d'inconfort ?" list={q10} onToggle={toggleSituation} />
 
           {/* Bouton valider */}
-          <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]} onPress={() => navigateTo('register-step4')}>
+          <Pressable style={({ pressed }) => [s.btnPrimarySmall, pressed && s.btnPrimarySmallPressed]} onPress={handleSubmit} disabled={submitting}>
             {({ pressed }) => <Text style={[s.btnPrimaryText, pressed && s.btnPrimaryTextPressed]}>Je valide le questionnaire</Text>}
           </Pressable>
         </View>

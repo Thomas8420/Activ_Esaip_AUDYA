@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LogoAudya from '../../assets/images/logo-audya.svg';
@@ -7,6 +7,8 @@ import { registerStyles as s, COLORS } from '../../screens/Register/Register.sty
 import { useNavigation } from '../../context/NavigationContext';
 import Bubbles from '../../components/Bubbles';
 import { sanitizeName, sanitizeZipCode, MAX_LENGTHS } from '../../utils/validators';
+import { submitRegistrationStep5 } from '../../services/registerService';
+import { ApiError } from '../../services/api';
 
 const OPTIONS_SPECIALITE = [
   'Médecin généraliste', 'ORL (Oto-Rhino-Laryngologiste)', 'Audioprothésiste',
@@ -74,8 +76,29 @@ const RegisterStep5Page = () => {
     setSelectedResult(null);
   };
 
-  const handleSkip     = () => { navigateTo('register-success'); };
-  const handleValidate = () => { navigateTo('register-success'); };
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSkip = () => { navigateTo('register-success'); };
+
+  const handleValidate = async () => {
+    if (submitting) {return;}
+    // Si aucun professionnel n'est sélectionné, on traite comme un skip
+    // (l'utilisateur a cherché mais n'a rien trouvé/sélectionné).
+    if (!selectedResult) {
+      navigateTo('register-success');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await submitRegistrationStep5(selectedResult.id);
+      navigateTo('register-success');
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Impossible d\'associer ce professionnel.';
+      Alert.alert('Erreur', msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView style={s.safeArea} edges={['top']}>
