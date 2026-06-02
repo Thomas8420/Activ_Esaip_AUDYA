@@ -1,13 +1,23 @@
-import React, {createContext, useContext, useState, useMemo} from 'react';
+import React, {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import {loginStep1, logout as apiLogout, DEV_SKIP_2FA} from '../services/authService';
+import {setAuthToken} from '../services/api';
+import {
+  getStoredAuthToken,
+  getStoredUser,
+  type StoredUser,
+} from '../services/secureStorage';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 interface AuthContextValue {
   /** true si l'utilisateur a terminé le flux 2FA et est connecté */
   isAuthenticated: boolean;
+  /** true tant que l'hydratation du token depuis le Keychain n'est pas finie */
+  isHydrating: boolean;
   /** Email saisi au login — transmis à l'écran VerifyCode */
   pendingEmail: string;
+  /** Utilisateur connecté (null tant que pas authentifié) */
+  user: StoredUser | null;
   /** Appel du premier facteur (email + password) */
   loginFirstFactor: (email: string, password: string) => Promise<void>;
   /** Appelé après succès du 2FA — ouvre l'app principale */
@@ -26,7 +36,31 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isHydrating, setIsHydrating] = useState(true);
   const [pendingEmail, setPendingEmail] = useState('');
+  const [user, setUser] = useState<StoredUser | null>(null);
+
+  // Hydratation au démarrage : si un token est persisté dans le Keychain,
+  // on restaure la session sans repasser par login.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [token, storedUser] = await Promise.all([
+        getStoredAuthToken(),
+        getStoredUser(),
+      ]);
+      if (cancelled) {return;}
+      if (token && storedUser) {
+        setAuthToken(token);
+        setUser(storedUser);
+        setIsAuthenticated(true);
+      }
+      setIsHydrating(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const loginFirstFactor = async (
     email: string,
@@ -41,7 +75,12 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   };
 
   const loginSuccess = () => {
-    setIsAuthenticated(true);
+    // À ce stade authService a déjà stocké token + user ; on hydrate le state.
+    (async () => {
+      const stored = await getStoredUser();
+      setUser(stored);
+      setIsAuthenticated(true);
+    })();
   };
 
   const logout = async (): Promise<void> => {
@@ -51,13 +90,22 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
     } finally {
       setIsAuthenticated(false);
       setPendingEmail('');
+      setUser(null);
     }
   };
 
   const value = useMemo(
-    () => ({isAuthenticated, pendingEmail, loginFirstFactor, loginSuccess, logout}),
+    () => ({
+      isAuthenticated,
+      isHydrating,
+      pendingEmail,
+      user,
+      loginFirstFactor,
+      loginSuccess,
+      logout,
+    }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isAuthenticated, pendingEmail],
+    [isAuthenticated, isHydrating, pendingEmail, user],
   );
 
   return (

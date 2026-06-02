@@ -5,7 +5,7 @@
  * du wrapper sans toucher le réseau.
  */
 
-import { apiFetch, ApiError } from '../../src/services/api';
+import { apiFetch, ApiError, setAuthToken } from '../../src/services/api';
 
 const mockFetch = jest.fn();
 (globalThis as unknown as Record<string, unknown>).fetch = mockFetch;
@@ -15,6 +15,7 @@ const mockFetch = jest.fn();
 
 beforeEach(() => {
   mockFetch.mockReset();
+  setAuthToken(null);
 });
 
 // ─── Succès ───────────────────────────────────────────────────────────────────
@@ -43,13 +44,33 @@ test('apiFetch — inclut les headers par défaut', async () => {
   });
 });
 
-test('apiFetch — credentials include est toujours présent', async () => {
+test('apiFetch — injecte Authorization Bearer quand un token est en cache', async () => {
+  mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
+  setAuthToken('sanctum-token-xyz');
+
+  await apiFetch('/test');
+
+  const [, options] = mockFetch.mock.calls[0];
+  expect(options.headers.Authorization).toBe('Bearer sanctum-token-xyz');
+});
+
+test('apiFetch — pas d\'Authorization sans token', async () => {
   mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
 
   await apiFetch('/test');
 
   const [, options] = mockFetch.mock.calls[0];
-  expect(options.credentials).toBe('include');
+  expect(options.headers.Authorization).toBeUndefined();
+});
+
+test('apiFetch — skipAuth: true ne joint pas le header même si token présent', async () => {
+  mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
+  setAuthToken('sanctum-token-xyz');
+
+  await apiFetch('/login', { skipAuth: true });
+
+  const [, options] = mockFetch.mock.calls[0];
+  expect(options.headers.Authorization).toBeUndefined();
 });
 
 test('apiFetch — fusionne les headers personnalisés avec les headers par défaut', async () => {

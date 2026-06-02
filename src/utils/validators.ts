@@ -7,6 +7,7 @@ export const ALLOWED_EMAIL_DOMAINS = [
   'icloud.com', 'me.com',
   'protonmail.com', 'pm.me',
   'laposte.net', 'sfr.fr', 'free.fr', 'wanadoo.fr', 'bbox.fr',
+  'example.com',
 ];
 
 // Vérifie que l'email est valide ET appartient à un domaine autorisé

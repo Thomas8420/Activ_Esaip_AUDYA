@@ -7,6 +7,14 @@ import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import {AuthProvider, useAuth} from '../src/context/AuthContext';
 
+// On isole AuthContext de la couche réseau réelle : les tests d'authService
+// vivent dans __tests__/services/authService.test.ts.
+jest.mock('../src/services/authService', () => ({
+  loginStep1: jest.fn().mockResolvedValue(undefined),
+  logout: jest.fn().mockResolvedValue(undefined),
+  DEV_SKIP_2FA: false,
+}));
+
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
 /** Capture la valeur du contexte depuis un consumer. */
