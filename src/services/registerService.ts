@@ -1,7 +1,11 @@
 import {apiFetch} from './api';
 
 // ─── Toggle API ──────────────────────────────────────────────────────────────
-const USE_REGISTER_API = false; // Passer à true quand les endpoints backend sont prêts
+// true : appelle les endpoints /api/register/* en preprod.
+// Pré-requis backend : POST /api/register, /verify-email, /patient-info,
+// /hearing-survey, /medical-info, /professional doivent être déployés.
+// En attendant, les inscriptions échoueront avec ApiError → repasser à false.
+const USE_REGISTER_API = true;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
