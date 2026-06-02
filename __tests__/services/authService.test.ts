@@ -85,7 +85,8 @@ describe('loginStep2', () => {
 
     apiFetchMock.mockResolvedValueOnce({
       token: 'sanctum-token-xyz',
-      user: {id: 42, email: 'user@gmail.com', first_name: 'Marie', last_name: 'Dupont'},
+      expires_at: '2026-06-02T20:14:38.000000Z',
+      user: {id: 42, email: 'user@gmail.com', firstname: 'Marie', lastname: 'Dupont'},
     } as never);
 
     await loginStep2('123456');

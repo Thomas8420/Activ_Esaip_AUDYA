@@ -49,26 +49,30 @@ interface LoginApiResponse {
 interface UserApiResponse {
   id: number | string;
   email: string;
-  first_name?: string;
-  last_name?: string;
+  // Le backend renvoie `firstname` / `lastname` en single word (cf. shape réel
+  // capturé sur /api/auth/verify-2fa), pas en snake_case.
+  firstname?: string;
+  lastname?: string;
   [key: string]: unknown;
 }
 
 interface Verify2FAApiResponse {
   token: string;
+  /** ISO 8601 — expiration du token Sanctum. Stocké pour permettre un refresh proactif. */
+  expires_at?: string;
   user: UserApiResponse;
 }
 
 // ─── Mapping ─────────────────────────────────────────────────────────────────
 
 function mapUser(raw: UserApiResponse): StoredUser {
-  const {first_name, last_name, ...rest} = raw;
+  const {firstname, lastname, ...rest} = raw;
   return {
     ...rest,
     id: raw.id,
     email: raw.email,
-    ...(first_name !== undefined ? {firstName: first_name} : {}),
-    ...(last_name !== undefined ? {lastName: last_name} : {}),
+    ...(firstname !== undefined ? {firstName: firstname} : {}),
+    ...(lastname !== undefined ? {lastName: lastname} : {}),
   };
 }
 
