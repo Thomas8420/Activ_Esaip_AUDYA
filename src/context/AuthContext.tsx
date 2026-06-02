@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useMemo, useState} from 're
 import {loginStep1, logout as apiLogout, DEV_SKIP_2FA} from '../services/authService';
 import {setAuthToken} from '../services/api';
 import {
+  clearAuthStorage,
   getStoredAuthToken,
   getStoredUser,
   type StoredUser,
@@ -20,8 +21,13 @@ interface AuthContextValue {
   user: StoredUser | null;
   /** Appel du premier facteur (email + password) */
   loginFirstFactor: (email: string, password: string) => Promise<void>;
-  /** Appelé après succès du 2FA — ouvre l'app principale */
-  loginSuccess: () => void;
+  /**
+   * Appelé après succès du 2FA — ouvre l'app principale.
+   * Throw si aucun token n'est présent en storage (défense en profondeur :
+   * empêche tout appelant de passer isAuthenticated=true sans avoir réussi
+   * loginStep2, qui est le seul à écrire un token dans le Keystore).
+   */
+  loginSuccess: () => Promise<void>;
   /** Déconnexion */
   logout: () => Promise<void>;
 }
@@ -74,13 +80,21 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
     }
   };
 
-  const loginSuccess = () => {
-    // À ce stade authService a déjà stocké token + user ; on hydrate le state.
-    (async () => {
-      const stored = await getStoredUser();
-      setUser(stored);
-      setIsAuthenticated(true);
-    })();
+  const loginSuccess = async (): Promise<void> => {
+    // Seul authService.loginStep2 écrit un token dans le Keystore. Sa présence
+    // est donc la preuve qu'un 2FA valide vient d'être validé par le backend.
+    // Si un appelant tente loginSuccess() sans avoir passé le 2FA, on refuse
+    // et on nettoie tout résidu éventuel.
+    const [token, stored] = await Promise.all([
+      getStoredAuthToken(),
+      getStoredUser(),
+    ]);
+    if (!token || !stored) {
+      await clearAuthStorage();
+      throw new Error('SECURITY: loginSuccess called without a valid auth token.');
+    }
+    setUser(stored);
+    setIsAuthenticated(true);
   };
 
   const logout = async (): Promise<void> => {

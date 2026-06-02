@@ -58,7 +58,7 @@ const VerifyCodeScreen: React.FC<Props> = ({visible, onClose, onSuccess}) => {
     setLoading(true);
     try {
       await loginStep2(code.trim());
-      loginSuccess();
+      await loginSuccess();
       onSuccess();
     } catch (err) {
       if (err instanceof ApiError) {

@@ -147,7 +147,31 @@ describe('loginFirstFactor', () => {
 // ─── loginSuccess ─────────────────────────────────────────────────────────────
 
 describe('loginSuccess', () => {
-  test('passe isAuthenticated à true', async () => {
+  test('throw si aucun token n\'est présent en storage (défense en profondeur)', async () => {
+    const {Consumer, getCaptured} = captureContext();
+    await ReactTestRenderer.act(async () => {
+      ReactTestRenderer.create(
+        <AuthProvider>
+          <Consumer />
+        </AuthProvider>,
+      );
+    });
+
+    await expect(getCaptured()!.loginSuccess()).rejects.toThrow(/SECURITY/);
+    expect(getCaptured()!.isAuthenticated).toBe(false);
+  });
+
+  test('passe isAuthenticated à true quand un token est présent en storage', async () => {
+    // On simule une session 2FA réussie en pré-remplissant le storage —
+    // c'est exactement ce que fait loginStep2 en conditions réelles.
+    const {
+      setStoredAuthToken,
+      setStoredUser,
+      clearAuthStorage,
+    } = require('../src/services/secureStorage');
+    await setStoredAuthToken('test-token');
+    await setStoredUser({id: 1, email: 'u@e.com'});
+
     const {Consumer, getCaptured} = captureContext();
     await ReactTestRenderer.act(async () => {
       ReactTestRenderer.create(
@@ -158,10 +182,13 @@ describe('loginSuccess', () => {
     });
 
     await ReactTestRenderer.act(async () => {
-      getCaptured()!.loginSuccess();
+      await getCaptured()!.loginSuccess();
     });
 
     expect(getCaptured()!.isAuthenticated).toBe(true);
+    expect(getCaptured()!.user).toMatchObject({id: 1, email: 'u@e.com'});
+
+    await clearAuthStorage();
   });
 });
 
@@ -169,6 +196,11 @@ describe('loginSuccess', () => {
 
 describe('logout', () => {
   test('remet isAuthenticated à false et vide pendingEmail', async () => {
+    // Pré-remplit le storage comme l'aurait fait loginStep2
+    const {setStoredAuthToken, setStoredUser} = require('../src/services/secureStorage');
+    await setStoredAuthToken('test-token');
+    await setStoredUser({id: 1, email: 'user@gmail.com'});
+
     const {Consumer, getCaptured} = captureContext();
     await ReactTestRenderer.act(async () => {
       ReactTestRenderer.create(
@@ -181,7 +213,7 @@ describe('logout', () => {
     // Simuler un login complet
     await ReactTestRenderer.act(async () => {
       await getCaptured()!.loginFirstFactor('user@gmail.com', 'any');
-      getCaptured()!.loginSuccess();
+      await getCaptured()!.loginSuccess();
     });
 
     expect(getCaptured()!.isAuthenticated).toBe(true);
